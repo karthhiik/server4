@@ -34,6 +34,7 @@ class Settings(BaseSettings):
 
     # API Base URLs
     API_BASE_URL3: str = os.getenv("API_BASE_URL3", "http://localhost:8001")
+    COMMUNITY_ASSET_BASE_URL: str = os.getenv("COMMUNITY_ASSET_BASE_URL", "http://localhost:8000")
 
     # VAPID (Push Notifications)
     VAPID_PUBLIC_KEY: str = os.getenv("VAPID_PUBLIC_KEY", "")
