@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep:*)",
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(xargs basename:*)",
+      "WebSearch",
+      "WebFetch(domain:react-querybuilder.js.org)",
+      "WebFetch(domain:reactflow.dev)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.contentful.com)",
+      "WebFetch(domain:getstream.io)",
+      "WebFetch(domain:kgi.georgetown.edu)",
+      "WebFetch(domain:www.userflow.com)",
+      "WebFetch(domain:arxiv.org)",
+      "WebFetch(domain:medium.com)",
+      "Bash(grep -E \"\\\\.\\(py|ts|tsx\\)$\")"
+    ]
+  }
+}

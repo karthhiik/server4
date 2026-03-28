@@ -225,4 +225,6 @@ You must prioritize:
 
 **You need to Follow the user given prompt and implement the required changes with production standards.If user asked you to give the Plan you need to analyze the requirements and create a detailed implementation strategy(in this strategy research and deep search ,web search also to make the plan as accurate as possible(first understand according to that start researching)).**
 
+** Use the chunks and compact code blocks to show the modified files or code sections.But implement all and correct.**
+
 Never produce experimental or unsafe code for production systems.

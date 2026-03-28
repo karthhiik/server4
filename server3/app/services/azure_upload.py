@@ -83,12 +83,34 @@ class AzureBlobManager:
                 decoded_id = base64.b64decode(bid).decode('utf-8')
                 decoded_blocks.append(BlobBlock(block_id=decoded_id))
             except Exception as e:
-                print(f"Error decoding block ID {bid}: {e}")
+                # print(f"Error decoding block ID {bid}: {e}")
                 # Fallback: try using original ID if decoding fails
                 decoded_blocks.append(BlobBlock(block_id=bid))
 
         blob_client.commit_block_list(decoded_blocks, content_settings=ContentSettings(content_type=content_type))
         
         return blob_client.url
+
+    def get_blob_properties(self, blob_name: str):
+        blob_client = self.blob_service_client.get_blob_client(
+            container=self.container_name,
+            blob=blob_name,
+        )
+        return blob_client.get_blob_properties()
+
+    def download_blob_bytes(self, blob_name: str, *, offset: int = 0, length: int | None = None) -> bytes:
+        blob_client = self.blob_service_client.get_blob_client(
+            container=self.container_name,
+            blob=blob_name,
+        )
+        downloader = blob_client.download_blob(offset=offset, length=length)
+        return downloader.readall()
+
+    def delete_blob(self, blob_name: str) -> None:
+        blob_client = self.blob_service_client.get_blob_client(
+            container=self.container_name,
+            blob=blob_name,
+        )
+        blob_client.delete_blob(delete_snapshots="include")
 
 azure_manager = AzureBlobManager()

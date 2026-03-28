@@ -1,0 +1,16 @@
+# Keep Docker context focused on backend services and shared package
+*
+
+# Root-level files that are occasionally needed by builds
+!.dockerignore
+!.gitignore
+
+# Backends and shared module
+!FASTAPI_COMMUNITY/
+!FASTAPI_COMMUNITY/**
+!server2/
+!server2/**
+!server3/
+!server3/**
+!shared_security/
+!shared_security/**

@@ -1059,6 +1059,6 @@ def render_chibi_data_uri(
 if __name__ == "__main__":
     # Quick test
     svg = render_chibi_svg("test-user", "female")
-    print(f"Generated SVG length: {len(svg)} characters")
-    print("First 500 chars:")
-    print(svg[:500])
+    # print(f"Generated SVG length: {len(svg)} characters")
+    # print("First 500 chars:")
+    # print(svg[:500])

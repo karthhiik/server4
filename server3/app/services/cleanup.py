@@ -6,6 +6,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Disable verbose APScheduler logging to reduce overhead
+logging.getLogger('apscheduler.schedulers.base').setLevel(logging.WARNING)
+logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
+logging.getLogger('apscheduler.scheduler').setLevel(logging.WARNING)
+
 async def cleanup_expired_files():
     """
     Background job to delete files older than 10 days.

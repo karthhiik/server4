@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.db.mongo import get_database, get_community_db
-from app.core.security import get_current_user_id_from_token
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from app.core.content_crypto import (
+    decrypt_message_document,
+    decrypt_reply_preview,
+    encrypt_message_document,
+    resolve_message_content,
+)
+from app.core.security import get_current_user
 from bson import ObjectId
 from typing import List
 from datetime import datetime
@@ -12,14 +17,9 @@ from app.services.avatar_service import (
     _safe_seed,
     _normalize_variant,
 )
+from app.services.permissions import get_chat_permission_state
 
 router = APIRouter()
-security = HTTPBearer()
-
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    return get_current_user_id_from_token(token)
-
 
 async def _broadcast_avatar_update(
     *,
@@ -30,21 +30,25 @@ async def _broadcast_avatar_update(
 
     db = await get_database()
     cursor = db.conversations.find({"participants": user_id})
+    participant_ids: set[str] = set()
     async for conv in cursor:
         for participant_id in conv.get("participants", []):
             if participant_id == user_id:
                 continue
-            await manager.send_personal_message(
-                {
-                    "type": "user_update",
-                    "user_id": user_id,
-                    "avatar": resolved_avatar["thumb_url"],
-                    "avatar_version": resolved_avatar["version"],
-                    "resolved_thumb_url": resolved_avatar["thumb_url"],
-                    "updated_at": resolved_avatar.get("updated_at"),
-                },
-                participant_id,
-            )
+            participant_ids.add(participant_id)
+
+    if participant_ids:
+        await manager.emit_to_users(
+            {
+                "type": "user_update",
+                "user_id": user_id,
+                "avatar": resolved_avatar["thumb_url"],
+                "avatar_version": resolved_avatar["version"],
+                "resolved_thumb_url": resolved_avatar["thumb_url"],
+                "updated_at": resolved_avatar.get("updated_at"),
+            },
+            list(participant_ids),
+        )
 
 @router.post("/user/avatar")
 async def update_avatar(payload: dict, user_id: str = Depends(get_current_user)):
@@ -138,7 +142,12 @@ async def get_conversations(user_id: str = Depends(get_current_user)):
     db = await get_database()
     community_db = await get_community_db()
     
-    cursor = db.conversations.find({"participants": user_id}).sort("updated_at", -1)
+    cursor = db.conversations.find(
+        {
+            "participants": user_id,
+            "hidden_for": {"$ne": user_id},
+        }
+    ).sort("updated_at", -1)
     conversations = await cursor.to_list(length=100)
     
     results = []
@@ -194,18 +203,15 @@ async def get_conversations(user_id: str = Depends(get_current_user)):
             avatar_version = avatar_info["version"]
         
         # Unread Count Logic
-        unread_count = 0
-        if conv.get("last_message"):
-            # If we have a last message, check if it's read by me
-            # Better way: Count messages in this conversation that are NOT from me and status != 'read'
-            
-            # Since counting can be expensive, we might optimize this later.
-            # For now, let's do a count query.
-            unread_count = await db.messages.count_documents({
-                "conversation_id": str(conv["_id"]),
-                "sender_id": {"$ne": user_id},
-                "status": {"$ne": "read"}
-            })
+        unread_query = {
+            "conversation_id": str(conv["_id"]),
+            "sender_id": {"$ne": user_id},
+            "status": {"$ne": "read"}
+        }
+        cleared_at = conv.get("cleared_at", {}).get(user_id)
+        if cleared_at:
+            unread_query["timestamp"] = {"$gt": cleared_at}
+        unread_count = await db.messages.count_documents(unread_query)
 
         results.append({
             "id": str(conv["_id"]),
@@ -218,9 +224,11 @@ async def get_conversations(user_id: str = Depends(get_current_user)):
             "is_following": is_following,
             "is_follower": is_follower,
             "last_message": {
-                "content": last_msg["content"] if last_msg else "",
+                "content": resolve_message_content(last_msg, route="chat.conversations") if last_msg else "",
+                "sender_id": last_msg["sender_id"] if last_msg else None,
                 "timestamp": last_msg["timestamp"].isoformat() if last_msg else None,
-                "type": last_msg["type"] if last_msg else "text"
+                "type": last_msg["type"] if last_msg else "text",
+                "status": last_msg["status"] if last_msg else None,
             } if last_msg else None,
             "unread_count": unread_count
         })
@@ -258,8 +266,19 @@ async def get_messages(conversation_id: str, user_id: str = Depends(get_current_
     messages = await cursor.to_list(length=200)
     
     for msg in messages:
+        decrypted_msg = decrypt_message_document(msg, route="chat.messages")
+        reply_to_data = decrypted_msg.get("reply_to_data")
+        if isinstance(reply_to_data, dict) and "content_encrypted" in reply_to_data:
+            reply_to_data["content"] = decrypt_reply_preview(
+                reply_to_data.pop("content_encrypted"),
+                parent_document=decrypted_msg,
+                route="chat.reply_preview",
+            )
+        msg.clear()
+        msg.update(decrypted_msg)
         msg["id"] = str(msg["_id"])
         del msg["_id"]
+        msg.pop("content_encrypted", None)
         msg["timestamp"] = msg["timestamp"].isoformat()
         
     return messages
@@ -319,20 +338,12 @@ async def delete_message(message_id: str, user_id: str = Depends(get_current_use
         # Get conversation to find participants
         conv = await db.conversations.find_one({"_id": ObjectId(conversation_id)})
         if conv:
-            for participant_id in conv.get("participants", []):
-                if participant_id != user_id: # Notify others
-                     await manager.send_personal_message({
-                        "type": "message_deleted",
-                        "message_id": message_id,
-                        "conversation_id": conversation_id
-                    }, participant_id)
-            
-            # Also confirm to sender (if they have multiple tabs open)
-            await manager.send_personal_message({
+            participant_ids = list(dict.fromkeys(conv.get("participants", [])))
+            await manager.emit_to_users({
                 "type": "message_deleted",
                 "message_id": message_id,
                 "conversation_id": conversation_id
-            }, user_id)
+            }, participant_ids)
 
     return {"message": "Message deleted"}
 
@@ -345,9 +356,25 @@ async def edit_message(message_id: str, content: str, user_id: str = Depends(get
     if not msg:
         raise HTTPException(status_code=403, detail="Message not found or access denied")
         
+    updated_document = encrypt_message_document(
+        {
+            **msg,
+            "_id": str(msg["_id"]),
+            "content": content,
+        },
+        route="chat.edit_message",
+    )
+    updated_document.pop("_id", None)
     await db.messages.update_one(
         {"_id": ObjectId(message_id)},
-        {"$set": {"content": content, "is_edited": True, "updated_at": datetime.utcnow()}}
+        {
+            "$set": {
+                **updated_document,
+                "is_edited": True,
+                "updated_at": datetime.utcnow(),
+            },
+            "$unset": {"content": ""},
+        },
     )
     
     # Broadcast Real-Time Update
@@ -358,14 +385,13 @@ async def edit_message(message_id: str, content: str, user_id: str = Depends(get
         # Broadcast to conversation participants
         conv = await db.conversations.find_one({"_id": ObjectId(conversation_id)})
         if conv:
-            for participant_id in conv.get("participants", []):
-                await manager.send_personal_message({
-                    "type": "message_updated",
-                    "message_id": message_id,
-                    "content": content,
-                    "is_edited": True,
-                    "conversation_id": conversation_id
-                }, participant_id)
+            await manager.emit_to_users({
+                "type": "message_updated",
+                "message_id": message_id,
+                "content": content,
+                "is_edited": True,
+                "conversation_id": conversation_id
+            }, list(dict.fromkeys(conv.get("participants", []))))
 
     return {"message": "Message updated"}
 
@@ -415,6 +441,25 @@ async def clear_chat(conversation_id: str, user_id: str = Depends(get_current_us
     )
     
     return {"message": "Chat cleared"}
+
+@router.get("/permissions/{target_id}")
+async def get_chat_permissions(target_id: str, user_id: str = Depends(get_current_user)):
+    if target_id == user_id:
+        return {
+            "can_send_message": False,
+            "reason": "self",
+            "message": "You cannot open a chat with yourself.",
+            "is_blocked": False,
+            "is_blocked_by_me": False,
+            "is_blocked_by_them": False,
+            "is_following": False,
+            "is_follower": False,
+            "is_mutual": False,
+            "message_count": 0,
+            "remaining_messages": 0,
+        }
+
+    return await get_chat_permission_state(user_id, target_id)
 
 @router.get("/users/{user_id}/presence")
 async def get_user_presence(user_id: str, current_user: str = Depends(get_current_user)):
