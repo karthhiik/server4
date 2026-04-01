@@ -11,3 +11,6 @@ secrets/
 server3/venv/
 **/__pycache__/
 *.pyc
+
+# Git worktrees - isolated development workspaces
+.worktrees/
