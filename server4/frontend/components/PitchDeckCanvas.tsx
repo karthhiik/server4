@@ -82,21 +82,30 @@ export function PitchDeckCanvas({
   };
 
   return (
-    <div className="pitch-deck-container">
-      <div className="deck-viewer">
-        <div className="slide-display">
+    <div
+      className="pitch-deck-container"
+      role="application"
+      aria-label="Pitch Deck Canvas"
+    >
+      <div className="deck-viewer" role="main">
+        <div className="slide-display" role="region" aria-label="Current slide">
           {currentSlide && renderSlide(currentSlide)}
         </div>
 
-        <div className="slide-counter">
+        <div className="slide-counter" aria-live="polite" aria-atomic="true">
           {currentSlideIndex + 1} / {deck.slides.length}
         </div>
 
-        <div className="navigation-controls">
+        <nav
+          className="navigation-controls"
+          role="navigation"
+          aria-label="Pitch deck navigation"
+        >
           <button
             onClick={goToPrevious}
             disabled={currentSlideIndex === 0}
             className="nav-button"
+            aria-label="Previous slide - Navigate to the previous slide in the pitch deck"
           >
             ← Previous
           </button>
@@ -104,6 +113,11 @@ export function PitchDeckCanvas({
           <button
             onClick={() => setIsPresenting(!isPresenting)}
             className="present-button"
+            aria-label={
+              isPresenting
+                ? "Exit Presentation - Exit presentation mode"
+                : "Start Presentation - Begin presentation mode"
+            }
           >
             {isPresenting ? "Exit Presentation" : "Start Presentation"}
           </button>
@@ -112,20 +126,29 @@ export function PitchDeckCanvas({
             onClick={goToNext}
             disabled={currentSlideIndex === deck.slides.length - 1}
             className="nav-button"
+            aria-label="Next slide - Navigate to the next slide in the pitch deck"
           >
             Next →
           </button>
-        </div>
+        </nav>
 
         {currentSlide.speaker_notes && (
-          <div className="speaker-notes">
+          <aside
+            className="speaker-notes"
+            role="complementary"
+            aria-label="Speaker notes for current slide"
+          >
             <h4>Speaker Notes</h4>
             <p>{currentSlide.speaker_notes}</p>
-          </div>
+          </aside>
         )}
       </div>
 
-      <div className="deck-sidebar">
+      <aside
+        className="deck-sidebar"
+        role="complementary"
+        aria-label="Pitch deck controls and navigation"
+      >
         <h2>{deck.title}</h2>
         <div className="deck-status">
           <span className="status-badge" data-status={deck.status}>
@@ -134,37 +157,41 @@ export function PitchDeckCanvas({
           <span className="theme-badge">{deck.theme}</span>
         </div>
 
-        <div className="slide-thumbnails">
+        <nav className="slide-thumbnails" role="navigation" aria-label="Slide thumbnails">
           {deck.slides.map((slide, index) => (
-            <div
+            <button
               key={slide.id}
               className={`thumbnail ${index === currentSlideIndex ? "active" : ""}`}
               onClick={() => goToSlide(index)}
+              aria-label={`Slide ${index + 1}: ${slide.title} - Jump to this slide`}
+              aria-current={index === currentSlideIndex ? "true" : undefined}
             >
               <div className="thumbnail-preview">
                 {slide.type.charAt(0).toUpperCase()}
               </div>
               <div className="thumbnail-title">{slide.title}</div>
               <div className="thumbnail-order">{index + 1}</div>
-            </div>
+            </button>
           ))}
-        </div>
+        </nav>
 
         <div className="export-controls">
           <button
             className="export-btn pdf"
             onClick={() => onExport?.("pdf")}
+            aria-label="Export pitch deck as PDF"
           >
             📄 Export PDF
           </button>
           <button
             className="export-btn pptx"
             onClick={() => onExport?.("pptx")}
+            aria-label="Export pitch deck as PowerPoint presentation"
           >
             🎯 Export PPTX
           </button>
         </div>
-      </div>
+      </aside>
 
       <style jsx>{`
         .pitch-deck-container {
