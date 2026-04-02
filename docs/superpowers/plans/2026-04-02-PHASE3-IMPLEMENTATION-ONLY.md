@@ -11,8 +11,13 @@
 - Feature 4: Multiplayer Presence Architecture (Future WebSocket ready)
 
 **Test Target:** 45+ new unit & integration tests (all TDD-driven)
-**Estimated Duration:** 16-20 hours with subagent-driven development
+**Estimated Duration:** 20-28 hours with subagent-driven development (increased from 16-20 for robust A11y)
 **Architecture:** TDD first, implement second, review gates between tasks
+**Critical Requirements:**
+- ✅ Dynamic imports for Three.js (prevent bundle bloat)
+- ✅ Standard WCAG contrast ratio algorithm (not pseudo-science)
+- ✅ Hidden data tables for 3D accessibility
+- ✅ Normalized scenario math (no magic numbers)
 
 ---
 
@@ -209,8 +214,13 @@ describe('3D Market Globe', () => {
 
 #### Task 1.2: Implement ThreeDGlobe component
 
+**CRITICAL:** Use dynamic imports to prevent bundle bloat. Create TWO files:
+
+**File A: GlobeRenderer.tsx (heavy Three.js logic - will be code-split)**
+
 ```typescript
-// src/features/intelligence/shared/ThreeDGlobe.tsx
+// src/features/intelligence/shared/GlobeRenderer.tsx
+// This file is lazy-loaded and will be in a separate bundle chunk
 
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
@@ -301,12 +311,7 @@ export const ThreeDGlobe: React.FC<ThreeDGlobeProps> = ({
       marker.userData.region = region;
       marker.castShadow = true;
       scene.add(marker);
-
-      // Create DOM element for test ID
-      const markerDiv = document.createElement('div');
-      markerDiv.setAttribute('data-testid', `region-marker-${region}`);
-      markerDiv.style.display = 'none';
-      document.body.appendChild(markerDiv);
+    });
     });
 
     // Lighting
@@ -357,11 +362,6 @@ export const ThreeDGlobe: React.FC<ThreeDGlobeProps> = ({
       markerGeometry.dispose();
       renderer.dispose();
 
-      // Remove marker divs
-      document.querySelectorAll('[data-testid^="region-marker-"]').forEach((el) => {
-        el.remove();
-      });
-
       sceneRef.current = null;
       rendererRef.current = null;
       globeRef.current = null;
@@ -369,16 +369,73 @@ export const ThreeDGlobe: React.FC<ThreeDGlobeProps> = ({
   }, [regions, width, height]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      data-testid="three-d-globe"
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        borderRadius: '8px',
-        boxShadow: '0 0 20px rgba(0, 255, 136, 0.3)',
-      }}
-    />
+    <>
+      {/* Visual Canvas */}
+      <canvas
+        ref={canvasRef}
+        data-testid="three-d-globe"
+        style={{
+          width: `${width}px`,
+          height: `${height}px`,
+          borderRadius: '8px',
+          boxShadow: '0 0 20px rgba(0, 255, 136, 0.3)',
+        }}
+      />
+
+      {/* Hidden accessibility table for screen readers - WCAG compliance */}
+      <div className="sr-only" role="region" aria-label="Market Region Data">
+        <table>
+          <caption>3D globe region highlights and market data</caption>
+          <tbody>
+            {regions.map((region) => (
+              <tr key={region}>
+                <td>{region}</td>
+                <td>Market region is highlighted on the interactive 3D globe</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+};
+
+/**
+ * File B: ThreeDGlobe.tsx (lazy-loading wrapper - stays in main bundle)
+ * This component uses lazy loading to prevent Three.js from blocking initial page load
+ */
+
+interface ThreeDGlobeProps {
+  regions: string[];
+  width?: number;
+  height?: number;
+}
+
+// Dynamic import with Suspense fallback
+const GlobeRenderer = React.lazy(() => import('./GlobeRenderer'));
+
+export const ThreeDGlobe: React.FC<ThreeDGlobeProps> = ({
+  regions,
+  width = 300,
+  height = 300
+}) => {
+  return (
+    <Suspense fallback={
+      <div
+        className="globe-skeleton"
+        style={{
+          width: `${width}px`,
+          height: `${height}px`,
+          background: 'linear-gradient(90deg, #1a3a52 25%, #2a5a7a 50%, #1a3a52 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s infinite',
+          borderRadius: '8px',
+        }}
+        aria-label="Loading 3D market globe..."
+      />
+    }>
+      <GlobeRenderer regions={regions} width={width} height={height} />
+    </Suspense>
   );
 };
 ```
@@ -713,11 +770,18 @@ export const useScenarios = (baselineMetrics: Record<string, number>) => {
       deltas[key] = ((current - baseline) / baseline) * 100;
     });
 
+    /**
+     * CRITICAL: Normalize percentage metrics to decimals before calculation
+     * conversionRate is stored as 0-100 (e.g., 5 = 5%)
+     * We convert to decimal (0.05) for projections
+     */
+    const conversionRateAsDecimal = (scenarios.current.conversionRate || 0) / 100;
+
+    // Now calculation is clear: marketSize * decimal conversion rate * price point
     const projectedRevenue =
       (scenarios.current.marketSize || 0) *
-      (scenarios.current.conversionRate || 0) *
-      (scenarios.current.pricePoint || 0) *
-      0.01;
+      conversionRateAsDecimal *
+      (scenarios.current.pricePoint || 0);
 
     const ltvCacRatio =
       (scenarios.current.lifetimeValue || 0) /
@@ -837,9 +901,20 @@ import { useScenarios } from '../../shared/hooks/useScenarios';
 import { ScenarioSlider } from '../../shared/ScenarioSlider';
 
 export const GTMCanvas: React.FC<{ gtmId: string }> = ({ gtmId }) => {
+  /**
+   * Baseline metrics for scenario engine
+   *
+   * IMPORTANT: All metrics are stored in their "display" format:
+   * - conversionRate: 0-100 (e.g., 5 = 5%, NOT 0.05)
+   * - pricePoint: raw number (e.g., 100)
+   * - marketSize: raw number (e.g., 1000)
+   *
+   * The useScenarios hook normalizes conversionRate to decimal (0.05) during calculations.
+   * This prevents ambiguity and magic numbers like "0.01" in the projection formula.
+   */
   const baselineMetrics = {
     marketSize: 100,
-    conversionRate: 5,
+    conversionRate: 5, // Entry format: 5 (meaning 5%), NOT 0.05
     pricePoint: 100,
     customerAcquisitionCost: 500,
     lifetimeValue: 5000,
@@ -1224,23 +1299,53 @@ export const getChartAriaLabel = (chartType: string, title: string, description:
 };
 
 /**
- * Check color contrast ratio
+ * Calculate WCAG relative luminance (standard algorithm - not approximation)
+ * Reference: https://www.w3.org/TR/WCAG20/#relativeluminancedef
  */
-export const checkContrastRatio = (foreground: string, background: string): number => {
-  const getLuminance = (color: string) => {
-    const rgb = parseInt(color.slice(1), 16);
-    const r = (rgb >> 16) & 0xff;
-    const g = (rgb >> 8) & 0xff;
-    const b = rgb & 0xff;
+const getRelativeLuminance = (hex: string): number => {
+  const rgb = parseInt(hex.slice(1), 16);
+  const r = ((rgb >> 16) & 0xff) / 255;
+  const g = ((rgb >> 8) & 0xff) / 255;
+  const b = (rgb & 0xff) / 255;
 
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.5 ? luminance + 0.05 : luminance + 0.05;
+  // Convert to linear RGB
+  const toLinear = (c: number) => {
+    if (c <= 0.03928) {
+      return c / 12.92;
+    }
+    return Math.pow((c + 0.055) / 1.055, 2.4);
   };
 
-  const l1 = getLuminance(foreground);
-  const l2 = getLuminance(background);
+  const R = toLinear(r);
+  const G = toLinear(g);
+  const B = toLinear(b);
 
-  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  // Standard WCAG formula
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+};
+
+/**
+ * Check color contrast ratio using WCAG standard formula
+ * Returns ratio (e.g., 4.5 for WCAG AA compliance)
+ * WCAG AA requires 4.5:1 for normal text, 3:1 for large text
+ */
+export const checkContrastRatio = (foreground: string, background: string): number => {
+  const l1 = getRelativeLuminance(foreground);
+  const l2 = getRelativeLuminance(background);
+
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+
+  return (lighter + 0.05) / (darker + 0.05);
+};
+
+/**
+ * Verify if colors meet WCAG AA standard (4.5:1 for normal text)
+ */
+export const isWCAGCompliant = (foreground: string, background: string, largeText: boolean = false): boolean => {
+  const ratio = checkContrastRatio(foreground, background);
+  const threshold = largeText ? 3 : 4.5;
+  return ratio >= threshold;
 };
 
 /**
