@@ -70,11 +70,11 @@ async def get_authenticated_user_id_from_token(token: str) -> str:
             detail="User database unavailable",
         )
 
-    user = await community_db.users.find_one({"user_id": user_id}, {"jwt_token": 1})
-    if not user or user.get("jwt_token") != token:
+    user = await community_db.users.find_one({"user_id": user_id}, {"_id": 1})
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Session is no longer active",
+            detail="User not found",
         )
 
     return str(user_id)

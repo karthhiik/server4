@@ -1,0 +1,1378 @@
+See first give me the plan of solution for this below task's or issue . first understand the Server1_Fastapi including all the code based files and front-end also called lliveupdatedstreaming folder , task -1 i am getting problem in the front when i given a prompt and click on the generate button it isnot getting worked and generation is not gettign happend in the backend for (all four services called Business plan , swot , gtm and pitch dekc analysis report) .TASK-2 check did the generation is correctly happening in the business plan , swot , gtm and pitch deck analysis report test all three service with real time inputs and create a .md file and keep all the response in that (use real time data and check), Task -3 did it is using the sockets or SSE for updating the process while generating . Task -4 did the front-end is correctly displaying what backend is generating the reponse (for all the four services) See this tasks are for all four services(busienss plan , swot , gtm and pitch deck analysis report) make sure this is a real tiem and rela world project be careful about it. See this problems are all from the Server1_FastApi. only we have all the things understand correctly and give me the implementation plan i will review it correctly first understand correctly.
+
+----------------------------------------
+toolName: no_need_execute
+            
+status: no_need_execute
+          
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Server1_FastApi: locate all API routes and services related to business plan generation, market intelligence, SWOT, GTM strategy, pitch/pitch deck generation. Identify route files, router prefixes, and handler functions.
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Server1_FastApi: find GTM plan generation endpoints, including celery task submission, status/progress endpoints, and download/export endpoints (pdf/docx/pptx).
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Server1_FastApi: identify pitch deck generation/analysis and export routes (pptx/pdf), any presentation or pitch deck creation endpoints, and their services/schemas.
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Server1_FastApi: determine how progress/streaming is implemented for business plan, SWOT, GTM, and pitch. Look for WebSocket routes, SSE routes, redis pubsub, progress manager, and any /progress endpoints.
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\main.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\main.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\business_routes_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\business_routes_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\business_routes_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\gtm_routes_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\gtm_routes_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\gtm_routes_refactored.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: gtm_plan_result|download_gtm_pdf|task_id
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: @router\.(get|post|delete|put)\("
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\swot_routes.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\swot_routes.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\swot_routes.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\swot_routes.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\swot_routes.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\pitch_analysis_routes_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\pitch_analysis_routes_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\generation_routes.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\generation_routes.py
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Locate implementation of app.services.intelligence.smart_router (Smart Router generation state persistence). Identify how it stores state (Redis/Mongo), and any progress/streaming support for section-level completion.
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Server1_FastApi: inspect live_ticker_routes (RAG + SSE live ticker). Determine if it streams smart_router progress or research sources for business plan/SWOT/GTM/pitch deck generation.
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\live_ticker_routes.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: @router\.(post|get)\("
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\export_routes.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\export_routes.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: @router\.(post|get|delete)\("
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\task_routes.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\task_routes.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: async def generate_business_plan\b|return \{\s*"success"
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\services\business_plan_service_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\services\business_plan_service_refactored.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: def build_business_section_models|def build_business_section_entry|return structured_sections
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\services\business_plan_service_refactored.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: async def generate_gtm_plan\b|return \{\s*"success"
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\services\gtm_service_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\schemas\swot.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\schemas\gtm.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\schemas\business.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\schemas\pitch.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: def emit\(|async def stream_updates\(|pubsub|progress:
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\core\progress.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\core\progress.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: pitch_deck|ArtifactType\.PITCH_DECK|PITCH_DECK
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\celery_tasks\intelligence_tasks.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: /system/pitch/health
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\pitch_analysis_routes_refactored.py
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\pitch_analysis_routes_refactored.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: async def generate_swot_analysis\b|return \{\s*"strengths"|return \{\s*"success"
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\services\swot_service_refactored.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: async def analyze_pitch_deck\b|return \{\s*"success": True
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\services\pitch_service_refactored.py
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Find /api/intelligence/tasks/{task_id}/result and related task inspection endpoints in intelligence_routes. Identify response structure for task result/status and how it ties to task_orchestrator.
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\intelligence_routes.py
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: APIRouter\(prefix=
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\Server1_FastApi\app\api\routes\progress_ws_routes.py
+          
+I scanned the full Server1_FastApi surface area that’s relevant to Business Plan, SWOT, GTM, and Pitch (analysis + pitch-deck generation), including what’s actually mounted in the running app, the underlying services, and all progress/streaming mechanisms.
+
+**What’s Actually Mounted (Active)**
+- The running FastAPI app mounts the refactored “Flask-pattern” routes for Business, GTM, SWOT, Pitch, plus the Smart Router generation + SSE stream + exports + async-task APIs: [main.py:L241-L289](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/main.py#L241-L289)
+- Legacy/alternate route modules exist but are not included by `main.py` (so treat as inactive unless mounted elsewhere):  
+  [business_routes.py](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/business_routes.py), [gtm_routes.py](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/gtm_routes.py), [pitch_analysis_routes.py](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes.py), and various `*_complete.py` variants.
+
+---
+
+## Business Plan
+
+**A) “Direct Generate” (service id 306)**
+- **POST** `/api/generate_business_plan` (alias: `/api/generate-business-plan`) — form fields: `business_name`, `industry`, `business_type`, `vision`  
+  Response shape (high-level): `success`, `plan_id`, `business_plan` (markdown), `sections`, `market_data`, `generation_id`, plus intelligence bundle/context fields.  
+  Source: [business_routes_refactored.py:L84-L204](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/business_routes_refactored.py#L84-L204)
+
+- **POST** `/api/generate_business_plan_async` (alias: `/api/generate-business-plan-async`) — same form fields + `research_mode`  
+  Returns **202** with `task_id`, `progress_type`, `progress_socket_path`, `result_path`.  
+  Source: [business_routes_refactored.py:L219-L284](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/business_routes_refactored.py#L219-L284)
+
+- **GET** `/api/business_plan/{plan_id}` — returns `{success: true, data: <mongo document with plan_id>}`  
+  Source: [business_routes_refactored.py:L299-L326](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/business_routes_refactored.py#L299-L326)
+
+- **GET** `/api/user_business_plans?skip=&limit=` — returns `{success, data: [...], pagination: {...}}`  
+  Source: [business_routes_refactored.py:L341-L377](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/business_routes_refactored.py#L341-L377)
+
+- **DELETE** `/api/business_plan/{plan_id}`  
+  Source: [business_routes_refactored.py:L390-L415](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/business_routes_refactored.py#L390-L415)
+
+- **POST** `/api/regenerate-section` — form fields: `plan_id`, `section_key` (must be one of the 13 section keys).  
+  Response: `{success, section_key, content, section, plan_id}`  
+  Source: [business_routes_refactored.py:L477-L628](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/business_routes_refactored.py#L477-L628)
+
+- **GET** `/api/market-intelligence/{industry}` — returns `data.market_data` plus a few top-level convenience fields  
+  Source: [business_routes_refactored.py:L643-L677](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/business_routes_refactored.py#L643-L677)
+
+**Business Plan service response internals**
+- The core generator returns:
+  - `{"success": True, "result": {"plan_id", "business_plan", "sections", "market_data", "generation_id", ...}}`  
+  Source: [business_plan_service_refactored.py:L1460-L1727](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/services/business_plan_service_refactored.py#L1460-L1727)
+- Each entry in `sections` is a dict with:
+  - `content` (markdown), `content_without_tables`, `tables`, and optional `metrics`  
+  Source: [build_business_section_entry](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/services/business_plan_service_refactored.py#L245-L331)
+
+**B) “Smart Router Pipeline” (profile → full report)**
+- **POST** `/api/v1/business-plan/generate` — JSON body: `{"session_id": "exp_..."}`  
+  Response: `{success, session_id, service_type, status, document, sections, citations, metadata}`  
+  Source: [generation_routes.py:L239-L257](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/generation_routes.py#L239-L257), models at [generation_routes.py:L47-L72](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/generation_routes.py#L47-L72)
+
+- **POST (SSE)** `/api/v1/business-plan/generate-stream` — JSON body: `{"session_id": "exp_..."}`  
+  Streams events: `connected`, `plan`, `section_start`, `progress`, `source_ticker`, `markdown`, `document`, `complete`, `error`  
+  Source: [live_ticker_routes.py:L235-L285](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/live_ticker_routes.py#L235-L285) and header docs [live_ticker_routes.py:L1-L45](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/live_ticker_routes.py#L1-L45)
+
+- **GET** `/api/v1/generate/{session_id}` — polling/resume: returns stored orchestration state  
+  Source: [generation_routes.py:L329-L353](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/generation_routes.py#L329-L353)
+
+---
+
+## SWOT
+
+**Primary SWOT + related analyses (service ids 309–313)**
+- **POST** `/api/swot` — JSON body `SwotCreate`  
+  Response includes: `swot` (S/W/O/T arrays), `industryGrowth`, `requestId`, `planId`, plus intelligence fields.  
+  Source: [swot_routes.py:L137-L282](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L137-L282), request schema: [swot.py:L17-L51](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/schemas/swot.py#L17-L51)
+
+- **POST** `/api/swot/async` — JSON body `SwotCreate`  
+  Returns **202** with `task_id`, `progress_socket_path`, `result_path`.  
+  Source: [swot_routes.py:L314-L359](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L314-L359)
+
+- **POST** `/api/competitor-analysis` — JSON body `CompetitorAnalysisCreate`  
+  Response: `{competitors: <dict>, requestId}`  
+  Source: [swot_routes.py:L373-L413](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L373-L413), schema: [swot.py:L53-L86](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/schemas/swot.py#L53-L86)
+
+- **POST** `/api/value-proposition-canvas` — JSON body `CompetitorAnalysisCreate`  
+  Response: `{valueProposition: <dict>, requestId}`  
+  Source: [swot_routes.py:L427-L467](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L427-L467)
+
+- **POST** `/api/risk-analysis` — JSON body `CompetitorAnalysisCreate`  
+  Response: `{riskAnalysis: <dict>, requestId}`  
+  Source: [swot_routes.py:L481-L522](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L481-L522)
+
+- **POST** `/api/market-segmentation` — JSON body `CompetitorAnalysisCreate`  
+  Response: `{marketSegmentation: <dict>, requestId}`  
+  Source: [swot_routes.py:L535-L575](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L535-L575)
+
+**SWOT CRUD + updates**
+- **GET** `/api/swot/{plan_id}` — returns `{plan: ...}`  
+  Source: [swot_routes.py:L589-L615](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L589-L615)
+- **GET** `/api/user-swot-plans?limit=&offset=`  
+  Source: [swot_routes.py:L617-L650](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L617-L650)
+- **DELETE** `/api/delete-swot/{plan_id}`  
+  Source: [swot_routes.py:L653-L677](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L653-L677)
+- **POST** `/api/update-swot`, `/api/update-competitor-analysis`, `/api/update-value-proposition-canvas`, `/api/update-risk-analysis`, `/api/update-market-segmentation`  
+  Source: [swot_routes.py:L763-L930](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/swot_routes.py#L763-L930)
+
+**Smart Router SWOT**
+- **POST** `/api/v1/swot/generate` and **POST (SSE)** `/api/v1/swot/generate-stream`  
+  Sources: [generation_routes.py:L263-L279](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/generation_routes.py#L263-L279), [live_ticker_routes.py:L248-L259](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/live_ticker_routes.py#L248-L259)
+
+---
+
+## GTM
+
+**Important path note**
+- `gtm_routes_refactored` is mounted with `APIRouter(prefix="")`, so endpoints are at the root (e.g. `/generate_gtm_plan`), even though the module docstring says `/api/...`.  
+  Source: [gtm_routes_refactored.py:L51-L56](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/gtm_routes_refactored.py#L51-L56)
+
+**Direct GTM generation (service id 316)**
+- **POST** `/generate_gtm_plan` — `multipart/form-data` with many aliased fields like `"Business Name:"`, `"Industry:"`, etc (the server reconstructs the nested dict).  
+  Response includes: `plan_id`, `gtm_plan` (markdown), `market_intelligence`, `strategic_nodes`, `node_connections`, `pdf_filename`, `generation_id`, plus intelligence fields.  
+  Source: [gtm_routes_refactored.py:L84-L270](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/gtm_routes_refactored.py#L84-L270)
+
+- **POST** `/generate_gtm_plan_async` — same form fields + `research_mode`  
+  Returns **202** with `task_id`, `progress_socket_path`, `result_path`.  
+  Source: [gtm_routes_refactored.py:L285-L400](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/gtm_routes_refactored.py#L285-L400)
+
+- **GET** `/gtm/{plan_id}`  
+  Source: [gtm_routes_refactored.py:L415-L441](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/gtm_routes_refactored.py#L415-L441)
+
+- **GET** `/user-gtm-plans?skip=&limit=`  
+  Source: [gtm_routes_refactored.py:L457-L493](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/gtm_routes_refactored.py#L457-L493)
+
+- **DELETE** `/gtm/{plan_id}`  
+  Source: [gtm_routes_refactored.py:L506-L538](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/gtm_routes_refactored.py#L506-L538)
+
+- **GET** `/gtm/pdf/{plan_id}` — downloads stored PDF from `pdf_path`  
+  Source: [gtm_routes_refactored.py:L546-L581](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/gtm_routes_refactored.py#L546-L581)
+
+**GTM service response internals**
+- The generator returns:
+  - `{"success": True, "result": {"plan_id", "gtm_plan", "market_intelligence", "summary_metrics", "structured_sections", "overview", "strategic_nodes", "node_connections", "pdf_path", "pdf_filename", ...}}`  
+  Source: [gtm_service_refactored.py:L2188-L2334](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/services/gtm_service_refactored.py#L2188-L2334)
+
+**Smart Router GTM**
+- **POST** `/api/v1/gtm/generate` and **POST (SSE)** `/api/v1/gtm/generate-stream`  
+  Sources: [generation_routes.py:L285-L301](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/generation_routes.py#L285-L301), [live_ticker_routes.py:L261-L271](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/live_ticker_routes.py#L261-L271)
+
+---
+
+## Pitch (Two Distinct Flows)
+
+### 1) Pitch deck *analysis* (upload PDF/PPT/PPTX) — service id 307
+- **POST** `/api/analyze_pitch` (alias: `/api/analyze-pitch`)  
+  Request: `multipart/form-data` file field `file`, plus query param `business_type`  
+  Response: `{success, analysis_id, file_name, business_type, analyses: {...}, timestamp, intelligence_bundle_id, ...}`  
+  Source: [pitch_analysis_routes_refactored.py:L91-L237](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes_refactored.py#L91-L237)
+
+- **POST** `/api/analyze_pitch_async` (alias: `/api/analyze-pitch-async`)  
+  Request: upload file + query `business_type` + query `research_mode`  
+  Returns **202** with `task_id`, `progress_socket_path`, `result_path`.  
+  Source: [pitch_analysis_routes_refactored.py:L252-L337](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes_refactored.py#L252-L337)
+
+- **GET** `/api/pitch_analysis/{analysis_id}` (alias: `/api/analyze-pitch-result/{analysis_id}`)  
+  Source: [pitch_analysis_routes_refactored.py:L357-L385](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes_refactored.py#L357-L385)
+
+- **GET** `/api/user_pitch_analyses?skip=&limit=` (alias: `/api/analyze-pitch-history`)  
+  Source: [pitch_analysis_routes_refactored.py:L400-L437](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes_refactored.py#L400-L437)
+
+- **DELETE** `/api/pitch_analysis/{analysis_id}`  
+  Source: [pitch_analysis_routes_refactored.py:L450-L475](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes_refactored.py#L450-L475)
+
+- **GET** `/api/analyze-pitch-status/{task_id}` — polling status from `pitch_analyses` document fields  
+  Source: [pitch_analysis_routes_refactored.py:L537-L571](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes_refactored.py#L537-L571)
+
+- **POST** `/api/analyze-pitch-cancel/{task_id}` — marks record cancelled  
+  Source: [pitch_analysis_routes_refactored.py:L586-L635](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes_refactored.py#L586-L635)
+
+- **GET** `/api/analyze-pitch-metrics` — aggregates by status  
+  Source: [pitch_analysis_routes_refactored.py:L649-L695](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/pitch_analysis_routes_refactored.py#L649-L695)
+
+**Pitch analysis service response internals**
+- Returns: `{"success": True, "result": {"analysis_id", "file_name", "business_type", "analyses": {...}}}`  
+  Source: [pitch_service_refactored.py:L367-L437](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/services/pitch_service_refactored.py#L367-L437)
+
+### 2) Pitch-deck *generation* (from finalized expansion profile)
+- **POST** `/api/v1/pitch-deck/generate` — JSON body: `{"session_id": "exp_..."}` → returns assembled markdown report  
+  Source: [generation_routes.py:L307-L322](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/generation_routes.py#L307-L322)
+- **POST (SSE)** `/api/v1/pitch-deck/generate-stream` — streams per-section events + markdown chunks  
+  Source: [live_ticker_routes.py:L274-L285](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/live_ticker_routes.py#L274-L285)
+
+---
+
+## Export (PDF / DOCX / PPTX)
+These are “bring-your-own-content” exporters (you send `metadata` + `sections`, it returns a file download).
+- **POST** `/api/export/pdf`  
+- **POST** `/api/export/docx`  
+- **POST** `/api/export/pptx` (useful for “pitch deck” output)  
+Payload shape: `ExportPayload { metadata, sections[], config? }`  
+Source: [export_routes.py:L22-L81](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/export_routes.py#L22-L81), endpoints: [export_routes.py:L86-L550](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/export_routes.py#L86-L550)
+
+---
+
+## Progress / Streaming Mechanisms (What Exists + How to Use)
+
+**1) WebSocket progress (recommended for async Celery-backed artifact generation)**
+- **WS** `/ws/progress/{progress_type}?token=JWT&task_id=...`  
+  `progress_type ∈ {gtm, business, pitch, swot, general}` (with alias normalization).  
+  Messages are JSON: `progress`, `message`, `status`, `task_id`, `timestamp`, optional `details`.  
+  Source: [progress_ws_routes.py:L1-L216](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/progress_ws_routes.py#L1-L216)
+
+**2) SSE progress endpoints (legacy-compatible)**
+- **GET (SSE)** `/events/business_progress?token=...`  
+- **GET (SSE)** `/events/gtm_progress?token=...`  
+- **GET (SSE)** `/events/pitch_progress?token=...`  
+- **GET (SSE)** `/events/general_progress?token=...`  
+All of these proxy Redis Pub/Sub updates via the unified ProgressManager: [progress.py:L277-L356](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/core/progress.py#L277-L356)
+
+**3) Live ticker SSE for Smart Router “Step 2” report generation (session-based)**
+- **POST (SSE)** `/api/v1/{business-plan|swot|gtm|pitch-deck}/generate-stream` with JSON `{"session_id": ...}`  
+  Streams section-level progress + source tickers + markdown chunks (more granular than the Celery progress channel).  
+  Source: [live_ticker_routes.py:L231-L339](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/live_ticker_routes.py#L231-L339)
+
+**4) Polling state/result**
+- Smart Router state polling: **GET** `/api/v1/generate/{session_id}`: [generation_routes.py:L329-L353](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/generation_routes.py#L329-L353)
+- Async artifact tasks (intelligence orchestrator): **GET** `/api/intelligence/tasks/{task_id}/result` returns **202** until terminal: [intelligence_routes.py:L844-L864](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/intelligence_routes.py#L844-L864)
+- Generic 202 task API: **POST** `/api/tasks/{business-plan|gtm|swot|pitch}` then poll `/api/tasks/{task_id}/status` and `/api/tasks/{task_id}/result`  
+  Source: [task_routes.py:L163-L443](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/api/routes/task_routes.py#L163-L443)
+
+**How progress is emitted (Redis channels + payload shape)**
+- The unified ProgressManager publishes to Redis:
+  - channel: `progress:{user_id}:{progress_type}` or `progress:{user_id}:{progress_type}:{task_id}`
+  - state key: `progress_state:{user_id}:{progress_type}:{task_id|default}`
+  - payload includes `progress`, `message`, `status`, `progress_type`, `task_id`, `timestamp`, `details`, plus trace metadata  
+  Source: [progress.py:L70-L176](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/core/progress.py#L70-L176)
+- Celery “intelligence” tasks emit via `manager.emit(...)` (used by the `*_async` endpoints): [intelligence_tasks.py:L36-L54](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/celery_tasks/intelligence_tasks.py#L36-L54), example flow in business-plan task: [intelligence_tasks.py:L198-L236](file:///d:/Desktop/New_Flask/FLASK/Server1_FastApi/app/celery_tasks/intelligence_tasks.py#L198-L236)
+
+---
+
+If you want, I can produce a single OpenAPI-style table (method/path/auth/service_id/body/response/progress-channel) for these endpoints; everything needed is present in the files above.
+        
+          
+
+        
+            
+toolName: no_need_execute
+            
+status: no_need_execute
+          
+          
+
+        
+            
+toolName: view_folder
+            
+status: failed
+          
+d:\Desktop\New_Flask\FLASK
+          
+
+        
+            
+toolName: file_search
+            
+status: failed
+          
+file_pattern: **/lliveupdatedstreaming/**
+          
+
+        
+            
+toolName: file_search
+            
+status: failed
+          
+file_pattern: *lliveupdatedstreaming*
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Find the frontend project/folder named 'lliveupdatedstreaming' and locate generate button click handlers for business plan, SWOT, GTM, and pitch generation. Identify where API base URL is configured and what endpoints/payloads are used. Also find streaming client logic (SSE/EventSource, fetch streaming, WebSocket).
+          
+
+        
+            
+toolName: view_folder
+            
+status: success
+          
+d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: In lliveupdatedstreaming/src, find the click/submit handlers for generating Business Plan, SWOT, GTM Strategy, and Pitch Deck/analysis. Locate the functions that call fetch/axios and note the endpoint paths and request payload shapes.
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Find where lliveupdatedstreaming configures API base URLs (VITE_API_BASE_URL, VITE_API_BASE_URL2), plus any axios/fetch base instances or helpers. Return which env vars are used and defaults.
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: EventSource|text/event-stream|SSE
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: getReader\(|ReadableStream|onmessage|\bWebSocket\b|wss:|ws:|socket\.on|socket\.emit
+          
+
+        
+            
+toolName: file_search
+            
+status: success
+          
+file_pattern: **/*pitch*.*
+          
+
+        
+            
+toolName: file_search
+            
+status: success
+          
+file_pattern: **/*swot*.*
+          
+
+        
+            
+toolName: file_search
+            
+status: success
+          
+file_pattern: **/*SWOT*.*
+          
+
+        
+            
+toolName: file_search
+            
+status: success
+          
+file_pattern: **/*GTM*.*
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: generate-business-plan|generate_gtm_plan|generate-swot|generate_swot|pitch|generate_pitch|pitch-deck|generate-stream
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Find in lliveupdatedstreaming/src the main business plan generation request code (POST to /api/generate-business-plan or similar). Return the handler function name and the payload keys being sent.
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: handleGenerate|generate|axios\.post|fetch\(
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\components\BusinessPlanfrom\from.tsx
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: submitBusinessPlanTask|submitSwot|submitGtm|submitPitch|analyze_pitch|generate_gtm_plan_async|generate.*async|endpoint:\s*"
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\lib\intelligenceApi.ts
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\config\env.ts
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\.env
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\lib\progressSocket.ts
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\components\Loading\gtmloading.tsx
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\components\Loading\pitchloading.tsx
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\components\Loading\swotlaoding.tsx
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\components\Loading\businessLoading.tsx
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\pages\pitch_anaylsis.tsx
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: submitSwotTask|axios\.post|fetch\(|handleGenerate|generate|/api/swot|/swot
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\pages\SWOTAnalysis.tsx
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: submitGtmTask|connectProgressSocket|/generate_gtm_plan_async|generate_gtm_plan|handleSubmit|onClick\s*\=\s*\{|axios\.post|FormData
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\pages\GTMStrategy.tsx
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: \/ws\/progress\/[a-z_]+
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\components\BusinessPlanfrom\resultpitchanalysis.tsx
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: axios\.post|fetch\(|\/api\/generate|\/ws\/generation|new WebSocket|connectProgress|EventSource
+          
+
+        
+            
+toolName: search_codebase
+            
+status: success
+          
+query: Within src/components/PitchDeck, locate any API calls or websocket connections used to generate pitch decks/presentations. Look for functions that call /api/generate/ai, /api/generate/template, or /ws/generation/{project_id}.
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\pages\GTMStrategy.tsx
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: \/ws\/progress\/swot
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: function apiRequest|const apiRequest|export const apiRequest
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\lib\intelligenceApi.ts
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\lib\api\httpClient.ts
+          
+
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+query: onClick=\{generateAnalysis\}|onClick=\{generateStrategy\}|onClick=\{handleGeneratePlan\}
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\pages\SWOTAnalysis.tsx
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\pages\pitch_anaylsis.tsx
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\pages\GTMStrategy.tsx
+          
+
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: d:\Desktop\New_Flask\FLASK\lliveupdatedstreaming\src\components\BusinessPlanfrom\from.tsx
+          
+I scanned the entire [lliveupdatedstreaming](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming) frontend (source TS/TSX, not just build artifacts) and found the active “Generate” handlers + the shared request + streaming client plumbing.
+
+**API Base URLs**
+- **Primary (core) API base**: `VITE_API_BASE_URL`
+  - Local `.env` sets it to `http://127.0.0.1:8080` ([.env:L2-L9](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/.env#L2-L9))
+  - Code-normalized and defaulted via `appEnv.coreApiBaseUrl` ([env.ts:L49-L58](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/config/env.ts#L49-L58))
+- **Secondary bases**:
+  - `VITE_API_BASE_URL2` → `appEnv.communityApiBaseUrl` ([env.ts:L49-L58](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/config/env.ts#L49-L58))
+  - `VITE_API_BASE_URL3` → `appEnv.chatApiBaseUrl` ([env.ts:L49-L58](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/config/env.ts#L49-L58))
+- **Central request helper**: `apiRequest()` resolves base by `target` (`core|community|chat|absolute`) and injects `Authorization: Bearer <token>` when provided ([httpClient.ts:L48-L65](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/api/httpClient.ts#L48-L65), [httpClient.ts:L126-L153](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/api/httpClient.ts#L126-L153))
+
+---
+
+## Business Plan — Generate Button Handler(s)
+
+### A) Main Business Plan form → queues async task (current flow)
+- **UI button**: “Generate Business Plan” calls `handleGeneratePlan` ([from.tsx:L2660-L2677](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/from.tsx#L2660-L2677))
+- **Handler**: `handleGeneratePlan` ([from.tsx:L1812-L1935](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/from.tsx#L1812-L1935))
+- **Auth/access calls (core base = `VITE_API_BASE_URL`)**
+  - `GET /api/service/check-access/108` with `Authorization: Bearer <jwt>` ([from.tsx:L1820-L1838](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/from.tsx#L1820-L1838))
+- **Generation submit (async queue)**
+  - Calls `submitBusinessPlanTask(jwtToken, submitData)` ([from.tsx:L1910-L1914](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/from.tsx#L1910-L1914))
+  - `submitBusinessPlanTask` is defined as:
+    - **POST** `/api/generate_business_plan_async` (target: `core`)
+    - **Body**: `FormData`
+    - **Auth**: Bearer token handled by `apiRequest` ([intelligenceApi.ts:L571-L584](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L571-L584))
+- **Request payload (FormData)**
+  - Always included:
+    - `business_name`, `industry`, `business_type`, `vision`, `research_mode=deep` ([from.tsx:L1855-L1864](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/from.tsx#L1855-L1864))
+  - Also appends an “extendedPayload” object, where each key is appended; non-strings are JSON-stringified ([from.tsx:L1865-L1908](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/from.tsx#L1865-L1908)):
+    - `companyName, industry, targetMarket, revenueSources, uniqueValueProp, businessType, businessDescription, founderMission, currentStage, oneLinerHook, marketSize, customerPersona, competitors, coreProduct, coreFeatures, techStack, unfairAdvantage, pricingStrategy, acquisitionChannels, foundingTeam, teamSize, hiringNeeds, techInfrastructure, partnerships, burnRate, currentFunding, runway, revenue, riskAppetite, backupPlan, biggestThreats, longTermVision`
+- **What happens after submit**
+  - On `{success: true, task_id}` navigates to the intelligence workspace route:
+    - `/intelligence/workspace/business_plan/<task_id>` via `buildIntelligenceWorkspacePath()` ([intelligenceApi.ts:L566-L569](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L566-L569), used in [from.tsx:L1912-L1925](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/from.tsx#L1912-L1925))
+
+### B) Business plan generation from Pitch Results (legacy sync endpoint still present)
+Inside the pitch results page, there’s another business-plan generation path:
+- **Function**: `generateBusinessPlan()` posts JSON to a legacy endpoint ([resultpitchanalysis.tsx:L1330-L1475](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/resultpitchanalysis.tsx#L1330-L1475))
+- **Endpoint**
+  - **POST** `${VITE_API_BASE_URL}/api/generate-business-plan` (JSON) ([resultpitchanalysis.tsx:L1411-L1419](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/resultpitchanalysis.tsx#L1411-L1419))
+- **Payload**
+  - A large JSON object `businessPlanData` with many fields (companyName, industry, targetMarket, etc.) plus extra “enhanced fields” like `keyMetrics`, `fundingNeeds`, `exitStrategy`, etc. ([resultpitchanalysis.tsx:L1355-L1403](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/resultpitchanalysis.tsx#L1355-L1403))
+
+---
+
+## SWOT — Generate Button Handler
+- **UI button**: “Generate SWOT Analysis” → `generateAnalysis` ([SWOTAnalysis.tsx:L3463-L3491](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/SWOTAnalysis.tsx#L3463-L3491))
+- **Handler**: `generateAnalysis()` ([SWOTAnalysis.tsx:L2699-L2773](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/SWOTAnalysis.tsx#L2699-L2773))
+- **Auth/access calls**
+  - `GET /verify-login` (Bearer) ([SWOTAnalysis.tsx:L2286-L2310](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/SWOTAnalysis.tsx#L2286-L2310))
+  - `GET /api/service/check-access/309` (Bearer) ([SWOTAnalysis.tsx:L2313-L2331](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/SWOTAnalysis.tsx#L2313-L2331))
+- **Generation submit (async queue)**
+  - Calls `submitSwotTask(jwtToken, body)` ([SWOTAnalysis.tsx:L2735-L2744](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/SWOTAnalysis.tsx#L2735-L2744))
+  - `submitSwotTask` definition:
+    - **POST** `/api/swot/async` (target: `core`)
+    - **Body**: JSON object (`Record<string, unknown>`) ([intelligenceApi.ts:L601-L614](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L601-L614))
+- **Payload (JSON)**
+  - `{ businessName, industry, businessDescription, targetMarket, strengths, weaknesses, opportunities, threats }`
+  - Note: if `industry === "other"`, it sends `customIndustry` instead ([SWOTAnalysis.tsx:L2700-L2744](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/SWOTAnalysis.tsx#L2700-L2744))
+- **After submit**
+  - Navigates to `/intelligence/workspace/swot/<task_id>` ([SWOTAnalysis.tsx:L2746-L2759](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/SWOTAnalysis.tsx#L2746-L2759))
+
+---
+
+## GTM — Generate Button Handler
+- **UI button**: “Generate GTM Strategy” → `generateStrategy` ([GTMStrategy.tsx:L1077-L1094](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/GTMStrategy.tsx#L1077-L1094))
+- **Handler**: `generateStrategy()` ([GTMStrategy.tsx:L697-L764](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/GTMStrategy.tsx#L697-L764))
+- **Auth/access calls**
+  - Uses `verifyUserLogin()` + `checkServiceAccess(610)` (both hit `${VITE_API_BASE_URL}`; see earlier in file, not repeated here)
+- **Generation submit (async queue)**
+  - Calls `submitGtmTask(jwtToken, submitData)` ([GTMStrategy.tsx:L722-L743](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/GTMStrategy.tsx#L722-L743))
+  - `submitGtmTask` definition:
+    - **POST** `/generate_gtm_plan_async` (target: `core`)
+    - **Body**: `FormData` ([intelligenceApi.ts:L586-L599](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L586-L599))
+- **Payload (FormData)**
+  - Iterates over `formData` key/value pairs and appends them, then appends `research_mode=deep` ([GTMStrategy.tsx:L716-L721](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/GTMStrategy.tsx#L716-L721))
+  - The `formData` keys are the literal prompt labels (examples) ([GTMStrategy.tsx:L369-L390](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/GTMStrategy.tsx#L369-L390)):
+    - `"Business Name:"`, `"Industry:"`, `"Who are you hunting?"`, `"Monthly Budget:"`, etc.
+- **After submit**
+  - Navigates to `/intelligence/workspace/gtm/<task_id>` ([GTMStrategy.tsx:L729-L743](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/GTMStrategy.tsx#L729-L743))
+
+---
+
+## Pitch — “Analyze Pitch Deck” Handler (Pitch Analysis tool)
+- **UI button**: “Analyze Pitch Deck” → `generateAnalysis` ([pitch_anaylsis.tsx:L3637-L3644](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/pitch_anaylsis.tsx#L3637-L3644))
+- **Handler**: `generateAnalysis()` ([pitch_anaylsis.tsx:L2922-L2983](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/pitch_anaylsis.tsx#L2922-L2983))
+- **Generation submit (async queue)**
+  - Builds `FormData` with:
+    - `file`, `description`, `industry` ([pitch_anaylsis.tsx:L2943-L2948](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/pitch_anaylsis.tsx#L2943-L2948))
+  - Calls `submitPitchTask(token, { businessType: industry.trim(), researchMode: "deep", body: formData })` ([pitch_anaylsis.tsx:L2954-L2958](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/pitch_anaylsis.tsx#L2954-L2958))
+  - `submitPitchTask` definition:
+    - **POST** to absolute URL: `${coreBase}/api/analyze_pitch_async?business_type=...&research_mode=...`
+    - **Body**: `FormData` ([intelligenceApi.ts:L616-L639](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L616-L639))
+- **After submit**
+  - Navigates to `/intelligence/workspace/pitch/<task_id>` ([pitch_anaylsis.tsx:L2960-L2974](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/pitch_anaylsis.tsx#L2960-L2974))
+
+---
+
+## Streaming Client Logic (SSE/WebSocket)
+
+### WebSocket (active)
+The frontend does **not** use SSE/EventSource (no matches for `EventSource` / `text/event-stream` in `src`), but it **does** use browser WebSockets for progress.
+
+- **Shared WebSocket client**: `connectProgressSocket()` in [progressSocket.ts](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/progressSocket.ts#L1-L123)
+  - Builds URL from `VITE_API_BASE_URL` and converts protocol `http→ws`, `https→wss` ([progressSocket.ts:L30-L49](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/progressSocket.ts#L30-L49))
+  - Passes `token` (and optionally other params like `task_id`) via **query string** ([progressSocket.ts:L74-L82](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/progressSocket.ts#L74-L82))
+  - Parses JSON frames and hands them to `onMessage` ([progressSocket.ts:L87-L94](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/progressSocket.ts#L87-L94))
+  - Auto-reconnect (up to N attempts) with backoff ([progressSocket.ts:L100-L111](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/progressSocket.ts#L100-L111))
+
+- **Where it’s used for generation progress**
+  - **Business plan progress**: connects to `"/ws/progress/business"` ([businessLoading.tsx:L128-L199](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/Loading/businessLoading.tsx#L128-L199))
+    - Note: no `task_id` param here; only `token` is sent.
+  - **GTM progress**: connects to `"/ws/progress/gtm"` with `task_id` query param ([gtmloading.tsx:L48-L118](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/Loading/gtmloading.tsx#L48-L118))
+  - **Pitch progress (legacy in-page tracker)**: connects to `"/ws/progress/pitch"` with `task_id` ([pitch_anaylsis.tsx:L2823-L2867](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/pitch_anaylsis.tsx#L2823-L2867))
+
+### Polling fallbacks (still in code)
+- Pitch analysis page has a polling fallback:
+  - **GET** `${VITE_API_BASE_URL}/api/analyze-pitch-result/<taskId>` ([pitch_anaylsis.tsx:L2869-L2920](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/pitch_anaylsis.tsx#L2869-L2920))
+- GTM page contains a polling-style result fetch:
+  - **GET** `${VITE_API_BASE_URL}/gtm_plan_result/<taskId>` ([GTMStrategy.tsx:L650-L694](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/pages/GTMStrategy.tsx#L650-L694))
+- PitchDeckResults page includes:
+  - WebSocket progress path `"/ws/progress/business"` ([resultpitchanalysis.tsx:L1099-L1128](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/resultpitchanalysis.tsx#L1099-L1128))
+  - Polling progress endpoint **GET** `/api/business-plan-progress` ([resultpitchanalysis.tsx:L1131-L1155](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/components/BusinessPlanfrom/resultpitchanalysis.tsx#L1131-L1155))
+
+---
+
+### Quick endpoint index (core tool flows)
+- **Business Plan (async)**: `POST /api/generate_business_plan_async` (FormData) — [intelligenceApi.ts:L571-L584](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L571-L584)
+- **SWOT (async)**: `POST /api/swot/async` (JSON) — [intelligenceApi.ts:L601-L614](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L601-L614)
+- **GTM (async)**: `POST /generate_gtm_plan_async` (FormData) — [intelligenceApi.ts:L586-L599](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L586-L599)
+- **Pitch analysis (async)**: `POST /api/analyze_pitch_async?business_type=...&research_mode=...` (FormData) — [intelligenceApi.ts:L616-L639](file:///d:/Desktop/New_Flask/FLASK/lliveupdatedstreaming/src/lib/intelligenceApi.ts#L616-L639)
+- **Progress WebSockets**
+  - `ws(s)://<core-host>/ws/progress/business?token=...`
+  - `ws(s)://<core-host>/ws/progress/gtm?token=...&task_id=...`
+  - `ws(s)://<core-host>/ws/progress/pitch?token=...&task_id=...`
+        Request limited, please try again later (4008)

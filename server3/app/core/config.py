@@ -72,7 +72,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = _env_str("API_V1_STR", default="/api/v1")
     ENVIRONMENT: str = _env_str("ENVIRONMENT", default="production")
 
-    SECRET_KEY: str = _env_str("SECRET_KEY", default="local-dev-secret-change-me")
+    SECRET_KEY: str = _env_str("BARISE_JWT_SECRET_KEY", "SECRET_KEY", default="local-dev-secret-change-me")
     ALGORITHM: str = _env_str("ALGORITHM", default="HS256")
     ENCRYPTION_ENABLED: bool = _env_bool("ENCRYPTION_ENABLED", default=False)
     ENCRYPTION_MASTER_KEY: str = _env_str("ENCRYPTION_MASTER_KEY", default="local-dev-encryption-key-change-me")
