@@ -7,16 +7,12 @@ Tests:
 2. Image generation (Lucid worker)
 3. HtmlBuilder output quality
 4. PptxBuilder output
-5. Export pipeline
 """
 
 import asyncio
-import io
 import os
 import sys
-import tempfile
-import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 import streamlit as st
 
@@ -59,24 +55,36 @@ run_slide_test = st.sidebar.checkbox("Test Slide Generation", value=True)
 run_image_test = st.sidebar.checkbox("Test Image Generation", value=True)
 run_html_test = st.sidebar.checkbox("Test HTML Builder", value=True)
 run_pptx_test = st.sidebar.checkbox("Test PPTX Builder", value=True)
-run_export_test = st.sidebar.checkbox("Test Export Pipeline", value=False)
 
 
 # ── Helper Functions ────────────────────────────────────────────
 
 
 def load_dotenv_manual():
-    """Load .env file manually."""
-    env_path = os.path.join(os.path.dirname(__file__), "server4", ".env")
-    if os.path.exists(env_path):
-        with open(env_path, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith("#") and "=" in line:
-                    key, _, value = line.partition("=")
-                    key = key.strip()
-                    value = value.strip().strip('"').strip("'")
-                    os.environ.setdefault(key, value)
+    """Load .env file manually from server4 directory."""
+    # Try multiple paths to find .env
+    possible_paths = [
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), ".env"
+        ),  # Same dir as script
+        os.path.join(os.getcwd(), ".env"),  # Current working directory
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "server4", ".env"
+        ),  # server4 subfolder
+    ]
+
+    for env_path in possible_paths:
+        if os.path.exists(env_path):
+            with open(env_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        key, _, value = line.partition("=")
+                        key = key.strip()
+                        value = value.strip().strip('"').strip("'")
+                        os.environ.setdefault(key, value)
+            return True
+    return False
 
 
 def get_available_models():
@@ -84,35 +92,49 @@ def get_available_models():
     models = {}
 
     # DeepSeek
-    if os.environ.get("DEEPSEEK_ENDPOINT") and os.environ.get("DEEPSEEK_API_KEY"):
+    ds_endpoint = os.environ.get("DEEPSEEK_ENDPOINT", "")
+    ds_key = os.environ.get("DEEPSEEK_API_KEY", "")
+    if ds_endpoint and ds_key:
         models["deepseek-v3"] = "✅ Configured"
     else:
         models["deepseek-v3"] = "❌ Not configured"
 
-    # Mistral
-    if os.environ.get("MISTRAL_ENDPOINT") and os.environ.get("MISTRAL_API_KEY"):
+    # Mistral - check both case variants
+    mistral_endpoint = (
+        os.environ.get("MISTRAL_ENDPOINT") or os.environ.get("Mistral_endpoint") or ""
+    )
+    mistral_key = (
+        os.environ.get("MISTRAL_API_KEY") or os.environ.get("Mistral_api_key") or ""
+    )
+    if mistral_endpoint and mistral_key:
         models["mistral-medium"] = "✅ Configured"
     else:
         models["mistral-medium"] = "❌ Not configured"
 
-    # Groq
-    groq_keys = [os.environ.get(f"GROQ_API_KEY{i}", "") for i in range(8)]
-    groq_keys = [k for k in groq_keys if k]
+    # Groq - check all 8 possible keys
+    groq_keys = []
+    for i in range(8):
+        key_name = f"GROQ_API_KEY{i}" if i > 0 else "GROQ_API_KEY"
+        key = os.environ.get(key_name, "")
+        if key:
+            groq_keys.append(key)
     if groq_keys:
         models["groq"] = f"✅ {len(groq_keys)} key(s)"
     else:
         models["groq"] = "❌ Not configured"
 
     # CF Qwen
-    if os.environ.get("CF_WORKER_QWEN_URL") and os.environ.get("CF_WORKER_QWEN_TOKEN"):
+    qwen_url = os.environ.get("CF_WORKER_QWEN_URL", "")
+    qwen_token = os.environ.get("CF_WORKER_QWEN_TOKEN", "")
+    if qwen_url and qwen_token:
         models["cf-qwen"] = "✅ Configured"
     else:
         models["cf-qwen"] = "❌ Not configured"
 
     # CF Gemma
-    if os.environ.get("CF_WORKER_GEMMA_URL") and os.environ.get(
-        "CF_WORKER_GEMMA_TOKEN"
-    ):
+    gemma_url = os.environ.get("CF_WORKER_GEMMA_URL", "")
+    gemma_token = os.environ.get("CF_WORKER_GEMMA_TOKEN", "")
+    if gemma_url and gemma_token:
         models["cf-gemma"] = "✅ Configured"
     else:
         models["cf-gemma"] = "❌ Not configured"
@@ -120,9 +142,24 @@ def get_available_models():
     return models
 
 
+def run_async(coro):
+    """Run async code in Streamlit thread-safe way."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        return loop.run_until_complete(coro)
+    finally:
+        loop.close()
+
+
 # ── Main App ────────────────────────────────────────────────────
 
-load_dotenv_manual()
+env_loaded = load_dotenv_manual()
+
+if not env_loaded:
+    st.warning(
+        "⚠️ .env file not found. Please ensure server4/.env exists with API keys."
+    )
 
 # Show model status
 st.header("📊 Model Status")
@@ -201,7 +238,7 @@ CRITICAL: Return ONLY JSON, no markdown, no explanation."""
                 ]
 
                 try:
-                    response = asyncio.get_event_loop().run_until_complete(
+                    response = run_async(
                         router.complete(
                             task_type=TaskType.STRUCTURED_JSON,
                             messages=messages,
@@ -296,7 +333,7 @@ if run_image_test:
             }
 
             with st.spinner("Generating image..."):
-                image_url = asyncio.get_event_loop().run_until_complete(
+                image_url = run_async(
                     service.generate_slide_image(
                         content=test_content,
                         layout="bullets-with-image",
@@ -474,4 +511,6 @@ if run_pptx_test:
 # ── Footer ──────────────────────────────────────────────────────
 
 st.markdown("---")
-st.caption(f"Test run at {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}")
+st.caption(
+    f"Test run at {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}"
+)

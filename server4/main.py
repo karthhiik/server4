@@ -26,6 +26,10 @@ from app.routers import (
     export,
     websocket,
     admin,
+    business_plans,
+    swot_analysis,
+    gtm_analysis,
+    pitch_decks,
 )
 from app.utils.rate_limiter import close_redis
 
@@ -86,6 +90,10 @@ app.include_router(themes.router)
 app.include_router(export.router)
 app.include_router(websocket.router)
 app.include_router(admin.router)
+app.include_router(business_plans.router)
+app.include_router(swot_analysis.router)
+app.include_router(gtm_analysis.router)
+app.include_router(pitch_decks.router)
 
 
 @app.get("/health")

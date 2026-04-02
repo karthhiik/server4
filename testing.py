@@ -1,31 +1,92 @@
-import sib_api_v3_sdk
-from sib_api_v3_sdk.rest import ApiException
+# # # import base64
+# # # from openai import OpenAI
 
-# Configure API key
-configuration = sib_api_v3_sdk.Configuration()
-configuration.api_key['api-key'] = env.Mail_Api_Key
+# # # endpoint = "https://info-m98rto5s-eastus2.openai.azure.com/openai/v1/"
+# # # deployment_name = "FLUX.1-Kontext-pro"
+# # # api_key = ""
 
-api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
-    sib_api_v3_sdk.ApiClient(configuration)
+# # # client = OpenAI(
+# # #     base_url=endpoint,
+# # #     api_key=api_key
+# # # )
+
+# # # img = client.images.generate(
+# # #     model=deployment_name,
+# # #     prompt="A cute baby polar bear",
+# # #     n=1,
+# # #     size="1024x1024",
+# # # )
+
+# # # image_bytes = base64.b64decode(img.data[0].b64_json)
+# # # with open("output.png", "wb") as f:
+# # #     f.write(image_bytes)
+
+# # from openai import OpenAI
+
+# # endpoint = "https://info-m98rto5s-eastus2.openai.azure.com/openai/v1/"
+# # deployment_name = "gpt-4o-mini"
+# # api_key = ""
+
+# # client = OpenAI(
+# #     base_url=endpoint,
+# #     api_key=api_key
+# # )
+
+# # completion = client.chat.completions.create(
+# #     model=deployment_name,
+# #     messages=[
+# #         {
+# #             "role": "user",
+# #             "content": "What is the capital of France?",
+# #         }
+# #     ],
+# # )
+
+# # print(completion.choices[0].message)
+
+# from openai import OpenAI
+
+# endpoint = "https://info-m98rto5s-eastus2.openai.azure.com/openai/v1/"
+# deployment_name = "Kimi-K2-Thinking"
+# api_key = ""
+
+# client = OpenAI(
+#     base_url=endpoint,
+#     api_key=api_key
+# )
+
+# completion = client.chat.completions.create(
+#     model=deployment_name,
+#     messages=[
+#         {
+#             "role": "user",
+#             "content": "What is the capital of France?",
+#         }
+#     ],
+# )
+
+# print(completion.choices[0].message)
+
+
+from openai import OpenAI
+
+endpoint = "https://info-m98rto5s-eastus2.openai.azure.com/openai/v1/"
+deployment_name = "Phi-4-reasoning"
+api_key = ""
+
+client = OpenAI(
+    base_url=endpoint,
+    api_key=api_key
 )
 
-# Email content
-sender = {"email": env.Mail_Sender_Email, "name": "My App"}
-to = [{"email": env.Mail_Recipient_Email, "name": "User"}]
-
-send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
-    to=to,
-    sender=sender,
-    subject="Notification from App",
-    html_content="""
-    <h2>Hello!</h2>
-    <p>You have a new notification.</p>
-    """
+completion = client.chat.completions.create(
+    model=deployment_name,
+    messages=[
+        {
+            "role": "user",
+            "content": "What is the capital of France?",
+        }
+    ],
 )
 
-try:
-    response = api_instance.send_transac_email(send_smtp_email)
-    print(response)
-
-except ApiException as e:
-    print("Error:", e)
+print(completion.choices[0].message)
