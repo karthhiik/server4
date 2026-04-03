@@ -5,20 +5,7 @@ First service in the Business Plan generation pipeline.
 """
 
 from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, asdict
 import re
-
-
-@dataclass
-class ParsedContext:
-    """Represents parsed context from user input."""
-    companies: List[str]
-    filled_fields: int
-    completeness: float
-    primary_source: str
-    prompt_text: Optional[str] = None
-    form_data: Optional[Dict] = None
-    pdf_data: Optional[Dict] = None
 
 
 class InputProcessor:
@@ -69,7 +56,7 @@ class InputProcessor:
         }
 
     def extract_entities(self, text: str) -> List[Dict[str, Any]]:
-        """Extract company names using regex + NER.
+        """Extract company names using regex pattern matching.
 
         Args:
             text: The input text to search for entities
@@ -77,7 +64,7 @@ class InputProcessor:
         Returns:
             List of extracted entities with name, type, and confidence
         """
-        pattern = r'\b(?:Amazon|Microsoft|Google|Apple|Meta|Tesla|Netflix|Spotify)\b'
+        pattern = self.company_pattern
         matches = re.findall(pattern, text, re.IGNORECASE)
         return [{'name': m, 'type': 'company', 'confidence': 0.9} for m in matches]
 
