@@ -359,7 +359,17 @@ Respond with ONLY valid JSON array, no explanation."""
         )
 
         if result.success:
-            return result.output
+            output_data = result.output
+            # Ensure it's a list
+            if isinstance(output_data, list):
+                return output_data
+            elif isinstance(output_data, dict) and "slides" in output_data:
+                return output_data["slides"]
+            else:
+                self.log_progress(
+                    f"Unexpected output format: {type(output_data)}", "warning"
+                )
+                return []
 
         # Fallback to template structure
         self.log_progress(
