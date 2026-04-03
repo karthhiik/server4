@@ -113,6 +113,20 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("AZURE_KIMI_VERSION_MODEL", "AZURE_KIMI_MODEL"),
     )
 
+    # T0.5: Phi-4-reasoning (Azure) - alternate names
+    PHI4_REASONING_ENDPOINT: str = Field(
+        default="", validation_alias="Phi-4-reasoning_endpoint"
+    )
+    PHI4_REASONING_API_KEY: str = Field(
+        default="", validation_alias="Phi-4-reasoning_api_key"
+    )
+    PHI4_REASONING_DEPLOYMENT: str = Field(
+        default="Phi-4-reasoning",
+        validation_alias=AliasChoices(
+            "Phi-4-reasoning_deployment_name", "PHI4_REASONING_DEPLOYMENT"
+        ),
+    )
+
     # T1: DeepSeek-V3.2 (Storytelling)
     DEEPSEEK_ENDPOINT: str = Field(default="", validation_alias="DEEPSEEK_ENDPOINT")
     DEEPSEEK_API_KEY: str = Field(default="", validation_alias="DEEPSEEK_API_KEY")
@@ -213,13 +227,9 @@ class Settings(BaseSettings):
         default="", validation_alias="HUGGINGFACE_API_TOKEN"
     )
 
-    # OpenRouter (free tier)
+    # OpenRouter free tier
     OPENROUTE_SERVICE_API_KEY: str = Field(
         default="", validation_alias="openroute_service_api_key"
-    )
-    OPENROUTER_MODEL_FREE: str = Field(
-        default="qwen/qwen3.6-plus:free",
-        validation_alias="openroute_model_free",
     )
 
     # ══════════════════════════════════════════════════════════════
