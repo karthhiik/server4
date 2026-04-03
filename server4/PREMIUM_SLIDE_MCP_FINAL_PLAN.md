@@ -23,6 +23,7 @@ This is a **complete standalone implementation plan** for a world-class Premium 
 - **Anti-AI-Slop Design** — 12 curated style presets avoiding generic aesthetics
 - **Pitch Deck Domain Intelligence** — YC/Sequoia/DocSend rules as first-class constraints
 - **40+ Built-in Templates** — Accurate template generation system with placeholder resolution
+- **Real-World LLM Integration** — 15+ models (Cloudflare/Groq/Azure/OpenRouter) with noise handling
 - **Hybrid Architecture** — Python (Core MCP) + TypeScript (Code Agent)
 - **65+ MCP Tools** across 13 categories
 - **14-Week Implementation Phases**
@@ -38,6 +39,7 @@ This is a **complete standalone implementation plan** for a world-class Premium 
 5. Slide DSL Specification
 5B. Template Generation System (NEW - Enhanced)
 6. Technology Stack
+6B. LLM Model Integration (Complete Real-World Implementation)
 7. PreTeXt Integration Architecture
 8. Reflective Generation Loop
 9. Visual Style Discovery System
@@ -600,9 +602,1062 @@ class TemplateAccuracyValidator:
 | **Vector Store** | Chroma (embedded) | Presentation embeddings |
 | **Document Store** | MongoDB | Presentations, slides, themes |
 | **Cache** | Redis | LLM responses, theme configs |
-| **LLM Clients** | Multi-provider (12 providers) | OpenAI, Claude, Gemini, DeepSeek, Groq, etc. |
+| **LLM Clients** | Multi-provider (12+ providers) | Cloudflare, Azure, Groq, OpenRouter |
 | **Diagrams** | Excalidraw npm + Mermaid | Hand-drawn diagrams, flowcharts |
 | **Charts** | D3.js / Recharts | TAM/SAM/SOM, financial projections |
+
+---
+
+## 6B. LLM Model Integration (Complete Real-World Implementation)
+
+Based on real-time project requirements, this section defines integration for all available models with proper usage patterns, noise handling, and routing strategies.
+
+### 6B.1 Available Models Overview
+
+#### Image Generation Models (Free - Cloudflare Workers AI)
+
+| Model | Provider | Limit | Cost | Type |
+| :--- | :--- | :--- | :--- | :--- |
+| **FLUX.1-Kontext-pro** | Azure (Subscription) | Unlimited | Paid | Image Generation |
+| **lucid-origin** | Cloudflare | 1,000/day | Free | Image Generation |
+| **gemma-3-12b-it** | Cloudflare | 1,000/day | Free | Multimodal (Text + Image) |
+
+#### Text Generation Models (Free - Cloudflare Workers AI)
+
+| Model | Provider | Limit | Cost | Type |
+| :--- | :--- | :--- | :--- | :--- |
+| **qwen2.5-coder-32b-instruct** | Cloudflare | 1,000/day | Free | Code Generation |
+| **glm-4.7-flash** | Cloudflare | 1,000/day | Free | Text Generation |
+
+#### Text Generation Models (Free - OpenRouter)
+
+| Model | Provider | Limit | Cost | Type |
+| :--- | :--- | :--- | :--- | :--- |
+| **qwen/qwen3.6-plus-preview:free** | OpenRouter | Unlimited | Free | Text Generation |
+
+#### Text Generation Models (Free - Groq)
+
+| Model | Provider | API Keys | Cost | Type |
+| :--- | :--- | :--- | :--- | :--- |
+| **Groq Mixtral** | Groq | 8 keys available | Free | Text Generation |
+| **Groq Llama** | Groq | 8 keys available | Free | Text Generation |
+
+#### Text Generation Models (Subscription - Azure)
+
+| Model | Provider | Cost | Type |
+| :--- | :--- | :--- | :--- |
+| **Kimi-K2-Thinking** | Azure | Paid (Subscription) | Reasoning |
+| **DeepSeek-V3.2** | Azure | Paid (Subscription) | Text Generation |
+| **gpt-4o-mini** | Azure | Paid (Subscription) | Text Generation |
+| **Phi-4-reasoning** | Azure | Paid (Subscription) | Reasoning |
+| **mistral-medium-2505** | Azure | Paid (Subscription) | Text Generation |
+
+---
+
+### 6B.2 Cloudflare Workers AI Integration (Free Models)
+
+Based on analysis of `pp.py` and Cloudflare Workers AI documentation (2026):
+
+#### Architecture Pattern
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              CLOUDFLARE WORKERS AI INTEGRATION                      │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   Request Flow:                                                     │
+│   ┌─────────┐    ┌─────────────┐    ┌─────────────┐               │
+│   │  App    │ -> │  Worker URL │ -> │  Cloudflare │               │
+│   │         │    │             │    │  Workers AI │               │
+│   └─────────┘    └─────────────┘    └─────────────┘               │
+│                                                                      │
+│   Authentication:                                                   │
+│   Headers: { "Authorization": "Bearer {API_KEY}" }                 │
+│                                                                      │
+│   Response Format (may contain noise):                              │
+│   { "message": "clean response" } OR { "text": "noisy response" }  │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+#### Implementation Code
+
+```python
+import requests
+import json
+import re
+from typing import Optional, Dict, Any
+
+class CloudflareWorkerClient:
+    """Base client for Cloudflare Workers AI models"""
+    
+    def __init__(self, worker_url: str, api_key: str):
+        self.worker_url = worker_url.rstrip('/')
+        self.api_key = api_key
+        self.headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    def _clean_response(self, response: Dict[str, Any]) -> str:
+        """
+        Noise cleaning for Cloudflare responses.
+        Cloudflare workers may return responses in different formats.
+        """
+        # Try common response keys
+        for key in ['message', 'text', 'content', 'response', 'result', 'output']:
+            if key in response:
+                return self._post_clean(response[key])
+        
+        # Fallback: return entire response as string
+        return self._post_clean(str(response))
+    
+    def _post_clean(self, text: str) -> str:
+        """Post-process cleaned text to remove remaining artifacts"""
+        # Remove markdown code blocks
+        text = re.sub(r'```[\w]*\n', '', text)
+        text = re.sub(r'```', '', text)
+        
+        # Remove URLs
+        text = re.sub(r'https?://\S+', '', text)
+        
+        # Remove excessive whitespace
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        
+        return text.strip()
+    
+    def _handle_error(self, response) -> Dict[str, Any]:
+        """Handle error responses with detailed logging"""
+        try:
+            error_data = response.json()
+            print(f"Cloudflare API Error: {error_data}")
+            return {"error": error_data.get('message', 'Unknown error')}
+        except:
+            return {"error": f"HTTP {response.status_code}: {response.text[:200]}"}
+
+
+# ============================================================
+# GLM-4.7-Flash (Text Generation) - Cloudflare Worker
+# ============================================================
+
+class GLM47FlashClient(CloudflareWorkerClient):
+    """GLM-4.7-Flash text generation via Cloudflare Worker"""
+    
+    # Worker URL - Replace with your actual worker endpoint
+    WORKER_URL = "https://gklm47deploymentaiiglmodel.barisebot.workers.dev"
+    API_KEY = "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"
+    
+    def __init__(self):
+        super().__init__(self.WORKER_URL, self.API_KEY)
+    
+    def generate(self, message: str, system_prompt: str = None) -> str:
+        """
+        Generate text using GLM-4.7-Flash
+        
+        Args:
+            message: User message/prompt
+            system_prompt: Optional system prompt
+            
+        Returns:
+            Cleaned response string
+        """
+        payload = {"message": message}
+        if system_prompt:
+            payload["system"] = system_prompt
+        
+        response = requests.post(
+            f"{self.worker_url}/",
+            headers=self.headers,
+            json=payload,
+            timeout=60
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            return self._clean_response(result)
+        else:
+            error = self._handle_error(response)
+            return f"Error: {error.get('error', 'Unknown error')}"
+
+
+# ============================================================
+# Qwen2.5-Coder-32B-Instruct (Code Generation) - Cloudflare
+# ============================================================
+
+class QwenCoderClient(CloudflareWorkerClient):
+    """Qwen2.5-Coder-32B-Instruct code generation via Cloudflare Worker"""
+    
+    # Worker URL - Replace with your actual worker endpoint
+    WORKER_URL = "https://qwenmodelllmcodingmodling.collegeaurora3.workers.dev"
+    API_KEY = "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"
+    
+    def __init__(self):
+        super().__init__(self.WORKER_URL, self.API_KEY)
+    
+    def generate_code(self, prompt: str, language: str = "python") -> str:
+        """Generate code using Qwen2.5-Coder"""
+        
+        # Add language context to prompt
+        enhanced_prompt = f"Write {language} code for: {prompt}"
+        
+        payload = {"message": enhanced_prompt}
+        
+        response = requests.post(
+            f"{self.worker_url}/",
+            headers=self.headers,
+            json=payload,
+            timeout=90  # Code generation may take longer
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            cleaned = self._clean_response(result)
+            # Additional code-specific cleaning
+            return self._clean_code_output(cleaned)
+        else:
+            error = self._handle_error(response)
+            return f"Error: {error.get('error', 'Unknown error')}"
+    
+    def _clean_code_output(self, code: str) -> str:
+        """Additional cleaning for code output"""
+        # Ensure code blocks are properly formatted
+        if '```' not in code:
+            # Wrap in code block if no formatting
+            code = f"```{code}```"
+        return code
+
+
+# ============================================================
+# Gemma-3-12B-IT (Multimodal) - Cloudflare Worker
+# ============================================================
+
+class Gemma3Client(CloudflareWorkerClient):
+    """Gemma-3-12B-IT multimodal model via Cloudflare Worker"""
+    
+    # Worker URL - Replace with your actual worker endpoint
+    WORKER_URL = "http://gemmamodelforimageanddesigning.hiwings58.workers.dev"
+    API_KEY = "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"
+    
+    def __init__(self):
+        super().__init__(self.WORKER_URL, self.API_KEY)
+    
+    def generate(self, message: str, task: str = "general") -> str:
+        """
+        Generate using Gemma-3
+        
+        Args:
+            message: User message
+            task: Task type (general, code, analysis, image_description)
+        """
+        # Add task-specific context
+        task_contexts = {
+            "general": "Provide a clear and concise response.",
+            "code": "Write clean, well-commented code.",
+            "analysis": "Provide detailed analysis with reasoning.",
+            "image_description": "Describe the image in detail."
+        }
+        
+        enhanced_message = f"{task_contexts.get(task, task_contexts['general'])}\n\n{message}"
+        payload = {"message": enhanced_message}
+        
+        response = requests.post(
+            f"{self.worker_url}/",
+            headers=self.headers,
+            json=payload,
+            timeout=60
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            return self._clean_response(result)
+        else:
+            error = self._handle_error(response)
+            return f"Error: {error.get('error', 'Unknown error')}"
+
+
+# ============================================================
+# Lucid-Origin (Image Generation) - Cloudflare Worker
+# ============================================================
+
+import base64
+
+class LucidOriginClient(CloudflareWorkerClient):
+    """Lucid-Origin image generation via Cloudflare Worker"""
+    
+    # Worker URL - Replace with your actual worker endpoint
+    WORKER_URL = "https://lucid-originmodel.barisebotsnetworking.workers.dev"
+    API_KEY = "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"
+    
+    def __init__(self):
+        super().__init__(self.WORKER_URL, self.API_KEY)
+    
+    def generate_image(self, prompt: str) -> Optional[bytes]:
+        """
+        Generate image using Lucid-Origin
+        
+        Args:
+            prompt: Image generation prompt
+            
+        Returns:
+            Image as bytes or None on failure
+        """
+        payload = {"prompt": prompt}
+        
+        try:
+            response = requests.post(
+                f"{self.worker_url}/",
+                headers=self.headers,
+                json=payload,
+                timeout=120  # Image generation takes longer
+            )
+            
+            if response.status_code == 200:
+                # Lucid-Origin returns base64 encoded image
+                return response.content  # Already decoded from base64 by worker
+            else:
+                self._handle_error(response)
+                return None
+                
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            return None
+    
+    def generate_and_save(self, prompt: str, filename: str = None) -> Optional[str]:
+        """Generate image and save to file"""
+        import time
+        
+        image_data = self.generate_image(prompt)
+        if image_data:
+            if not filename:
+                filename = f"generated_image_{int(time.time())}.jpg"
+            
+            with open(filename, "wb") as f:
+                f.write(image_data)
+            
+            print(f"✅ Image saved to: {filename}")
+            return filename
+        return None
+```
+
+#### Noise Handling for Cloudflare Models
+
+```python
+class CloudflareNoiseHandler:
+    """
+    Comprehensive noise handling for Cloudflare Workers AI responses.
+    Based on analysis of pp.py worker responses.
+    """
+    
+    # Common noise patterns observed in Cloudflare worker responses
+    NOISE_PATTERNS = [
+        # Markdown artifacts
+        r'```\w*\n?',  # Incomplete code blocks
+        r'```',        # Unclosed code blocks
+        # Extra formatting
+        r'^\s*[-*]\s*[-*]\s*[-*]+\s*$',  # Separator lines
+        # Whitespace issues
+        r'\n\s*\n\s*\n+',  # Multiple newlines
+        # JSON-like artifacts (when plain text expected)
+        r'^\{.*\}\s*$',  # Stray JSON objects
+    ]
+    
+    @classmethod
+    def clean_response(cls, response: str) -> str:
+        """Clean response with multiple passes"""
+        cleaned = response
+        
+        # Remove noise patterns
+        for pattern in cls.NOISE_PATTERNS:
+            cleaned = re.sub(pattern, '', cleaned)
+        
+        # Normalize whitespace
+        cleaned = ' '.join(cleaned.split())
+        
+        # Remove control characters
+        cleaned = re.sub(r'[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f]', '', cleaned)
+        
+        return cleaned.strip()
+    
+    @classmethod
+    def validate_response(cls, response: str) -> bool:
+        """Check if response is valid (not just noise)"""
+        if not response or len(response.strip()) < 3:
+            return False
+        
+        # Check for excessive special characters
+        special_ratio = len(re.sub(r'[\w\s]', '', response)) / max(len(response), 1)
+        if special_ratio > 0.5:  # More than 50% special chars = likely noise
+            return False
+        
+        return True
+```
+
+---
+
+### 6B.3 Azure AI Foundry Integration (Subscription Models)
+
+Based on Microsoft Azure AI Foundry documentation (2026):
+
+#### Architecture Pattern
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              AZURE AI FOUNDRY INTEGRATION                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   Options:                                                          │
+│   1. OpenAI SDK (Recommended - v1 API)                              │
+│   2. Azure AI Foundry SDK                                           │
+│   3. Direct REST API                                                │
+│                                                                      │
+│   Authentication:                                                    │
+│   - Azure Active Directory (AAD)                                   │
+│   - API Key (simpler)                                               │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+#### Implementation Code
+
+```python
+from openai import AzureOpenAI
+from typing import Optional, Dict, Any, List
+import time
+
+class AzureOpenAIClient:
+    """Base client for Azure OpenAI models using OpenAI SDK"""
+    
+    def __init__(
+        self,
+        api_key: str,
+        endpoint: str,
+        api_version: str = "2024-12-01-preview"
+    ):
+        self.client = AzureOpenAI(
+            api_key=api_key,
+            azure_endpoint=endpoint,
+            api_version=api_version
+        )
+    
+    def generate(
+        self,
+        model: str,
+        messages: List[Dict],
+        temperature: float = 0.7,
+        max_tokens: int = 4096,
+        **kwargs
+    ) -> str:
+        """Generate text with specified model"""
+        
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            **kwargs
+        )
+        
+        return response.choices[0].message.content
+
+
+# ============================================================
+# Kimi-K2-Thinking (Reasoning) - Azure
+# ============================================================
+
+class KimiK2ThinkingClient(AzureOpenAIClient):
+    """Kimi-K2-Thinking for complex reasoning tasks"""
+    
+    # Configuration - Replace with your actual Azure values
+    API_KEY = "YOUR_AZURE_API_KEY"
+    ENDPOINT = "https://YOUR_RESOURCE.openai.azure.com/"
+    MODEL = "kimi-k2-thinking"  # Replace with actual model deployment name
+    
+    def __init__(self):
+        super().__init__(self.API_KEY, self.ENDPOINT)
+    
+    def reasoning_generate(self, prompt: str, thinking_depth: str = "high") -> Dict[str, Any]:
+        """
+        Generate with reasoning
+        
+        Args:
+            prompt: Input prompt
+            thinking_depth: thinking_effort level (low, medium, high)
+        """
+        messages = [
+            {"role": "system", "content": "You are a reasoning AI. Show your thinking process."},
+            {"role": "user", "content": prompt}
+        ]
+        
+        response = self.client.chat.completions.create(
+            model=self.MODEL,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=8192,
+            extra_body={"thinking": {"type": "enabled", "max_tokens": thinking_depth}}
+        )
+        
+        return {
+            "reasoning": getattr(response, 'reasoning_content', None),
+            "content": response.choices[0].message.content
+        }
+
+
+# ============================================================
+# DeepSeek-V3.2 - Azure
+# ============================================================
+
+class DeepSeekV32Client(AzureOpenAIClient):
+    """DeepSeek-V3.2 for general text generation"""
+    
+    API_KEY = "YOUR_AZURE_API_KEY"
+    ENDPOINT = "https://YOUR_RESOURCE.openai.azure.com/"
+    MODEL = "deepseek-v3-2"  # Replace with actual deployment name
+    
+    def __init__(self):
+        super().__init__(self.API_KEY, self.ENDPOINT)
+    
+    def generate(self, prompt: str, system_prompt: str = None) -> str:
+        """Generate text using DeepSeek-V3.2"""
+        messages = []
+        
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        
+        messages.append({"role": "user", "content": prompt})
+        
+        response = self.client.chat.completions.create(
+            model=self.MODEL,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=4096
+        )
+        
+        return response.choices[0].message.content
+
+
+# ============================================================
+# GPT-4o-Mini - Azure
+# ============================================================
+
+class GPT4MiniClient(AzureOpenAIClient):
+    """GPT-4o-Mini for fast, cost-effective generation"""
+    
+    API_KEY = "YOUR_AZURE_API_KEY"
+    ENDPOINT = "https://YOUR_RESOURCE.openai.azure.com/"
+    MODEL = "gpt-4o-mini"  # Replace with actual deployment name
+    
+    def __init__(self):
+        super().__init__(self.API_KEY, self.ENDPOINT)
+    
+    def fast_generate(self, prompt: str) -> str:
+        """Fast generation with GPT-4o-Mini"""
+        messages = [{"role": "user", "content": prompt}]
+        
+        response = self.client.chat.completions.create(
+            model=self.MODEL,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=2048
+        )
+        
+        return response.choices[0].message.content
+
+
+# ============================================================
+# Phi-4-Reasoning - Azure
+# ============================================================
+
+class Phi4ReasoningClient(AzureOpenAIClient):
+    """Phi-4 for reasoning-focused tasks"""
+    
+    API_KEY = "YOUR_AZURE_API_KEY"
+    ENDPOINT = "https://YOUR_RESOURCE.openai.azure.com/"
+    MODEL = "phi-4-reasoning"  # Replace with actual deployment name
+    
+    def __init__(self):
+        super().__init__(self.API_KEY, self.ENDPOINT)
+    
+    def reasoning_generate(self, prompt: str) -> str:
+        """Generate with Phi-4 reasoning capabilities"""
+        messages = [
+            {"role": "system", "content": "Provide step-by-step reasoning for your answer."},
+            {"role": "user", "content": prompt}
+        ]
+        
+        response = self.client.chat.completions.create(
+            model=self.MODEL,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=4096
+        )
+        
+        return response.choices[0].message.content
+
+
+# ============================================================
+# Mistral-Medium-2505 - Azure
+# ============================================================
+
+class MistralMediumClient(AzureOpenAIClient):
+    """Mistral Medium 2505 for balanced text generation"""
+    
+    API_KEY = "YOUR_AZURE_API_KEY"
+    ENDPOINT = "https://YOUR_RESOURCE.openai.azure.com/"
+    MODEL = "mistral-medium-2505"  # Replace with actual deployment name
+    
+    def __init__(self):
+        super().__init__(self.API_KEY, self.ENDPOINT)
+    
+    def generate(self, prompt: str, context: str = None) -> str:
+        """Generate using Mistral Medium"""
+        messages = []
+        
+        if context:
+            messages.append({"role": "system", "content": context})
+        
+        messages.append({"role": "user", "content": prompt})
+        
+        response = self.client.chat.completions.create(
+            model=self.MODEL,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=4096
+        )
+        
+        return response.choices[0].message.content
+
+
+# ============================================================
+# FLUX.1-Kontext-Pro (Image Generation) - Azure
+# ============================================================
+
+class FLUXKontextProClient(AzureOpenAIClient):
+    """FLUX.1-Kontext-Pro for high-quality image generation"""
+    
+    API_KEY = "YOUR_AZURE_API_KEY"
+    ENDPOINT = "https://YOUR_RESOURCE.openai.azure.com/"
+    MODEL = "flux-1-kontext-pro"  # Replace with actual deployment name
+    
+    def __init__(self):
+        super().__init__(self.API_KEY, self.ENDPOINT)
+    
+    def generate_image(self, prompt: str, size: str = "1024x1024") -> str:
+        """
+        Generate image using FLUX.1-Kontext-Pro
+        
+        Note: Azure image generation may use DALL-E or other image models.
+        This is a placeholder - actual implementation depends on Azure offering.
+        """
+        # For image generation, we typically use the images API
+        response = self.client.images.generate(
+            model=self.MODEL,
+            prompt=prompt,
+            size=size,
+            n=1
+        )
+        
+        return response.data[0].url
+```
+
+---
+
+### 6B.4 Groq Integration (Free Models - 8 API Keys)
+
+Based on Groq Python SDK (2026):
+
+```python
+from groq import Groq
+from typing import List, Dict, Any
+
+class GroqClient:
+    """Groq API client for free high-speed inference"""
+    
+    # 8 API keys available - rotate through them
+    API_KEYS = [
+        "gsk_your_first_key_here",
+        "gsk_your_second_key_here",
+        # ... up to 8 keys
+    ]
+    
+    def __init__(self, api_key: str = None):
+        # Use provided key or default to first available
+        self.client = Groq(api_key=api_key or self.API_KEYS[0])
+        self.current_key_index = 0
+    
+    def rotate_key(self):
+        """Rotate to next available API key"""
+        self.current_key_index = (self.current_key_index + 1) % len(self.API_KEYS)
+        self.client = Groq(api_key=self.API_KEYS[self.current_key_index])
+        print(f"Rotated to API key {self.current_key_index + 1}/{len(self.API_KEYS)}")
+    
+    def generate(
+        self,
+        model: str,
+        messages: List[Dict],
+        temperature: float = 0.7,
+        max_tokens: int = 4096,
+        **kwargs
+    ) -> str:
+        """Generate text with Groq model"""
+        
+        try:
+            response = self.client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                **kwargs
+            )
+            
+            return response.choices[0].message.content
+        
+        except Exception as e:
+            # Rate limit or other error - try rotating key
+            if "rate_limit" in str(e).lower() or "429" in str(e):
+                print(f"Rate limit hit, rotating key...")
+                self.rotate_key()
+                return self.generate(model, messages, temperature, max_tokens, **kwargs)
+            raise
+
+
+# Groq Model Options (Free Tier)
+GROQ_MODELS = {
+    "mixtral-8x7b-32768": "Mixtral 8x7B - Fast, good for general tasks",
+    "llama-3.3-70b-versatile": "Llama 3.3 70B - High quality",
+    "llama-3.1-70b-versatile": "Llama 3.1 70B - Reliable",
+    "llama-3.1-8b-instant": "Llama 3.1 8B - Fast, lightweight",
+    "gemma2-9b-it": "Gemma 2 9B - Google's model",
+    "llama3-70b-8192": "Llama 3 70B - Original Llama 3",
+    "llama3-8b-8192": "Llama 3 8B - Fast Llama",
+}
+
+
+class GroqLLM(GroqClient):
+    """Easy-to-use Groq LLM wrapper"""
+    
+    def __init__(self, api_key: str = None):
+        super().__init__(api_key)
+    
+    def chat(self, message: str, system_prompt: str = None, model: str = "mixtral-8x7b-32768") -> str:
+        """Simple chat interface"""
+        messages = []
+        
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        
+        messages.append({"role": "user", "content": message})
+        
+        return self.generate(model, messages)
+    
+    def code(self, prompt: str) -> str:
+        """Code-specific generation"""
+        return self.chat(
+            prompt,
+            system_prompt="You are a coding assistant. Write clean, efficient code.",
+            model="mixtral-8x7b-32768"
+        )
+    
+    def reason(self, prompt: str) -> str:
+        """Reasoning-focused generation with higher tokens"""
+        messages = [
+            {"role": "system", "content": "Provide step-by-step reasoning for your answer."},
+            {"role": "user", "content": prompt}
+        ]
+        
+        return self.generate(
+            "llama-3.3-70b-versatile",
+            messages,
+            max_tokens=8192
+        )
+```
+
+---
+
+### 6B.5 OpenRouter Integration (Free Models)
+
+```python
+import requests
+from typing import List, Dict, Any
+
+class OpenRouterClient:
+    """OpenRouter API client for free models"""
+    
+    BASE_URL = "https://openrouter.ai/api/v1"
+    API_KEY = "YOUR_OPENROUTER_API_KEY"  # Get from openrouter.ai
+    
+    def __init__(self, api_key: str = None):
+        self.api_key = api_key or self.API_KEY
+        self.headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://barise.app",  # Required by OpenRouter
+            "X-Title": "Barise Presentation Generator"
+        }
+    
+    def generate(
+        self,
+        model: str,
+        messages: List[Dict],
+        temperature: float = 0.7,
+        max_tokens: int = 4096
+    ) -> str:
+        """Generate text using OpenRouter"""
+        
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens
+        }
+        
+        response = requests.post(
+            f"{self.BASE_URL}/chat/completions",
+            headers=self.headers,
+            json=payload,
+            timeout=60
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            return result["choices"][0]["message"]["content"]
+        else:
+            print(f"Error: {response.status_code} - {response.text}")
+            return None
+
+
+# ============================================================
+# Qwen3.6 Plus (Free) - OpenRouter
+# ============================================================
+
+class Qwen36PlusClient(OpenRouterClient):
+    """Qwen3.6 Plus via OpenRouter - Free tier"""
+    
+    MODEL = "qwen/qwen3.6-plus-preview:free"
+    
+    def __init__(self):
+        super().__init__()
+    
+    def generate(self, prompt: str, system_prompt: str = None) -> str:
+        """Generate using Qwen3.6 Plus"""
+        messages = []
+        
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        
+        messages.append({"role": "user", "content": prompt})
+        
+        return self.generate(self.MODEL, messages)
+    
+    def generate_structured(self, prompt: str, schema: dict) -> dict:
+        """
+        Generate structured output using OpenRouter's format parameter
+        
+        Note: May not be available for all free models
+        """
+        payload = {
+            "model": self.MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "response_format": {"type": "json_object", "schema": schema}
+        }
+        
+        response = requests.post(
+            f"{self.BASE_URL}/chat/completions",
+            headers=self.headers,
+            json=payload,
+            timeout=60
+        )
+        
+        if response.status_code == 200:
+            import json
+            return json.loads(response.json()["choices"][0]["message"]["content"])
+        return {"error": "Generation failed"}
+```
+
+---
+
+### 6B.6 Model Routing & Cost Optimization
+
+```python
+from enum import Enum
+from typing import Optional, Callable
+import time
+
+class ModelType(Enum):
+    """Model categories for routing"""
+    IMAGE_GENERATION = "image"
+    CODE_GENERATION = "code"
+    REASONING = "reasoning"
+    GENERAL_TEXT = "general"
+    FAST_TEXT = "fast"
+
+
+class ModelRouter:
+    """
+    Intelligent model routing based on task type, cost, and availability.
+    Implements the cost-optimization strategy from the architecture.
+    """
+    
+    # Priority: Free > Subscription
+    # Speed: Groq > Cloudflare > Azure
+    
+    ROUTING_RULES = {
+        # Image Generation
+        ModelType.IMAGE_GENERATION: {
+            "primary": ("lucid-origin", "cloudflare"),  # Try free first
+            "fallback": ("gemma-3-12b-it", "cloudflare"),
+            "premium": ("FLUX.1-Kontext-pro", "azure"),  # Subscription
+        },
+        
+        # Code Generation
+        ModelType.CODE_GENERATION: {
+            "primary": ("qwen2.5-coder-32b-instruct", "cloudflare"),
+            "fallback": ("Groq mixtral", "groq"),
+            "premium": ("gpt-4o-mini", "azure"),
+        },
+        
+        # Reasoning
+        ModelType.REASONING: {
+            "primary": ("Groq llama-3.3-70b", "groq"),  # Fast, free
+            "fallback": ("Phi-4-reasoning", "azure"),
+            "premium": ("Kimi-K2-Thinking", "azure"),
+        },
+        
+        # General Text
+        ModelType.GENERAL_TEXT: {
+            "primary": ("glm-4.7-flash", "cloudflare"),
+            "fallback": ("qwen3.6-plus-preview", "openrouter"),
+            "premium": ("DeepSeek-V3.2", "azure"),
+        },
+        
+        # Fast/Quick tasks
+        ModelType.FAST_TEXT: {
+            "primary": ("Groq llama-3.1-8b", "groq"),
+            "fallback": ("glm-4.7-flash", "cloudflare"),
+        },
+    }
+    
+    def __init__(self):
+        self.clients = {}  # Lazy initialization
+        self.daily_usage = {}  # Track daily limits
+    
+    def get_client(self, provider: str):
+        """Get or initialize client for provider"""
+        if provider not in self.clients:
+            if provider == "cloudflare":
+                # Initialize Cloudflare clients
+                self.clients["cloudflare"] = {
+                    "glm": GLM47FlashClient(),
+                    "qwen_coder": QwenCoderClient(),
+                    "gemma": Gemma3Client(),
+                    "lucid": LucidOriginClient(),
+                }
+            elif provider == "azure":
+                # Initialize Azure clients (lazy - requires API keys)
+                pass
+            elif provider == "groq":
+                self.clients["groq"] = GroqLLM()
+            elif provider == "openrouter":
+                self.clients["openrouter"] = Qwen36PlusClient()
+        
+        return self.clients.get(provider)
+    
+    def route(self, task_type: ModelType, prompt: str, **kwargs) -> str:
+        """
+        Route request to appropriate model based on task type and availability
+        """
+        rules = self.ROUTING_RULES.get(task_type)
+        
+        # Try primary (free) first
+        for priority in ["primary", "fallback", "premium"]:
+            model_name, provider = rules.get(priority, (None, None))
+            
+            if not model_name:
+                continue
+            
+            # Check daily limits
+            if self.is_limit_reached(provider, model_name):
+                print(f"Limit reached for {provider}/{model_name}, trying next...")
+                continue
+            
+            try:
+                client = self.get_client(provider)
+                result = self._call_client(client, model_name, prompt, **kwargs)
+                
+                if result:
+                    return result
+                    
+            except Exception as e:
+                print(f"Error with {provider}/{model_name}: {e}")
+                continue
+        
+        return "Error: All models failed or unavailable"
+    
+    def is_limit_reached(self, provider: str, model: str) -> bool:
+        """Check if daily limit reached for model"""
+        key = f"{provider}:{model}"
+        usage = self.daily_usage.get(key, 0)
+        
+        limits = {
+            "cloudflare:lucid-origin": 1000,
+            "cloudflare:gemma-3-12b-it": 1000,
+            "cloudflare:qwen2.5-coder-32b-instruct": 1000,
+            "cloudflare:glm-4.7-flash": 1000,
+        }
+        
+        limit = limits.get(key, 999999)  # Default to high limit
+        return usage >= limit
+    
+    def _call_client(self, client, model: str, prompt: str, **kwargs) -> str:
+        """Call appropriate client method based on model"""
+        # Implementation depends on client type
+        pass
+```
+
+---
+
+### 6B.7 Usage Limits & Rate Management
+
+```python
+class RateLimitManager:
+    """Manage rate limits and daily quotas for all providers"""
+    
+    # Daily limits per model (Cloudflare free tier)
+    DAILY_LIMITS = {
+        "lucid-origin": 1000,
+        "gemma-3-12b-it": 1000,
+        "qwen2.5-coder-32b-instruct": 1000,
+        "glm-4.7-flash": 1000,
+    }
+    
+    # Rate limits (requests per minute)
+    RPM_LIMITS = {
+        "cloudflare": 60,
+        "groq": 30,
+        "azure": 60,  # Depends on tier
+        "openrouter": 50,
+    }
+    
+    def __init__(self):
+        self.usage = {model: 0 for model in self.DAILY_LIMITS}
+        self.last_request_time = {}
+    
+    def can_make_request(self, model: str) -> bool:
+        """Check if request can be made (within limits)"""
+        if model in self.DAILY_LIMITS:
+            if self.usage[model] >= self.DAILY_LIMITS[model]:
+                return False
+        
+        return True
+    
+    def record_request(self, model: str):
+        """Record request for tracking"""
+        self.usage[model] = self.usage.get(model, 0) + 1
+    
+    def get_remaining(self, model: str) -> int:
+        """Get remaining requests for model"""
+        limit = self.DAILY_LIMITS.get(model, 999999)
+        return max(0, limit - self.usage.get(model, 0))
+```
 
 ---
 

@@ -213,6 +213,15 @@ class Settings(BaseSettings):
         default="", validation_alias="HUGGINGFACE_API_TOKEN"
     )
 
+    # OpenRouter (free tier)
+    OPENROUTE_SERVICE_API_KEY: str = Field(
+        default="", validation_alias="openroute_service_api_key"
+    )
+    OPENROUTER_MODEL_FREE: str = Field(
+        default="qwen/qwen3.6-plus:free",
+        validation_alias="openroute_model_free",
+    )
+
     # ══════════════════════════════════════════════════════════════
     # IMAGE GENERATION
     # ══════════════════════════════════════════════════════════════
