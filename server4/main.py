@@ -30,6 +30,7 @@ from app.routers import (
     swot_analysis,
     gtm_analysis,
     pitch_decks,
+    intelligence_enrichment,
 )
 from app.utils.rate_limiter import close_redis
 
@@ -94,6 +95,7 @@ app.include_router(business_plans.router)
 app.include_router(swot_analysis.router)
 app.include_router(gtm_analysis.router)
 app.include_router(pitch_decks.router)
+app.include_router(intelligence_enrichment.router)
 
 
 @app.get("/health")
