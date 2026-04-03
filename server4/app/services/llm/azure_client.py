@@ -64,7 +64,68 @@ class AzureGPT4oMiniClient(BaseLLMClient):
             provider=self.provider,
             tokens_used=resp.usage.total_tokens if resp.usage else 0,
             latency_ms=elapsed,
-            raw_response=resp,
+        )
+
+
+class AzurePhi4Client(BaseLLMClient):
+    """T0.5: Phi-4-reasoning — Reasoning and problem solving."""
+
+    name = "phi-4-reasoning"
+    provider = "azure-ai"
+
+    def __init__(self):
+        endpoint = settings.PHI4_REASONING_ENDPOINT.strip().strip('"')
+        api_key = settings.PHI4_REASONING_API_KEY.strip().strip('"')
+        self._client = (
+            AsyncOpenAI(
+                base_url=endpoint.rstrip("/") if endpoint else None,
+                api_key=api_key,
+            )
+            if endpoint
+            else None
+        )
+
+    async def complete(
+        self,
+        messages: list[dict[str, str]],
+        model: Optional[str] = None,
+        temperature: float = 0.7,
+        max_tokens: int = 4096,
+        response_format: Optional[dict] = None,
+    ) -> LLMResponse:
+        if not self._client:
+            raise ConnectionError("Phi-4-reasoning not configured")
+
+        start = time.monotonic()
+        deployment = settings.PHI4_REASONING_DEPLOYMENT.strip().strip('"')
+        kwargs: dict = {
+            "model": model or deployment,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+        if response_format:
+            kwargs["response_format"] = response_format
+
+        resp = await self._client.chat.completions.create(**kwargs)
+        elapsed = int((time.monotonic() - start) * 1000)
+
+        content = resp.choices[0].message.content or ""
+
+        # Handle reasoning model - content may be None but reasoning in reasoning_content
+        if not content and hasattr(resp.choices[0].message, "reasoning_content"):
+            reasoning = resp.choices[0].message.reasoning_content
+            if reasoning:
+                # Extract final answer from reasoning
+                lines = reasoning.split("\n")
+                content = lines[-1] if lines else "[See reasoning]"
+
+        return LLMResponse(
+            content=content,
+            model=self.name,
+            provider=self.provider,
+            tokens_used=resp.usage.total_tokens if resp.usage else 0,
+            latency_ms=elapsed,
         )
 
 

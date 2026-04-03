@@ -28,8 +28,8 @@ class ResearcherAgent(BaseAgent):
     Uses web search for current data and trends.
     """
 
-    DEFAULT_MODEL = "gemma-3-12b-it"
-    FALLBACK_MODELS = ["qwen2.5-coder-32b-instruct", "glm-4.7-flash"]
+    DEFAULT_MODEL = "gpt-4o-mini"
+    FALLBACK_MODELS = ["deepseek-v3", "cf-qwen"]
 
     @property
     def agent_type(self) -> AgentType:

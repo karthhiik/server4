@@ -31,7 +31,7 @@ class AssemblerAgent(BaseAgent):
     """
 
     DEFAULT_MODEL = "deepseek-v3"
-    FALLBACK_MODELS = ["mistral-medium-2505", "gpt-4o-mini"]
+    FALLBACK_MODELS = ["mistral-medium", "gpt-4o-mini"]
 
     @property
     def agent_type(self) -> AgentType:
@@ -64,6 +64,14 @@ class AssemblerAgent(BaseAgent):
         ceo_output = self.context.previous_outputs.get(AgentType.CEO)
         researcher_output = self.context.previous_outputs.get(AgentType.RESEARCHER)
         designer_output = self.context.previous_outputs.get(AgentType.DESIGNER)
+
+        if not ceo_output or not researcher_output or not designer_output:
+            return AgentOutput(
+                success=False,
+                agent_type=self.agent_type,
+                output={},
+                errors=["One or more agent outputs missing"],
+            )
 
         structure = ceo_output.output.get("structure", [])
         research = researcher_output.output.get("research_items", [])

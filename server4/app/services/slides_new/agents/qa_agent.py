@@ -31,7 +31,7 @@ class QAAgent(BaseAgent):
     """
 
     DEFAULT_MODEL = "gpt-4o-mini"
-    FALLBACK_MODELS = ["deepseek-v3", "mistral-medium-2505"]
+    FALLBACK_MODELS = ["deepseek-v3", "mistral-medium"]
 
     QUALITY_GATES = {
         "content_completeness": {

@@ -30,8 +30,8 @@ class DesignerAgent(BaseAgent):
     Uses design intelligence to avoid generic AI aesthetics.
     """
 
-    DEFAULT_MODEL = "mistral-medium-2505"
-    FALLBACK_MODELS = ["gpt-4o-mini", "deepseek-v3"]
+    DEFAULT_MODEL = "deepseek-v3"
+    FALLBACK_MODELS = ["cf-glm", "cf-gemma", "mistral-medium", "phi-4-reasoning"]
 
     ANTI_AI_SLOP_PRESETS = {
         "yc_pitch": {

@@ -3,9 +3,10 @@ LLM Model Router — Routes to optimal model per task type.
 Every call has a 3-deep fallback chain.
 Every call is logged for observability.
 
-Updated 2026-04-02: Only working models (Kimi/GPT-4o-mini/Phoenix/Lucid/GLM removed)
+Updated 2026-04-03: All tested working models included
 """
 
+import asyncio
 import time
 from enum import Enum
 from typing import Optional
@@ -16,12 +17,17 @@ from app.services.llm.base_client import BaseLLMClient, LLMResponse
 from app.services.llm.azure_client import (
     AzureDeepSeekClient,
     AzureMistralClient,
+    AzureGPT4oMiniClient,
+    AzureKimiClient,
+    AzurePhi4Client,
 )
 from app.services.llm.groq_client import GroqRoundRobinClient
 from app.services.llm.cloudflare_client import (
     create_cf_qwen_client,
     create_cf_gemma_client,
+    create_cf_glm_client,
 )
+from app.services.llm.openrouter_client import OpenRouterClient
 
 logger = structlog.get_logger()
 
@@ -38,20 +44,29 @@ class TaskType(str, Enum):
     CONTENT_FIT_RESIZE = "content_fit_resize"
     REFINEMENT = "refinement"
     GENERAL = "general"
+    DESIGNER_LAYOUT = "designer_layout"
 
 
 # Routing table: task_type → ordered list of model names to try
-# Updated 2026-04-02: Only working models
+# Updated 2026-04-03: All tested working models included
 ROUTING_TABLE: dict[TaskType, list[str]] = {
-    TaskType.OUTLINE_PLANNING: ["deepseek-v3", "mistral-medium", "cf-qwen"],
+    TaskType.OUTLINE_PLANNING: ["kimi-k2-thinking", "phi-4-reasoning", "deepseek-v3"],
     TaskType.NARRATIVE_STORYTELLING: ["deepseek-v3", "mistral-medium", "cf-qwen"],
-    TaskType.STRUCTURED_JSON: ["groq", "deepseek-v3", "cf-qwen"],
+    TaskType.STRUCTURED_JSON: ["gpt-4o-mini", "groq", "phi-4-reasoning"],
     TaskType.TECHNICAL_CODE: ["mistral-medium", "deepseek-v3", "groq"],
-    TaskType.TRANSLATION_QUICK_EDIT: ["groq", "cf-qwen", "cf-gemma"],
-    TaskType.TEMPLATE_FILL: ["deepseek-v3", "groq", "cf-qwen"],
-    TaskType.CONTENT_FIT_RESIZE: ["groq", "cf-qwen", "cf-gemma"],
-    TaskType.REFINEMENT: ["deepseek-v3", "groq", "cf-qwen"],
-    TaskType.GENERAL: ["deepseek-v3", "groq", "cf-qwen"],
+    TaskType.TRANSLATION_QUICK_EDIT: ["gpt-4o-mini", "groq", "cf-qwen"],
+    TaskType.TEMPLATE_FILL: ["deepseek-v3", "gpt-4o-mini", "cf-qwen"],
+    TaskType.CONTENT_FIT_RESIZE: ["gpt-4o-mini", "groq", "cf-qwen"],
+    TaskType.REFINEMENT: ["deepseek-v3", "gpt-4o-mini", "mistral-medium"],
+    TaskType.GENERAL: ["deepseek-v3", "gpt-4o-mini", "cf-qwen"],
+    # Designer specific routing
+    TaskType.DESIGNER_LAYOUT: [
+        "deepseek-v3",
+        "cf-glm",
+        "cf-gemma",
+        "mistral-medium",
+        "phi-4-reasoning",
+    ],
 }
 
 # Max retries per model before moving to next in chain
@@ -77,8 +92,14 @@ class ModelRouter:
         return cls._instance
 
     def _init_clients(self) -> None:
+        # T0: Kimi-K2-Thinking (Planning/Reasoning)
+        self._clients["kimi-k2-thinking"] = AzureKimiClient()
+        # T0.5: Phi-4-reasoning (Reasoning)
+        self._clients["phi-4-reasoning"] = AzurePhi4Client()
         # T1: DeepSeek-V3 (Storytelling, narrative)
         self._clients["deepseek-v3"] = AzureDeepSeekClient()
+        # T2: GPT-4o-mini (Fast structured JSON)
+        self._clients["gpt-4o-mini"] = AzureGPT4oMiniClient()
         # T3: Mistral-medium (Technical, code)
         self._clients["mistral-medium"] = AzureMistralClient()
         # T4: Groq round-robin (Fast, structured JSON)
@@ -86,6 +107,9 @@ class ModelRouter:
         # T5: Cloudflare Workers (Free fallback)
         self._clients["cf-qwen"] = create_cf_qwen_client()
         self._clients["cf-gemma"] = create_cf_gemma_client()
+        self._clients["cf-glm"] = create_cf_glm_client()
+        # T7: OpenRouter (Free tier)
+        self._clients["openrouter"] = OpenRouterClient()
 
     def get_client(self, model_name: str) -> BaseLLMClient:
         client = self._clients.get(model_name)

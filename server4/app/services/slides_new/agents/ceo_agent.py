@@ -28,6 +28,9 @@ class CEOAgent(BaseAgent):
     Uses YC/Sequoia pitch deck best practices for investor presentations.
     """
 
+    DEFAULT_MODEL = "kimi-k2-thinking"
+    FALLBACK_MODELS = ["phi-4-reasoning", "deepseek-v3"]
+
     # YC/Sequoia proven pitch deck structures
     ARCHETYPE_TEMPLATES = {
         "yc_seed": {

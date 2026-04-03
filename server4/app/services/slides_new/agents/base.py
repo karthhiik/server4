@@ -77,7 +77,7 @@ class BaseAgent(ABC):
 
     # Default model for this agent type - override in subclasses
     DEFAULT_MODEL = "deepseek-v3"
-    FALLBACK_MODELS = ["mistral-medium", "groq", "cf-qwen"]
+    FALLBACK_MODELS = ["gpt-4o-mini", "mistral-medium", "cf-qwen"]
 
     def __init__(self, db: AsyncIOMotorDatabase, context: AgentContext):
         """
