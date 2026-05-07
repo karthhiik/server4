@@ -119,9 +119,11 @@ async def detect_entities(request: DetectEntitiesRequest) -> DetectEntitiesRespo
     """
     try:
         logger.debug(
-            f"Detecting entities from text",
-            artifact_type=request.artifact_type,
-            text_length=len(request.text),
+            "Detecting entities from text",
+            extra={
+                "artifact_type": request.artifact_type,
+                "text_length": len(request.text),
+            },
         )
         entities = await enricher.detect_entities(request.text)
         return DetectEntitiesResponse(
@@ -158,9 +160,11 @@ async def web_enrich(request: WebEnrichRequest) -> WebEnrichResponse:
     """
     try:
         logger.debug(
-            f"Web enriching entity",
-            entity_name=request.entity_name,
-            entity_type=request.entity_type,
+            "Web enriching entity",
+            extra={
+                "entity_name": request.entity_name,
+                "entity_type": request.entity_type,
+            },
         )
         result = await enricher.search_company(request.entity_name, "fast")
         return WebEnrichResponse(
@@ -202,9 +206,11 @@ async def extract_form_fields(request: ExtractFormFieldsRequest) -> ExtractFormF
     """
     try:
         logger.debug(
-            f"Extracting form fields from prompt",
-            artifact_type=request.artifact_type,
-            prompt_length=len(request.prompt),
+            "Extracting form fields from prompt",
+            extra={
+                "artifact_type": request.artifact_type,
+                "prompt_length": len(request.prompt),
+            },
         )
         fields = await enricher.extract_form_fields(request.prompt)
         return ExtractFormFieldsResponse(
@@ -241,9 +247,11 @@ async def competitor_snapshot(request: CompetitorSnapshotRequest) -> CompetitorS
     """
     try:
         logger.debug(
-            f"Getting competitor snapshot",
-            competitor_name=request.competitor_name,
-            business_context=request.business_context,
+            "Getting competitor snapshot",
+            extra={
+                "competitor_name": request.competitor_name,
+                "business_context": request.business_context,
+            },
         )
         result = await enricher.search_company(request.competitor_name, "deep")
 

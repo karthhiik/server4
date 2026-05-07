@@ -17,10 +17,11 @@ class ScraperEngine:
     """Extracts clean content from URLs using Firecrawl and Jina."""
 
     async def extract_content(self, url: str) -> Optional[dict]:
-        """Extract content with fallback: Firecrawl → Jina."""
+        """Extract content with fallback: Firecrawl → Jina → ScrapeDo."""
         providers = [
             ("firecrawl", self._extract_firecrawl),
             ("jina", self._extract_jina),
+            ("scrapedo", self._extract_scrapedo),
         ]
 
         for name, fn in providers:
@@ -98,4 +99,52 @@ class ScraperEngine:
             "title": data.get("data", {}).get("title", ""),
             "content": content[:5000],
             "source": "jina",
+        }
+
+    async def _extract_scrapedo(self, url: str) -> Optional[dict]:
+        """Extract content via ScrapeDo proxy for anti-bot bypass.
+
+        API: https://api.scrape.do/?api_key={key}&url={url}&render=true
+        ScrapeDo renders the page via headless browser and returns HTML.
+        We extract text content from the rendered HTML.
+        """
+        if not settings.SCRAPE_DO_API_KEY:
+            raise ConnectionError("ScrapeDo not configured")
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.get(
+                "https://api.scrape.do/",
+                params={
+                    "api_key": settings.SCRAPE_DO_API_KEY,
+                    "url": url,
+                    "render": "true",
+                },
+            )
+            resp.raise_for_status()
+            # ScrapeDo returns raw HTML; extract text
+            html_content = resp.text
+
+        if not html_content or len(html_content) < 100:
+            return None
+
+        # Basic text extraction: strip tags
+        import re
+
+        text = re.sub(r"<script[^>]*>.*?</script>", "", html_content, flags=re.DOTALL)
+        text = re.sub(r"<style[^>]*>.*?</style>", "", text, flags=re.DOTALL)
+        text = re.sub(r"<[^>]+>", " ", text)
+        text = re.sub(r"\s+", " ", text).strip()
+
+        if not text:
+            return None
+
+        # Try to extract title from HTML
+        title_match = re.search(r"<title[^>]*>(.*?)</title>", html_content, re.IGNORECASE)
+        title = title_match.group(1).strip() if title_match else ""
+
+        return {
+            "url": url,
+            "title": title,
+            "content": text[:5000],
+            "source": "scrapedo",
         }

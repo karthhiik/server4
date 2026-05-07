@@ -20,6 +20,10 @@ GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile"
 
 
+class ProviderPoolExhaustedError(ConnectionError):
+    """Raised when every key in a provider pool fails for one request."""
+
+
 class GroqRoundRobinClient(BaseLLMClient):
     """
     Round-robin across 8 Groq API keys for ultra-fast inference.
@@ -69,7 +73,9 @@ class GroqRoundRobinClient(BaseLLMClient):
                 errors.append(str(e))
                 continue
 
-        raise ConnectionError(f"All {len(self._keys)} Groq keys exhausted: {errors}")
+        raise ProviderPoolExhaustedError(
+            f"All {len(self._keys)} Groq keys exhausted: {errors}"
+        )
 
     async def _call(
         self,

@@ -117,3 +117,79 @@ class SocialEngine:
         except Exception as e:
             logger.warning("youtube_search_failed", error=str(e))
             return []
+
+    async def search_producthunt(self, query: str, max_results: int = 5) -> list[dict]:
+        """Search ProductHunt for product launches.
+
+        Uses the ProductHunt GraphQL API v2 with Bearer token auth.
+        """
+        if not settings.PRODUCTHUNT_API_KEY:
+            return []
+
+        gql = """
+        query SearchProducts($query: String!, $first: Int!) {
+            posts(order: VOTES, search: $query, first: $first) {
+                edges {
+                    node {
+                        name
+                        tagline
+                        votesCount
+                        url
+                        website
+                        createdAt
+                        topics(first: 3) {
+                            edges {
+                                node {
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post(
+                    "https://api.producthunt.com/v2/api/graphql",
+                    json={
+                        "query": gql,
+                        "variables": {"query": query, "first": min(max_results, 20)},
+                    },
+                    headers={
+                        "Authorization": f"Bearer {settings.PRODUCTHUNT_API_KEY}",
+                        "Content-Type": "application/json",
+                    },
+                )
+                resp.raise_for_status()
+                data = resp.json()
+
+            if "errors" in data:
+                logger.warning(
+                    "producthunt_graphql_error",
+                    error=data["errors"][0].get("message", ""),
+                )
+                return []
+
+            posts = data.get("data", {}).get("posts", {}).get("edges", [])
+            results = []
+            for edge in posts:
+                node = edge.get("node", {})
+                topics = [
+                    t["node"]["name"]
+                    for t in node.get("topics", {}).get("edges", [])
+                ]
+                results.append({
+                    "name": node.get("name", ""),
+                    "tagline": node.get("tagline", ""),
+                    "votes_count": node.get("votesCount", 0),
+                    "url": node.get("url", ""),
+                    "website": node.get("website", ""),
+                    "topics": topics,
+                    "created_at": node.get("createdAt", ""),
+                })
+            return results
+        except Exception as e:
+            logger.warning("producthunt_search_failed", query=query[:50], error=str(e))
+            return []

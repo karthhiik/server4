@@ -1,0 +1,158 @@
+
+######################################################################
+#  V4 DEEP TEST -- Standard + Premium Content Generation
+######################################################################
+
+Environment configured:
+  [OK]  TAVILY_API_KEY
+  [OK]  SERPER_API_KEY
+  [--]  EXA_API_KEY
+  [--]  JINA_API_KEY
+  [--]  YOU_COM_API_KEY
+  [OK]  NEWSAPI_KEY
+  [OK]  NEWSDATA_API_KEY
+  [--]  GUARDIAN_API_KEY
+  [OK]  REDDIT_USER_AGENT
+  [OK]  GITHUB_TOKEN
+  [OK]  FINNHUB_API_KEY
+  [OK]  GROQ_API_KEY
+  [OK]  DEEPSEEK_API_KEY
+  [OK]  AZURE_KIMI_API_KEY
+  [OK]  AZURE_GPT4O_MINI_API_KEY
+  [OK]  MONGODB_URI
+  [OK]  REDIS_HOST
+
+Connecting to MongoDB…
+2026-04-18 00:19:18 [info     ] database_indexes_created       phase4=True phase5=True phase6=True phase7=True v7=True
+  [OK] Mongo connected.
+
+======================================================================
+>> STD-1: Standard / clear B2B SaaS pitch
+======================================================================
+2026-04-18 00:19:26 [warning  ] v4_newsapi_failed              error="Client error '426 Upgrade Required' for url 'https://newsapi.org/v2/everything?q=Create+a+10-slide+pitch+deck+for+Northwind+AI%2C+a+B2B+SaaS+that+uses+agentic+LLM+workflows+to+automate+enterprise+procurement.+Target+audience+is+seed-stage+VCs.+Series-Seed+raise+of+%243M.&pageSize=10&sortBy=relevancy&language=en&from=2026-01-17'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/426"
+2026-04-18 00:19:29 [info     ] v4_research_complete           duration_ms=7401 mode=standard n_citations=1 n_news=0 query='Create a 10-slide pitch deck for Northwind AI, a B2B SaaS that uses agentic LLM '
+2026-04-18 00:19:32 [info     ] llm_call_success               attempt=1 latency_ms=2719 model=groq phase=v4_skeleton_standard presentation_id=v4test-std-1-1776451761 provider=groq task=intent_classification tokens=973
+2026-04-18 00:20:51 [info     ] llm_call_success               attempt=1 latency_ms=78500 model=deepseek-v3 phase=v4_writer_2 presentation_id=v4test-std-1-1776451761 provider=azure-ai task=template_fill tokens=576
+2026-04-18 00:21:05 [info     ] llm_call_success               attempt=1 latency_ms=92702 model=deepseek-v3 phase=v4_writer_4 presentation_id=v4test-std-1-1776451761 provider=azure-ai task=template_fill tokens=486
+2026-04-18 00:21:09 [info     ] llm_call_success               attempt=1 latency_ms=4219 model=deepseek-v3 phase=v4_writer_7 presentation_id=v4test-std-1-1776451761 provider=azure-ai task=template_fill tokens=385
+2026-04-18 00:21:49 [info     ] llm_call_success               attempt=1 latency_ms=136952 model=deepseek-v3 phase=v4_writer_0 presentation_id=v4test-std-1-1776451761 provider=azure-ai task=template_fill tokens=361
+2026-04-18 00:22:11 [info     ] llm_call_success               attempt=1 latency_ms=158140 model=deepseek-v3 phase=v4_writer_1 presentation_id=v4test-std-1-1776451761 provider=azure-ai task=template_fill tokens=384
+2026-04-18 00:22:11 [info     ] llm_call_success               attempt=1 latency_ms=158452 model=deepseek-v3 phase=v4_writer_5 presentation_id=v4test-std-1-1776451761 provider=azure-ai task=template_fill tokens=396
+2026-04-18 00:22:12 [info     ] llm_call_success               attempt=1 latency_ms=159733 model=deepseek-v3 phase=v4_writer_3 presentation_id=v4test-std-1-1776451761 provider=azure-ai task=template_fill tokens=459
+2026-04-18 00:22:31 [info     ] llm_call_success               attempt=1 latency_ms=100187 model=deepseek-v3 phase=v4_writer_6 presentation_id=v4test-std-1-1776451761 provider=azure-ai task=template_fill tokens=473
+2026-04-18 00:23:12 [info     ] llm_call_success               attempt=1 latency_ms=40719 model=deepseek-v3 phase=v4_critic presentation_id=v4test-std-1-1776451761 provider=azure-ai task=refinement tokens=1685
+2026-04-18 00:23:14 [info     ] v4_outcome_recorded            generation_id=3625fc84-f372-45e0-8cad-d38d866b8a55 purpose=investor_pitch signal=0.7926562500000001
+  [PASS] 232946ms -- 8 slides, score 7.93/10
+  [SAVED] test_v4_deep_report.md + test_v4_deep_raw.json
+
+======================================================================
+>> STD-2: Standard / vague unclear input
+======================================================================
+2026-04-18 00:23:18 [warning  ] v4_newsapi_failed              error="Client error '426 Upgrade Required' for url 'https://newsapi.org/v2/everything?q=make+some+cool+slides+about+something&pageSize=10&sortBy=relevancy&language=en&from=2026-01-17'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/426"
+2026-04-18 00:23:22 [info     ] v4_research_complete           duration_ms=5474 mode=standard n_citations=10 n_news=0 query='make some cool slides about something'
+2026-04-18 00:23:24 [info     ] llm_call_success               attempt=1 latency_ms=1952 model=groq phase=v4_skeleton_standard presentation_id=v4test-std-2-1776451996 provider=groq task=intent_classification tokens=1130
+2026-04-18 00:23:27 [info     ] llm_call_success               attempt=1 latency_ms=3204 model=deepseek-v3 phase=v4_writer_5 presentation_id=v4test-std-2-1776451996 provider=azure-ai task=template_fill tokens=796
+2026-04-18 00:23:27 [info     ] llm_call_success               attempt=1 latency_ms=3672 model=deepseek-v3 phase=v4_writer_1 presentation_id=v4test-std-2-1776451996 provider=azure-ai task=template_fill tokens=829
+2026-04-18 00:23:27 [info     ] llm_call_success               attempt=1 latency_ms=3782 model=deepseek-v3 phase=v4_writer_4 presentation_id=v4test-std-2-1776451996 provider=azure-ai task=template_fill tokens=823
+2026-04-18 00:23:27 [info     ] llm_call_success               attempt=1 latency_ms=3797 model=deepseek-v3 phase=v4_writer_3 presentation_id=v4test-std-2-1776451996 provider=azure-ai task=template_fill tokens=837
+2026-04-18 00:23:29 [info     ] llm_call_success               attempt=1 latency_ms=5141 model=deepseek-v3 phase=v4_writer_2 presentation_id=v4test-std-2-1776451996 provider=azure-ai task=template_fill tokens=787
+2026-04-18 00:23:29 [info     ] llm_call_success               attempt=1 latency_ms=5156 model=deepseek-v3 phase=v4_writer_0 presentation_id=v4test-std-2-1776451996 provider=azure-ai task=template_fill tokens=838
+2026-04-18 00:23:33 [info     ] llm_call_success               attempt=1 latency_ms=4375 model=deepseek-v3 phase=v4_critic presentation_id=v4test-std-2-1776451996 provider=azure-ai task=refinement tokens=1293
+2026-04-18 00:23:34 [info     ] v4_outcome_recorded            generation_id=1e94b05a-57a3-441a-b80e-d5fa6edfc4be purpose=general signal=0.7910416666666666
+  [PASS] 17931ms -- 6 slides, score 7.91/10
+  [SAVED] test_v4_deep_report.md + test_v4_deep_raw.json
+
+======================================================================
+>> STD-3: Standard / minimal one-word seed
+======================================================================
+2026-04-18 00:23:37 [warning  ] v4_newsapi_failed              error="Client error '426 Upgrade Required' for url 'https://newsapi.org/v2/everything?q=fintech&pageSize=10&sortBy=relevancy&language=en&from=2026-01-17'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/426"
+2026-04-18 00:23:40 [info     ] v4_research_complete           duration_ms=3979 mode=standard n_citations=14 n_news=0 query=fintech
+2026-04-18 00:23:42 [info     ] llm_call_success               attempt=1 latency_ms=2202 model=groq phase=v4_skeleton_standard presentation_id=v4test-std-3-1776452015 provider=groq task=intent_classification tokens=1180
+2026-04-18 00:23:45 [info     ] llm_call_success               attempt=1 latency_ms=3281 model=deepseek-v3 phase=v4_writer_1 presentation_id=v4test-std-3-1776452015 provider=azure-ai task=template_fill tokens=777
+2026-04-18 00:23:46 [info     ] llm_call_success               attempt=1 latency_ms=4077 model=deepseek-v3 phase=v4_writer_0 presentation_id=v4test-std-3-1776452015 provider=azure-ai task=template_fill tokens=809
+2026-04-18 00:23:46 [info     ] llm_call_success               attempt=1 latency_ms=4312 model=deepseek-v3 phase=v4_writer_3 presentation_id=v4test-std-3-1776452015 provider=azure-ai task=template_fill tokens=818
+2026-04-18 00:23:46 [info     ] llm_call_success               attempt=1 latency_ms=4327 model=deepseek-v3 phase=v4_writer_2 presentation_id=v4test-std-3-1776452015 provider=azure-ai task=template_fill tokens=900
+2026-04-18 00:23:47 [info     ] llm_call_success               attempt=1 latency_ms=4859 model=deepseek-v3 phase=v4_writer_4 presentation_id=v4test-std-3-1776452015 provider=azure-ai task=template_fill tokens=903
+2026-04-18 00:23:59 [info     ] llm_call_success               attempt=1 latency_ms=12047 model=deepseek-v3 phase=v4_critic presentation_id=v4test-std-3-1776452015 provider=azure-ai task=refinement tokens=1111
+2026-04-18 00:23:59 [info     ] v4_outcome_recorded            generation_id=38b67355-7413-4f28-b698-8c0ec781bce2 purpose=general signal=0.8007500000000001
+  [PASS] 23996ms -- 5 slides, score 8.01/10
+  [SAVED] test_v4_deep_report.md + test_v4_deep_raw.json
+
+======================================================================
+>> PRM-1: Premium / clear pitch with explicit YC slide types
+======================================================================
+2026-04-18 00:24:02 [warning  ] v4_newsapi_failed              error="Client error '426 Upgrade Required' for url 'https://newsapi.org/v2/everything?q=Investor+pitch+deck+for+VoltGrid%2C+a+fast-charging+EV+network+operator+deploying+350kW+chargers+across+European+A-roads.+Series+A%2C+raising+%2425M+to+scale+from+40+to+250+stations+across+DE%2FFR%2FNL.+Profitable+per-station+unit+economics+with+18-month+payback.+Strategic+partnership+with+Shell+Recharge.&pageSize=10&sortBy=relevancy&language=en&from=2026-01-17'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/426"
+2026-04-18 00:24:02 [warning  ] v4_github_failed               error="Client error '401 Unauthorized' for url 'https://api.github.com/search/repositories?q=Investor+pitch+deck+for+VoltGrid%2C+a+fast-charging+EV+network+operator+deploying+350kW+chargers+across+European+A-roads.+Series+A%2C+raising+%2425M+to+scale+from+40+to+250+stations+across+DE%2FFR%2FNL.+Profitable+per-station+unit+economics+with+18-month+payback.+Strategic+partnership+with+Shell+Recharge.&sort=stars&per_page=6'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401"
+2026-04-18 00:24:03 [warning  ] v4_newsdata_failed             error="Client error '422 UNPROCESSABLE ENTITY' for url 'https://newsdata.io/api/1/news?apikey=pub_84661c25e2fd2d681779e8338cc591c4a242e&q=Investor+pitch+deck+for+VoltGrid%2C+a+fast-charging+EV+network+operator+deploying+350kW+chargers+across+European+A-roads.+Series+A%2C+raising+%2425M+to+scale+from+40+to+250+stations+across+DE%2FFR%2FNL.+Profitable+per-station+unit+economics+with+18-month+payback.+Strategic+partnership+with+Shell+Recharge.&language=en'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422"
+2026-04-18 00:24:03 [warning  ] v4_you_failed                  error="Client error '403 Forbidden' for url 'https://api.ydc-index.io/search?query=Investor+pitch+deck+for+VoltGrid%2C+a+fast-charging+EV+network+operator+deploying+350kW+chargers+across+European+A-roads.+Series+A%2C+raising+%2425M+to+scale+from+40+to+250+stations+across+DE%2FFR%2FNL.+Profitable+per-station+unit+economics+with+18-month+payback.+Strategic+partnership+with+Shell+Recharge.&num_web_results=8'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+2026-04-18 00:24:05 [warning  ] v4_jina_failed                 error="Client error '422 Unprocessable Entity' for url 'https://s.jina.ai/Investor%20pitch%20deck%20for%20VoltGrid,%20a%20fast-charging%20EV%20network%20operator%20deploying%20350kW%20chargers%20across%20European%20A-roads.%20Series%20A,%20raising%20$25M%20to%20scale%20from%2040%20to%20250%20stations%20across%20DE/FR/NL.%20Profitable%20per-station%20unit%20economics%20with%2018-month%20payback.%20Strategic%20partnership%20with%20Shell%20Recharge.'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422"
+2026-04-18 00:24:06 [info     ] v4_research_complete           duration_ms=4610 mode=premium n_citations=16 n_news=6 query='Investor pitch deck for VoltGrid, a fast-charging EV network operator deploying '
+2026-04-18 00:24:44 [info     ] llm_call_success               attempt=1 latency_ms=38094 model=kimi-k2-thinking phase=v4_skeleton_premium presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=outline_planning tokens=5437
+2026-04-18 00:24:44 [error    ] v4_skeleton_premium_failed     error="Expecting ',' delimiter: line 1 column 2324 (char 2323)"
+2026-04-18 00:24:56 [info     ] llm_call_success               attempt=1 latency_ms=11547 model=deepseek-v3 phase=v4_writer_3 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1375
+2026-04-18 00:24:59 [info     ] llm_call_success               attempt=1 latency_ms=14890 model=deepseek-v3 phase=v4_writer_5 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1229
+2026-04-18 00:25:08 [info     ] llm_call_success               attempt=1 latency_ms=8797 model=deepseek-v3 phase=v4_writer_7 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1286
+2026-04-18 00:25:16 [info     ] llm_call_success               attempt=1 latency_ms=20125 model=deepseek-v3 phase=v4_writer_6 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1159
+2026-04-18 00:25:19 [info     ] llm_call_success               attempt=1 latency_ms=34625 model=deepseek-v3 phase=v4_writer_4 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1202
+2026-04-18 00:25:20 [info     ] llm_call_success               attempt=1 latency_ms=35954 model=deepseek-v3 phase=v4_writer_1 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1196
+2026-04-18 00:25:23 [info     ] llm_call_success               attempt=1 latency_ms=38813 model=deepseek-v3 phase=v4_writer_0 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1041
+2026-04-18 00:25:30 [info     ] llm_call_success               attempt=1 latency_ms=45812 model=deepseek-v3 phase=v4_writer_2 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1306
+2026-04-18 00:25:35 [info     ] llm_call_success               attempt=1 latency_ms=5297 model=deepseek-v3 phase=v4_critic presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=refinement tokens=1648
+2026-04-18 00:25:35 [info     ] v4_critic_refinement_cycle     cycle=1 n_to_rewrite=1
+2026-04-18 00:25:39 [info     ] llm_call_success               attempt=1 latency_ms=3657 model=deepseek-v3 phase=v4_writer_0 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1002
+2026-04-18 00:26:16 [info     ] llm_call_success               attempt=1 latency_ms=36937 model=deepseek-v3 phase=v4_critic presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=refinement tokens=1694
+2026-04-18 00:26:16 [info     ] v4_critic_refinement_cycle     cycle=2 n_to_rewrite=5
+2026-04-18 00:26:18 [info     ] llm_call_success               attempt=1 latency_ms=2390 model=deepseek-v3 phase=v4_writer_0 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1045
+2026-04-18 00:26:23 [info     ] llm_call_success               attempt=1 latency_ms=7000 model=deepseek-v3 phase=v4_writer_5 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1252
+2026-04-18 00:26:25 [info     ] llm_call_success               attempt=1 latency_ms=8687 model=deepseek-v3 phase=v4_writer_6 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1201
+2026-04-18 00:26:25 [info     ] llm_call_success               attempt=1 latency_ms=9265 model=deepseek-v3 phase=v4_writer_2 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1272
+2026-04-18 00:26:40 [info     ] llm_call_success               attempt=1 latency_ms=24391 model=deepseek-v3 phase=v4_writer_4 presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=narrative_storytelling tokens=1222
+2026-04-18 00:26:59 [info     ] llm_call_success               attempt=1 latency_ms=18579 model=deepseek-v3 phase=v4_critic presentation_id=v4test-prm-1-1776452041 provider=azure-ai task=refinement tokens=1724
+2026-04-18 00:27:02 [info     ] v4_outcome_recorded            generation_id=ce7a0038-247a-46b7-87cd-5c417c689c8e purpose=investor_pitch signal=0.80390625
+  [PASS] 181475ms -- 8 slides, score 8.04/10
+  [SAVED] test_v4_deep_report.md + test_v4_deep_raw.json
+
+======================================================================
+>> PRM-2: Premium / clear pitch, AUTO slide types (planner decides)
+======================================================================
+2026-04-18 00:27:06 [warning  ] v4_github_failed               error="Client error '401 Unauthorized' for url 'https://api.github.com/search/repositories?q=Pitch+deck+for+Helio+Diagnostics+%E2%80%94+AI-powered+radiology+second-opinion+service.+We+screen+mammograms+and+chest+CTs+and+flag+missed+cancers.+FDA+510%28k%29+cleared+Q1+2026.+14+hospital+pilot+customers%2C+%24480k+ARR%2C+growing+22%25+MoM.+Raising+%248M+Series+A+from+healthtech+VCs.&sort=stars&per_page=6'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401"
+2026-04-18 00:27:06 [warning  ] v4_jina_failed                 error="Client error '400 Bad Request' for url 'https://s.jina.ai/Pitch%20deck%20for%20Helio%20Diagnostics%20%E2%80%94%20AI-powered%20radiology%20second-opinion%20service.%20We%20screen%20mammograms%20and%20chest%20CTs%20and%20flag%20missed%20cancers.%20FDA%20510(k)%20cleared%20Q1%202026.%2014%20hospital%20pilot%20customers,%20$480k%20ARR,%20growing%2022%%20MoM.%20Raising%20$8M%20Series%20A%20from%20healthtech%20VCs.'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+2026-04-18 00:27:06 [warning  ] v4_newsdata_failed             error="Client error '422 UNPROCESSABLE ENTITY' for url 'https://newsdata.io/api/1/news?apikey=pub_84661c25e2fd2d681779e8338cc591c4a242e&q=Pitch+deck+for+Helio+Diagnostics+%E2%80%94+AI-powered+radiology+second-opinion+service.+We+screen+mammograms+and+chest+CTs+and+flag+missed+cancers.+FDA+510%28k%29+cleared+Q1+2026.+14+hospital+pilot+customers%2C+%24480k+ARR%2C+growing+22%25+MoM.+Raising+%248M+Series+A+from+healthtech+VCs.&language=en'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422"
+2026-04-18 00:27:06 [warning  ] v4_you_failed                  error="Client error '403 Forbidden' for url 'https://api.ydc-index.io/search?query=Pitch+deck+for+Helio+Diagnostics+%E2%80%94+AI-powered+radiology+second-opinion+service.+We+screen+mammograms+and+chest+CTs+and+flag+missed+cancers.+FDA+510%28k%29+cleared+Q1+2026.+14+hospital+pilot+customers%2C+%24480k+ARR%2C+growing+22%25+MoM.+Raising+%248M+Series+A+from+healthtech+VCs.&num_web_results=8'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+2026-04-18 00:27:06 [warning  ] v4_guardian_failed             error="Client error '400 Bad Request' for url 'https://content.guardianapis.com/search?q=Pitch+deck+for+Helio+Diagnostics+%E2%80%94+AI-powered+radiology+second-opinion+service.+We+screen+mammograms+and+chest+CTs+and+flag+missed+cancers.+FDA+510%28k%29+cleared+Q1+2026.+14+hospital+pilot+customers%2C+%24480k+ARR%2C+growing+22%25+MoM.+Raising+%248M+Series+A+from+healthtech+VCs.&api-key=ebdea790-e94f-40f5-8a47-7f18742f2d66&show-fields=trailText&page-size=6'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+2026-04-18 00:27:07 [warning  ] v4_newsapi_failed              error="Client error '426 Upgrade Required' for url 'https://newsapi.org/v2/everything?q=Pitch+deck+for+Helio+Diagnostics+%E2%80%94+AI-powered+radiology+second-opinion+service.+We+screen+mammograms+and+chest+CTs+and+flag+missed+cancers.+FDA+510%28k%29+cleared+Q1+2026.+14+hospital+pilot+customers%2C+%24480k+ARR%2C+growing+22%25+MoM.+Raising+%248M+Series+A+from+healthtech+VCs.&pageSize=10&sortBy=relevancy&language=en&from=2026-01-17'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/426"
+2026-04-18 00:27:13 [info     ] v4_research_complete           duration_ms=8674 mode=premium n_citations=16 n_news=0 query='Pitch deck for Helio Diagnostics — AI-powered radiology second-opinion service. '
+2026-04-18 00:27:46 [info     ] llm_call_success               attempt=1 latency_ms=32608 model=kimi-k2-thinking phase=v4_skeleton_premium presentation_id=v4test-prm-2-1776452224 provider=azure-ai task=outline_planning tokens=4369
+2026-04-18 00:28:02 [warning  ] llm_call_failed                attempt=1 error='Request timed out.' latency_ms=16234 model=deepseek-v3 phase=v4_critic presentation_id=v4test-prm-2-1776452224 provider=azure-ai task=refinement
+2026-04-18 00:28:30 [info     ] llm_call_success               attempt=2 latency_ms=28000 model=deepseek-v3 phase=v4_critic presentation_id=v4test-prm-2-1776452224 provider=azure-ai task=refinement tokens=254
+2026-04-18 00:28:31 [info     ] v4_outcome_recorded            generation_id=57d7cfd7-aacd-4fd7-bc13-caacac0257ba purpose=investor_pitch signal=0.0
+  [PASS] 87064ms -- 0 slides, score 0.0/10
+  [SAVED] test_v4_deep_report.md + test_v4_deep_raw.json
+
+======================================================================
+>> PRM-3: Premium / unclear seed (stress narrative inference)
+======================================================================
+2026-04-18 00:28:34 [warning  ] v4_newsapi_failed              error="Client error '426 Upgrade Required' for url 'https://newsapi.org/v2/everything?q=something+about+my+startup+idea+%E2%80%94+quantum+stuff&pageSize=10&sortBy=relevancy&language=en&from=2026-01-17'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/426"
+2026-04-18 00:28:34 [warning  ] v4_github_failed               error="Client error '401 Unauthorized' for url 'https://api.github.com/search/repositories?q=something+about+my+startup+idea+%E2%80%94+quantum+stuff&sort=stars&per_page=6'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401"
+2026-04-18 00:28:34 [warning  ] v4_you_failed                  error="Client error '403 Forbidden' for url 'https://api.ydc-index.io/search?query=something+about+my+startup+idea+%E2%80%94+quantum+stuff&num_web_results=8'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+2026-04-18 00:28:35 [warning  ] v4_guardian_failed             error="Client error '400 Bad Request' for url 'https://content.guardianapis.com/search?q=something+about+my+startup+idea+%E2%80%94+quantum+stuff&api-key=ebdea790-e94f-40f5-8a47-7f18742f2d66&show-fields=trailText&page-size=6'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+2026-04-18 00:28:46 [warning  ] v4_jina_failed                 error=
+2026-04-18 00:28:47 [info     ] v4_research_complete           duration_ms=13923 mode=premium n_citations=22 n_news=2 query='something about my startup idea — quantum stuff'
+2026-04-18 00:29:24 [info     ] llm_call_success               attempt=1 latency_ms=37421 model=kimi-k2-thinking phase=v4_skeleton_premium presentation_id=v4test-prm-3-1776452312 provider=azure-ai task=outline_planning tokens=5273
+2026-04-18 00:30:08 [info     ] llm_call_success               attempt=1 latency_ms=43000 model=deepseek-v3 phase=v4_writer_5 presentation_id=v4test-prm-3-1776452312 provider=azure-ai task=narrative_storytelling tokens=1006
+2026-04-18 00:30:08 [info     ] llm_call_success               attempt=1 latency_ms=43875 model=deepseek-v3 phase=v4_writer_4 presentation_id=v4test-prm-3-1776452312 provider=azure-ai task=narrative_storytelling tokens=1119
+2026-04-18 00:30:11 [info     ] llm_call_success               attempt=1 latency_ms=46811 model=deepseek-v3 phase=v4_writer_2 presentation_id=v4test-prm-3-1776452312 provider=azure-ai task=narrative_storytelling tokens=1197
+2026-04-18 00:30:42 [info     ] llm_call_success               attempt=1 latency_ms=77969 model=deepseek-v3 phase=v4_writer_1 presentation_id=v4test-prm-3-1776452312 provider=azure-ai task=narrative_storytelling tokens=1270
+2026-04-18 00:30:48 [info     ] llm_call_success               attempt=1 latency_ms=83125 model=deepseek-v3 phase=v4_writer_0 presentation_id=v4test-prm-3-1776452312 provider=azure-ai task=narrative_storytelling tokens=1180
+2026-04-18 00:30:49 [info     ] llm_call_success               attempt=1 latency_ms=84077 model=deepseek-v3 phase=v4_writer_3 presentation_id=v4test-prm-3-1776452312 provider=azure-ai task=narrative_storytelling tokens=1209
+2026-04-18 00:32:09 [info     ] llm_call_success               attempt=1 latency_ms=80797 model=deepseek-v3 phase=v4_critic presentation_id=v4test-prm-3-1776452312 provider=azure-ai task=refinement tokens=1280
+2026-04-18 00:32:12 [info     ] v4_outcome_recorded            generation_id=3f1965a4-d2e8-4768-8fe3-d004d8f690a4 purpose=investor_pitch signal=0.8785416666666668
+  [PASS] 220152ms -- 6 slides, score 8.79/10
+  [SAVED] test_v4_deep_report.md + test_v4_deep_raw.json
+
+======================================================================
+REPORT  → D:\Desktop\New_Flask\FLASK\server4\test_v4_deep_report.md
+RAW     → D:\Desktop\New_Flask\FLASK\server4\test_v4_deep_raw.json
+RESULT  → 6/6 scenarios passed.
+======================================================================
+

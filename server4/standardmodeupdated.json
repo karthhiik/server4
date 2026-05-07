@@ -1,0 +1,73 @@
+{
+  "mode": "standard",
+  "status": "success",
+  "project_id": "test_standard_001",
+  "query": "Create a presentation about Cyber-Insurance and Space Exploration with 12 slides",
+  "skeleton": {
+    "title": "CyberSpace Tech Investor Pitch",
+    "narrative_arc": "investor_pitch",
+    "slide_count": 10,
+    "slides": [
+      {
+        "index": 0,
+        "intent": "title",
+        "headline_target": "CyberSpace Tech Investor Pitch",
+        "layout_hint": "title-only"
+      },
+      {
+        "index": 1,
+        "intent": "problem",
+        "headline_target": "Defining the Pain at CyberSpace Tech",
+        "layout_hint": "two-column"
+      },
+      {
+        "index": 2,
+        "intent": "solution",
+        "headline_target": "How We Solve It at CyberSpace Tech",
+        "layout_hint": "two-column"
+      },
+      {
+        "index": 3,
+        "intent": "unique_advantage",
+        "headline_target": "Our Unique Value Proposition",
+        "layout_hint": "two-column"
+      },
+      {
+        "index": 4,
+        "intent": "how_it_works",
+        "headline_target": "How It Works in 3 Steps",
+        "layout_hint": "diagram"
+      },
+      {
+        "index": 5,
+        "intent": "market",
+        "headline_target": "Quantifying the Market Opportunity",
+        "layout_hint": "stat-hero"
+      },
+      {
+        "index": 6,
+        "intent": "traction",
+        "headline_target": "Proving Momentum",
+        "layout_hint": "stat-hero"
+      },
+      {
+        "index": 7,
+        "intent": "business_model",
+        "headline_target": "How We Make Money",
+        "layout_hint": "two-column"
+      },
+      {
+        "index": 8,
+        "intent": "competition",
+        "headline_target": "Our Competitive Advantage",
+        "layout_hint": "comparison"
+      },
+      {
+        "index": 9,
+        "intent": "team",
+        "headline_target": "Why This Team Wins",
+        "layout_hint": "team-grid"
+      }
+    ]
+  }
+}

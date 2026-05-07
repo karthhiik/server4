@@ -17,11 +17,12 @@ class NewsEngine:
     """Fetches recent news from multiple providers with fallback."""
 
     async def search_news(self, query: str, max_results: int = 5) -> list[dict]:
-        """Search news with fallback chain: NewsAPI → NewsData → Guardian."""
+        """Search news with fallback chain: NewsAPI → NewsData → Guardian → World News."""
         providers = [
             ("newsapi", self._search_newsapi),
             ("newsdata", self._search_newsdata),
             ("guardian", self._search_guardian),
+            ("world_news", self._search_world_news),
         ]
 
         for name, fn in providers:
@@ -85,4 +86,36 @@ class NewsEngine:
         return [
             {"title": r.get("webTitle", ""), "source": "The Guardian", "url": r.get("webUrl", ""), "published": r.get("webPublicationDate", "")}
             for r in data.get("response", {}).get("results", [])[:max_results]
+        ]
+
+    async def _search_world_news(self, query: str, max_results: int) -> list[dict]:
+        """World News API for international coverage.
+
+        API: GET https://api.worldnewsapi.com/search-news
+        Header: x-api-key
+        """
+        if not settings.WORLD_NEWS_API_KEY:
+            raise ConnectionError("World News API not configured")
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(
+                "https://api.worldnewsapi.com/search-news",
+                params={
+                    "text": query,
+                    "language": "en",
+                    "number": max_results,
+                },
+                headers={"x-api-key": settings.WORLD_NEWS_API_KEY},
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+        return [
+            {
+                "title": a.get("title", ""),
+                "source": a.get("source", ""),
+                "url": a.get("url", ""),
+                "published": a.get("publish_date", ""),
+            }
+            for a in data.get("news", [])[:max_results]
         ]

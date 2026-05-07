@@ -19,6 +19,7 @@ from app.models.presentation import (
     GenerationInput,
     GenerationState,
     TemplateGenerationInput,
+    PresentationMode,
 )
 from app.models.slide import SlideContent, SlideLayout
 from app.services.llm import ModelRouter, TaskType
@@ -67,7 +68,12 @@ class PresentationOrchestrator:
 
         # writing_style flows through the entire pipeline
         writing_style = getattr(input_data, "writing_style", None) or "yc_pitch"
-        purpose = input_data.purpose
+        # For standard mode, always generate pitch deck content regardless of input purpose
+        # For premium mode, use the specified purpose
+        if input_data.mode == PresentationMode.STANDARD:
+            purpose = "pitch"
+        else:
+            purpose = input_data.purpose
 
         try:
             # ═══════════ PHASE 1: RESEARCH (0-25%) ═══════════
@@ -161,7 +167,7 @@ class PresentationOrchestrator:
             # Phase D4: Run style-aware design quality pass
             design_warnings = self._run_design_quality_pass(
                 slides=slides,
-                purpose=input_data.purpose or "pitch",
+                purpose=purpose,
                 writing_style=writing_style,
             )
 
@@ -330,10 +336,13 @@ class PresentationOrchestrator:
 
         This runs as a fire-and-forget asyncio.create_task() — the main
         generation loop returns immediately with text content.
-        """
-        from app.services.image_service import ImageService
 
-        image_service = ImageService()
+        Uses Phase 8 ImageAssetManager with 4-tier fallback:
+        Azure Flux → Nvidia SD3 → CF Phoenix → CF Lucid.
+        """
+        from app.services.image_pipeline import ImageAssetManager, PromptContext
+
+        asset_manager = ImageAssetManager()
         try:
             # Fetch slide IDs from DB for WebSocket targeting
             slide_docs = (
@@ -343,6 +352,12 @@ class PresentationOrchestrator:
             )
             slide_id_map = {doc["index"]: str(doc["_id"]) for doc in slide_docs}
 
+            # Extract theme info for prompt building
+            theme_id = theme.get("theme_id", theme.get("id", ""))
+            primary_color = theme.get("colors", {}).get("primary", "#2563eb")
+            accent_color = theme.get("colors", {}).get("accent", "#7c3aed")
+            variant = theme.get("variant", "dark")
+
             for i, slide in enumerate(slides):
                 layout = slide.get("layout", "bullets")
                 content = slide.get("content", {})
@@ -351,10 +366,24 @@ class PresentationOrchestrator:
                 if layout in ("chart", "kpi-dashboard", "team-grid", "blank"):
                     continue
 
-                url = await image_service.generate_slide_image(
-                    content=content,
+                ctx = PromptContext(
+                    title=content.get("title", ""),
+                    subtitle=content.get("subtitle", ""),
+                    bullets=content.get("bullets", []),
+                    speaker_notes=content.get("speaker_notes", ""),
+                    slide_type=slide.get("slide_type", "custom"),
                     layout=layout,
-                    theme=theme,
+                    theme_id=theme_id,
+                    primary_color=primary_color,
+                    accent_color=accent_color,
+                    variant=variant,
+                    slide_index=i,
+                    total_slides=len(slides),
+                    custom_prompt=content.get("image_prompt"),
+                )
+
+                url = await asset_manager.generate_slide_image(
+                    ctx=ctx,
                     presentation_id=presentation_id,
                     slide_index=i,
                     user_id=user_id,
@@ -388,7 +417,7 @@ class PresentationOrchestrator:
                 error=str(e),
             )
         finally:
-            await image_service.close()
+            await asset_manager.close()
 
     @staticmethod
     def _dispatch_thumbnail_task(presentation_id: str) -> None:
@@ -1153,11 +1182,20 @@ class PresentationOrchestrator:
         Phase E2: After text content is ready, dispatch image generation
         for each slide that supports images. These run in parallel and
         update slides via WebSocket when ready.
-        """
-        from app.services.image_service import ImageService
 
-        image_service = ImageService()
+        Uses Phase 8 ImageAssetManager with 4-tier fallback:
+        Azure Flux → Nvidia SD3 → CF Phoenix → CF Lucid.
+        """
+        from app.services.image_pipeline import ImageAssetManager, PromptContext
+
+        asset_manager = ImageAssetManager()
         tasks = []
+
+        # Extract theme info for prompt building
+        theme_id = theme.get("theme_id", theme.get("id", ""))
+        primary_color = theme.get("colors", {}).get("primary", "#2563eb")
+        accent_color = theme.get("colors", {}).get("accent", "#7c3aed")
+        variant = theme.get("variant", "dark")
 
         for i, slide in enumerate(slides):
             layout = slide.get("layout", "bullets")
@@ -1167,11 +1205,28 @@ class PresentationOrchestrator:
             if layout in ("chart", "kpi-dashboard", "team-grid", "blank"):
                 continue
 
+            ctx = PromptContext(
+                title=content.get("title", ""),
+                subtitle=content.get("subtitle", ""),
+                bullets=content.get("bullets", []),
+                speaker_notes=content.get("speaker_notes", ""),
+                slide_type=slide.get("slide_type", "custom"),
+                layout=layout,
+                theme_id=theme_id,
+                primary_color=primary_color,
+                accent_color=accent_color,
+                variant=variant,
+                slide_index=i,
+                total_slides=len(slides),
+                custom_prompt=content.get("image_prompt"),
+            )
+
             # Fire-and-forget: create task but don't await
             task = asyncio.create_task(
-                self._generate_and_attach_image(
+                self._generate_and_attach_image_v2(
+                    ctx=ctx,
+                    asset_manager=asset_manager,
                     slide=slide,
-                    image_service=image_service,
                     project_id=presentation_id,
                     slide_index=i,
                     user_id=user_id,
@@ -1190,31 +1245,20 @@ class PresentationOrchestrator:
         if tasks:
             await asyncio.gather(*tasks, return_exceptions=True)
 
-    async def _generate_and_attach_image(
+        await asset_manager.close()
+
+    async def _generate_and_attach_image_v2(
         self,
+        ctx: "PromptContext",
+        asset_manager: "ImageAssetManager",
         slide: dict,
-        image_service: "ImageService",
         project_id: str,
         slide_index: int,
         user_id: str,
     ) -> None:
-        """Generate image for a slide and attach URL to slide content."""
-        layout = slide.get("layout", "bullets")
-        content = slide.get("content", {})
-
-        # Get theme from DB for style-aware prompting
-        theme = {}
-        try:
-            pres = await self.db.presentations.find_one({"_id": project_id})
-            if pres and pres.get("theme_id"):
-                theme = await self.db.themes.find_one({"_id": pres["theme_id"]}) or {}
-        except Exception:
-            pass
-
-        image_url = await image_service.generate_slide_image(
-            content=content,
-            layout=layout,
-            theme=theme or {},
+        """Generate image for a slide and attach URL to slide content (V2 pipeline)."""
+        image_url = await asset_manager.generate_slide_image(
+            ctx=ctx,
             presentation_id=project_id,
             slide_index=slide_index,
             user_id=user_id,
@@ -1225,14 +1269,14 @@ class PresentationOrchestrator:
             slide["content"]["image_url"] = image_url
             logger.info(
                 "image_attached",
-                slide=content.get("title", "")[:30],
-                layout=layout,
+                slide=slide.get("content", {}).get("title", "")[:30],
+                layout=slide.get("layout", ""),
             )
         else:
             logger.info(
                 "image_skipped",
-                slide=content.get("title", "")[:30],
-                layout=layout,
+                slide=slide.get("content", {}).get("title", "")[:30],
+                layout=slide.get("layout", ""),
                 reason="generation_failed_or_not_needed",
             )
 

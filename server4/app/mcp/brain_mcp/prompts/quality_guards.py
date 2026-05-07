@@ -260,3 +260,265 @@ def _extract_text(content: dict) -> str:
             parts.extend(str(v) for v in event.values())
 
     return " ".join(parts)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# CROSS-SLIDE CONSISTENCY CHECKS
+# ═══════════════════════════════════════════════════════════════════════
+
+# Pattern to extract dollar amounts with magnitude suffixes
+_DOLLAR_PATTERN = re.compile(
+    r'\$\s*([\d,.]+)\s*([KMBTkmbt](?:illion)?)?',
+    re.IGNORECASE,
+)
+
+# Pattern to extract percentage claims with context
+_PERCENT_PATTERN = re.compile(
+    r'([\d,.]+)\s*%\s*(CAGR|growth|market|revenue|increase|YoY|MoM)?',
+    re.IGNORECASE,
+)
+
+# Metric type labels that should be consistent across slides
+_METRIC_SYNONYMS = {
+    "arr": {"arr", "annual recurring revenue"},
+    "mrr": {"mrr", "monthly recurring revenue"},
+    "tam": {"tam", "total addressable market"},
+    "sam": {"sam", "serviceable addressable market", "serviceable available market"},
+    "som": {"som", "serviceable obtainable market"},
+    "revenue": {"revenue", "annual revenue", "yearly revenue"},
+    "cagr": {"cagr", "compound annual growth rate"},
+}
+
+
+def _normalise_dollar(amount_str: str, suffix: str) -> float:
+    """Convert dollar string + suffix to a float for comparison."""
+    try:
+        base = float(amount_str.replace(",", ""))
+    except (ValueError, AttributeError):
+        return 0.0
+    suffix = (suffix or "").upper().rstrip("ILLION")
+    multipliers = {"K": 1e3, "M": 1e6, "B": 1e9, "T": 1e12}
+    return base * multipliers.get(suffix, 1.0)
+
+
+def cross_slide_consistency_check(contracts: list) -> list[dict]:
+    """
+    Validate numeric/narrative consistency across all SlideContentContracts.
+
+    Checks:
+    1. Conflicting numeric claims (same metric, different numbers)
+    2. Citation label uniqueness (no duplicate labels mapping to different sources)
+    3. Metric naming consistency (ARR vs MRR must not both appear without context)
+    4. Narrative thread coherence (problem→solution→market flow)
+
+    Returns list of issue dicts: [{type, severity, slides, message}]
+    """
+    issues: list[dict] = []
+
+    if not contracts:
+        return issues
+
+    # ── 1) Numeric claim conflicts ───────────────────────────
+    # Collect all dollar amounts per metric context
+    metric_values: dict[str, list[tuple[str, float, str]]] = {}
+    for contract in contracts:
+        slide_id = contract.slide_id if hasattr(contract, "slide_id") else str(contract)
+        pres = contract.presentation_content if hasattr(contract, "presentation_content") else None
+        read = contract.reading_content if hasattr(contract, "reading_content") else None
+
+        texts = []
+        if pres:
+            texts.append(pres.title if hasattr(pres, "title") else "")
+            texts.extend(pres.bullets if hasattr(pres, "bullets") else [])
+            if hasattr(pres, "hero_stat") and pres.hero_stat:
+                texts.append(pres.hero_stat)
+        if read:
+            texts.append(read.summary if hasattr(read, "summary") else "")
+
+        full_text = " ".join(str(t) for t in texts)
+
+        # Extract dollar-context pairs
+        for match in _DOLLAR_PATTERN.finditer(full_text):
+            value = _normalise_dollar(match.group(1), match.group(2))
+            # Get surrounding context (30 chars after the match)
+            ctx_start = match.end()
+            ctx = full_text[ctx_start:ctx_start + 40].lower().strip()
+            # Try to find a metric label in context
+            metric_key = "unknown"
+            for label, synonyms in _METRIC_SYNONYMS.items():
+                if any(s in ctx or s in full_text[max(0, match.start() - 30):match.start()].lower()
+                       for s in synonyms):
+                    metric_key = label
+                    break
+            if metric_key == "unknown":
+                # Use first word of context as key
+                words = ctx.split()
+                if words:
+                    metric_key = words[0]
+
+            if value > 0:
+                metric_values.setdefault(metric_key, []).append(
+                    (slide_id, value, match.group(0))
+                )
+
+    # Check for conflicting values on the same metric
+    for metric, entries in metric_values.items():
+        if len(entries) < 2:
+            continue
+        values = [e[1] for e in entries]
+        min_val, max_val = min(values), max(values)
+        # Allow 10% tolerance for rounding
+        if min_val > 0 and (max_val / min_val) > 1.15:
+            slide_ids = list(set(e[0] for e in entries))
+            raw_values = [e[2] for e in entries]
+            issues.append({
+                "type": "numeric_conflict",
+                "severity": "critical",
+                "slides": slide_ids,
+                "message": (
+                    f"Conflicting '{metric}' values across slides: "
+                    f"{', '.join(raw_values)}. "
+                    f"Verify consistency — investors will notice."
+                ),
+            })
+
+    # ── 2) Citation label uniqueness ─────────────────────────
+    citation_map: dict[str, set[str]] = {}  # label → set of source_urls
+    for contract in contracts:
+        citations = contract.citations if hasattr(contract, "citations") else []
+        for cit in citations:
+            label = cit.label if hasattr(cit, "label") else str(cit)
+            source = (cit.source_url if hasattr(cit, "source_url") else "") or ""
+            citation_map.setdefault(label, set()).add(source)
+
+    for label, sources in citation_map.items():
+        non_empty = {s for s in sources if s}
+        if len(non_empty) > 1:
+            issues.append({
+                "type": "citation_conflict",
+                "severity": "important",
+                "slides": [],
+                "message": (
+                    f"Citation label '{label}' maps to {len(non_empty)} different sources. "
+                    f"Each label must reference exactly one source."
+                ),
+            })
+
+    # ── 3) Metric naming consistency ─────────────────────────
+    found_metrics: set[str] = set()
+    for contract in contracts:
+        pres = contract.presentation_content if hasattr(contract, "presentation_content") else None
+        read = contract.reading_content if hasattr(contract, "reading_content") else None
+        texts = []
+        if pres:
+            texts.append(pres.title if hasattr(pres, "title") else "")
+            texts.extend(pres.bullets if hasattr(pres, "bullets") else [])
+        if read:
+            texts.append(read.summary if hasattr(read, "summary") else "")
+        full = " ".join(str(t) for t in texts).lower()
+
+        if "arr" in full or "annual recurring" in full:
+            found_metrics.add("arr")
+        if "mrr" in full or "monthly recurring" in full:
+            found_metrics.add("mrr")
+
+    if "arr" in found_metrics and "mrr" in found_metrics:
+        issues.append({
+            "type": "metric_inconsistency",
+            "severity": "important",
+            "slides": [],
+            "message": (
+                "Both ARR and MRR are used across the deck. Pick one primary revenue "
+                "metric and use the other only in context (e.g. '$1.2M ARR ($100K MRR)')."
+            ),
+        })
+
+    # ── 4) Narrative thread check ────────────────────────────
+    expected_flow = ["problem", "solution", "market", "competition", "traction", "financial", "ask"]
+    slide_kinds = []
+    for contract in contracts:
+        kind = contract.slide_kind if hasattr(contract, "slide_kind") else None
+        if kind:
+            kind_val = kind.value if hasattr(kind, "value") else str(kind)
+            slide_kinds.append(kind_val)
+
+    if slide_kinds:
+        # Check that key slides appear in roughly the expected order
+        flow_positions = {}
+        for idx, kind in enumerate(slide_kinds):
+            if kind in expected_flow and kind not in flow_positions:
+                flow_positions[kind] = idx
+
+        # Verify ordering for pairs that should be sequential
+        order_checks = [
+            ("problem", "solution"),
+            ("solution", "market"),
+            ("traction", "ask"),
+        ]
+        for before, after in order_checks:
+            if before in flow_positions and after in flow_positions:
+                if flow_positions[before] > flow_positions[after]:
+                    issues.append({
+                        "type": "narrative_order",
+                        "severity": "important",
+                        "slides": [before, after],
+                        "message": (
+                            f"'{after}' slide appears before '{before}' slide. "
+                            f"Investor decks should flow: {' → '.join(expected_flow)}."
+                        ),
+                    })
+
+    return issues
+
+
+def deck_level_coherence_score(contracts: list) -> float:
+    """
+    Score 0.0-1.0 for overall deck coherence across all SlideContentContracts.
+
+    Components:
+    - Numeric consistency (0.3 weight)
+    - Citation integrity (0.2 weight)
+    - Evidence coverage (0.3 weight)
+    - Narrative flow (0.2 weight)
+    """
+    if not contracts:
+        return 0.0
+
+    score = 0.0
+
+    # ── Numeric consistency (0.3) ────────────────────────────
+    consistency_issues = cross_slide_consistency_check(contracts)
+    critical_count = sum(1 for i in consistency_issues if i.get("severity") == "critical")
+    important_count = sum(1 for i in consistency_issues if i.get("severity") == "important")
+    # Deduct 0.15 per critical, 0.05 per important
+    consistency_score = max(0.0, 1.0 - (critical_count * 0.15) - (important_count * 0.05))
+    score += consistency_score * 0.3
+
+    # ── Citation integrity (0.2) ─────────────────────────────
+    total_citations = 0
+    valid_citations = 0
+    for contract in contracts:
+        citations = contract.citations if hasattr(contract, "citations") else []
+        for cit in citations:
+            total_citations += 1
+            url = cit.source_url if hasattr(cit, "source_url") else None
+            if url:
+                valid_citations += 1
+    citation_ratio = valid_citations / max(total_citations, 1)
+    score += citation_ratio * 0.2
+
+    # ── Evidence coverage (0.3) ──────────────────────────────
+    slides_with_evidence = 0
+    for contract in contracts:
+        ev_score = contract.evidence_score if hasattr(contract, "evidence_score") else 0.0
+        if ev_score > 0.3:
+            slides_with_evidence += 1
+    coverage = slides_with_evidence / max(len(contracts), 1)
+    score += coverage * 0.3
+
+    # ── Narrative flow (0.2) ─────────────────────────────────
+    flow_issues = [i for i in consistency_issues if i.get("type") == "narrative_order"]
+    flow_score = max(0.0, 1.0 - len(flow_issues) * 0.25)
+    score += flow_score * 0.2
+
+    return round(min(1.0, max(0.0, score)), 3)

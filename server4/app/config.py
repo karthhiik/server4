@@ -6,9 +6,26 @@ Pydantic Settings loading all .env vars for LLMs, research APIs, storage, auth.
 import os
 from pathlib import Path
 from typing import Optional
+from urllib.parse import parse_qs, urlparse
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _fix_rediss_url(url: str) -> str:
+    """Append ssl_cert_reqs=CERT_REQUIRED to rediss:// URLs if missing.
+
+    Celery's Redis backend requires this parameter for SSL connections
+    (e.g. Azure Redis Cache).
+    """
+    if not url.startswith("rediss://"):
+        return url
+    parsed = urlparse(url)
+    qs = parse_qs(parsed.query)
+    if "ssl_cert_reqs" not in qs:
+        sep = "&" if parsed.query else "?"
+        return url + sep + "ssl_cert_reqs=CERT_REQUIRED"
+    return url
 
 
 def _project_root() -> Path:
@@ -41,6 +58,7 @@ class Settings(BaseSettings):
     API_PORT: int = Field(
         default=8003, validation_alias=AliasChoices("PORT", "API_PORT")
     )
+    PUBLIC_BASE_URL: str = Field(default="", validation_alias="PUBLIC_BASE_URL")
 
     # ── Auth (shared with Server 1) ─────────────────────────────
     SECRET_KEY: str = Field(
@@ -74,6 +92,14 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str = Field(
         default="redis://localhost:6379/2",
         validation_alias="CELERY_RESULT_BACKEND",
+    )
+    CELERY_TASK_TIME_LIMIT: int = Field(
+        default=600,
+        validation_alias="CELERY_TASK_TIME_LIMIT",
+    )
+    CELERY_WORKER_CONCURRENCY: int = Field(
+        default=4,
+        validation_alias="CELERY_WORKER_CONCURRENCY",
     )
 
     # ── Storage paths ───────────────────────────────────────────
@@ -111,6 +137,29 @@ class Settings(BaseSettings):
     AZURE_KIMI_MODEL: str = Field(
         default="Kimi-K2-Thinking",
         validation_alias=AliasChoices("AZURE_KIMI_VERSION_MODEL", "AZURE_KIMI_MODEL"),
+    )
+
+    # T0+: Kimi-K2.6 (Azure) — premium-only strategist + targeted rewriter.
+    # Narrowly used (budgeted per project) because it's the most expensive
+    # model in the stack. Env aliases match the keys already in server4/.env:
+    #   Kimi2.6_endpoint, Kimi2.6_api_key, Kimi2.6_deployment_name
+    AZURE_KIMI26_ENDPOINT: str = Field(
+        default="",
+        validation_alias=AliasChoices("Kimi2.6_endpoint", "AZURE_KIMI26_ENDPOINT"),
+    )
+    AZURE_KIMI26_API_KEY: str = Field(
+        default="",
+        validation_alias=AliasChoices("Kimi2.6_api_key", "AZURE_KIMI26_API_KEY"),
+    )
+    AZURE_KIMI26_DEPLOYMENT: str = Field(
+        default="Kimi-K2.6",
+        validation_alias=AliasChoices(
+            "Kimi2.6_deployment_name", "AZURE_KIMI26_DEPLOYMENT"
+        ),
+    )
+    AZURE_KIMI26_MODEL: str = Field(
+        default="Kimi-K2.6",
+        validation_alias=AliasChoices("Kimi2.6_model_name", "AZURE_KIMI26_MODEL"),
     )
 
     # T0.5: Phi-4-reasoning (Azure) - alternate names
@@ -171,6 +220,20 @@ class Settings(BaseSettings):
     MISTRAL_DEPLOYMENT: str = Field(
         default="mistral-medium-2505",
         validation_alias=AliasChoices("Mistral_deployment_name", "MISTRAL_DEPLOYMENT"),
+    )
+
+    # T2.5: GPT-OSS-120B (Azure) — open-source large-context workhorse
+    GPT_OSS_ENDPOINT: str = Field(
+        default="",
+        validation_alias=AliasChoices("gpt_oss_endpoint", "GPT_OSS_ENDPOINT"),
+    )
+    GPT_OSS_API_KEY: str = Field(
+        default="",
+        validation_alias=AliasChoices("gpt_oss_api_key", "GPT_OSS_API_KEY"),
+    )
+    GPT_OSS_DEPLOYMENT: str = Field(
+        default="gpt-oss-120b",
+        validation_alias=AliasChoices("gpt_oss_deployment_name", "GPT_OSS_DEPLOYMENT"),
     )
 
     # T4: Groq (8-key round-robin, ultra-fast)
@@ -238,10 +301,19 @@ class Settings(BaseSettings):
     AZURE_FLUX_ENDPOINT: str = Field(default="", validation_alias="AZURE_FLUX_ENDPOINT")
     AZURE_FLUX_API_KEY: str = Field(default="", validation_alias="AZURE_FLUX_API_KEY")
     AZURE_FLUX_DEPLOYMENT_NAME: str = Field(
-        default="flux-pro-2", validation_alias="AZURE_FLUX_DEPLOYMENT_NAME"
+        default="FLUX.1-Kontext-pro", validation_alias="AZURE_FLUX_DEPLOYMENT_NAME"
     )
     AZURE_FLUX_VERSION: str = Field(
         default="2024-12-01-preview", validation_alias="AZURE_FLUX_VERSION"
+    )
+
+    # Nvidia Stable Diffusion 3 Medium (free tier)
+    NVIDIA_STABLE_API_KEY: str = Field(
+        default="", validation_alias="Nvidia_stable_api_key"
+    )
+    NVIDIA_STABLE_ENDPOINT: str = Field(
+        default="https://ai.api.nvidia.com/v1/genai/stabilityai/stable-diffusion-3-medium",
+        validation_alias="NVIDIA_STABLE_ENDPOINT",
     )
 
     # ══════════════════════════════════════════════════════════════
@@ -264,10 +336,82 @@ class Settings(BaseSettings):
 
     # AI-powered search
     TAVILY_API_KEY: str = Field(default="", validation_alias="TAVILY_API_KEY")
-    EXA_API_KEY: str = Field(default="", validation_alias="exa.ai_key")
+    # Exa: primary key (lowercase env name) + 3 pooled keys for round-robin.
+    # Old `exa.ai_key` alias kept for backward compat.
+    EXA_API_KEY: str = Field(
+        default="",
+        validation_alias=AliasChoices("exa_ai_key", "exa.ai_key", "EXA_API_KEY"),
+    )
+    EXA_API_KEY_1: str = Field(default="", validation_alias="Exa1_api_key")
+    EXA_API_KEY_2: str = Field(default="", validation_alias="Exa2_api_key")
+    EXA_API_KEY_3: str = Field(default="", validation_alias="Exa3_api_key")
+
     FIRECRAWL_API_KEY: str = Field(default="", validation_alias="firecrawl.dev_key")
-    JINA_API_KEY: str = Field(default="", validation_alias="jina.ai_key")
-    YOU_COM_API_KEY: str = Field(default="", validation_alias="you.com_API")
+
+    # Jina: primary + 1 pooled key
+    JINA_API_KEY: str = Field(
+        default="",
+        validation_alias=AliasChoices("jina_ai_key", "jina.ai_key", "JINA_API_KEY"),
+    )
+    JINA_API_KEY_1: str = Field(default="", validation_alias="Jina1_api_key")
+
+    # You.com: primary + 4 pooled keys
+    YOU_COM_API_KEY: str = Field(
+        default="",
+        validation_alias=AliasChoices("you_com_API", "you.com_API", "YOU_COM_API_KEY"),
+    )
+    YOU_COM_API_KEY_1: str = Field(default="", validation_alias="you_com1_API")
+    YOU_COM_API_KEY_2: str = Field(default="", validation_alias="you_com2_API")
+    YOU_COM_API_KEY_3: str = Field(default="", validation_alias="you_com3_API")
+    YOU_COM_API_KEY_4: str = Field(default="", validation_alias="you_com4_API")
+
+    @property
+    def exa_keys(self) -> list[str]:
+        keys = [
+            self.EXA_API_KEY,
+            self.EXA_API_KEY_1,
+            self.EXA_API_KEY_2,
+            self.EXA_API_KEY_3,
+        ]
+        # De-duplicate while preserving order; strip whitespace from .env values.
+        seen: set[str] = set()
+        out: list[str] = []
+        for k in keys:
+            k = (k or "").strip()
+            if k and k not in seen:
+                seen.add(k)
+                out.append(k)
+        return out
+
+    @property
+    def jina_keys(self) -> list[str]:
+        keys = [self.JINA_API_KEY, self.JINA_API_KEY_1]
+        seen: set[str] = set()
+        out: list[str] = []
+        for k in keys:
+            k = (k or "").strip()
+            if k and k not in seen:
+                seen.add(k)
+                out.append(k)
+        return out
+
+    @property
+    def you_com_keys(self) -> list[str]:
+        keys = [
+            self.YOU_COM_API_KEY,
+            self.YOU_COM_API_KEY_1,
+            self.YOU_COM_API_KEY_2,
+            self.YOU_COM_API_KEY_3,
+            self.YOU_COM_API_KEY_4,
+        ]
+        seen: set[str] = set()
+        out: list[str] = []
+        for k in keys:
+            k = (k or "").strip()
+            if k and k not in seen:
+                seen.add(k)
+                out.append(k)
+        return out
 
     # Financial data
     ALPHA_VANTAGE_API_KEY: str = Field(
@@ -299,12 +443,120 @@ class Settings(BaseSettings):
     YOUTUBE_API_KEY: str = Field(default="", validation_alias="YOUTUBE_API_KEY")
     PRODUCTHUNT_API_KEY: str = Field(default="", validation_alias="PRODUCTHUNT_API_KEY")
 
+    # Scraping / Proxy
+    SCRAPE_DO_API_KEY: str = Field(default="", validation_alias="SCRAPE_DO_API_KEY")
+
+    # Alternative search
+    SEARCH_API_KEY: str = Field(default="", validation_alias="search_api")
+
+    # Crypto & Historical Finance
+    COINDESK_API_KEY: str = Field(
+        default="", validation_alias="coindesk.com_api_key"
+    )
+    EODHD_API_KEY: str = Field(default="", validation_alias="EODHD_API_key")
+
+    # Specialty APIs
+    API_NINJAS_KEY: str = Field(default="", validation_alias="API_NINJAS_KEY")
+    NASA_APOD_API_KEY: str = Field(default="", validation_alias="NASA_APDO_API")
+
     # Academic
     CORE_API_KEY: str = Field(default="", validation_alias="CORE_API_KEY")
+
+    # ── Local Models (HuggingFace T6) ───────────────────────────
+    USE_TINYLLAMA: bool = Field(default=False, validation_alias="USE_TINYLLAMA")
+    USE_FLAN_T5: bool = Field(default=False, validation_alias="USE_FLAN_T5")
+    USE_PHI2: bool = Field(default=False, validation_alias="USE_PHI2")
+    MODEL_DEVICE: str = Field(default="cpu", validation_alias="MODEL_DEVICE")
+    EMBEDDINGS_PATH: str = Field(default="./data/embeddings", validation_alias="EMBEDDINGS_PATH")
 
     # ── Rate Limiting ───────────────────────────────────────────
     RATE_LIMIT_STANDARD: int = Field(default=20)
     RATE_LIMIT_PREMIUM: int = Field(default=100)
+
+    # ── V4 Multi-model Consensus (Plan-v4 Section K) ────────────
+    ENABLE_CONSENSUS: bool = Field(
+        default=True,
+        validation_alias=AliasChoices("V4_ENABLE_CONSENSUS", "ENABLE_CONSENSUS"),
+    )
+    CONSENSUS_STANDARD_BUDGET_S: float = Field(
+        default=15.0, validation_alias="V4_CONSENSUS_STANDARD_BUDGET_S",
+    )
+    CONSENSUS_PREMIUM_BUDGET_S: float = Field(
+        default=25.0, validation_alias="V4_CONSENSUS_PREMIUM_BUDGET_S",
+    )
+
+    # ── V4 Phase 12: Few-shot prompt injection ──────────────────
+    # Appends a curated reference slide example to each writer's user
+    # message so the LLM has a concrete cadence anchor. The anchor is
+    # a clearly-labelled SHAPE reference; the writer system prompt and
+    # the anchor block both forbid copying the example's data.
+    ENABLE_FEW_SHOT_ANCHORS: bool = Field(
+        default=True,
+        validation_alias=AliasChoices(
+            "V4_ENABLE_FEW_SHOT_ANCHORS", "ENABLE_FEW_SHOT_ANCHORS"
+        ),
+    )
+
+    # ── V4 Content-quality gates (Founder replan) ───────────────
+    # Kill-switches so we can disable individual gates in prod without
+    # shipping a new release. All default to ON.
+    ENABLE_CONTENT_RULES_GATE: bool = Field(
+        default=True, validation_alias="V4_ENABLE_CONTENT_RULES_GATE",
+    )
+    ENABLE_TEMPLATE_DETECTOR: bool = Field(
+        default=True, validation_alias="V4_ENABLE_TEMPLATE_DETECTOR",
+    )
+    ENABLE_PROGRESS_LOG: bool = Field(
+        default=True, validation_alias="V4_ENABLE_PROGRESS_LOG",
+    )
+    ENABLE_SCHEMA_GATE: bool = Field(
+        default=True, validation_alias="V4_ENABLE_SCHEMA_GATE",
+    )
+    ENABLE_PROVENANCE_GATE: bool = Field(
+        default=True, validation_alias="V4_ENABLE_PROVENANCE_GATE",
+    )
+    ENABLE_STYLE_GUARD: bool = Field(
+        default=True, validation_alias="V4_ENABLE_STYLE_GUARD",
+    )
+    ENABLE_LAYOUT_RHYTHM_GATE: bool = Field(
+        default=True, validation_alias="V4_ENABLE_LAYOUT_RHYTHM_GATE",
+    )
+    ENABLE_LEARNING_INFLUENCE: bool = Field(
+        default=True, validation_alias="V4_ENABLE_LEARNING_INFLUENCE",
+    )
+    ENABLE_IMAGE_PROMPT_ENRICHMENT: bool = Field(
+        default=True, validation_alias="V4_ENABLE_IMAGE_PROMPT_ENRICHMENT",
+    )
+    ENABLE_STANDARD_ROUTING_EXPERIMENT: bool = Field(
+        default=False, validation_alias="V4_ENABLE_STANDARD_ROUTING_EXPERIMENT",
+    )
+    STANDARD_ROUTING_EXPERIMENT_ROLLOUT_PERCENT: float = Field(
+        default=0.0, validation_alias="V4_STANDARD_ROUTING_EXPERIMENT_ROLLOUT_PERCENT",
+    )
+    QUALITY_GATE_ROLLOUT_PERCENT: float = Field(
+        default=100.0, validation_alias="V4_QUALITY_GATE_ROLLOUT_PERCENT",
+    )
+    QUALITY_METRICS_COLLECTION: str = Field(
+        default="v4_quality_metrics", validation_alias="V4_QUALITY_METRICS_COLLECTION",
+    )
+    ALLOW_POLLINATIONS_IMAGES: bool = Field(
+        default=False, validation_alias="V4_ALLOW_POLLINATIONS_IMAGES",
+    )
+
+    # ── Kimi 2.6 narrow-use budget (Founder replan) ─────────────
+    # Kimi 2.6 is expensive. It only runs for two narrow tasks:
+    #   (a) premium skeleton-planner thesis pass
+    #   (b) critic's targeted rewrite of top-N slides when score < gate
+    # Per-project call-count budget is enforced inside ModelRouter.
+    ENABLE_KIMI26: bool = Field(
+        default=True, validation_alias="V4_ENABLE_KIMI26",
+    )
+    KIMI26_PREMIUM_MAX_CALLS: int = Field(
+        default=3, validation_alias="V4_KIMI26_PREMIUM_MAX_CALLS",
+    )
+    KIMI26_STANDARD_MAX_CALLS: int = Field(
+        default=1, validation_alias="V4_KIMI26_STANDARD_MAX_CALLS",
+    )
 
 
 settings = Settings()

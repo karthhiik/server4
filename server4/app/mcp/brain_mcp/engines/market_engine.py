@@ -36,6 +36,11 @@ class MarketDataEngine:
         if news:
             results["market_news"] = news
 
+        # Try EODHD for macro indicators
+        macro_data = await self._fetch_eodhd_macro(industry)
+        if macro_data:
+            results["macro_indicators"] = macro_data
+
         return results
 
     async def _fetch_fred_data(self, topic: str) -> Optional[dict]:
@@ -125,3 +130,43 @@ class MarketDataEngine:
         except Exception as e:
             logger.warning("finnhub_failed", error=str(e))
         return None
+
+    async def _fetch_eodhd_macro(self, topic: str) -> Optional[dict]:
+        """EODHD macroeconomic indicators.
+
+        Fetches GDP and inflation data from EODHD for the USA.
+        API: https://eodhd.com/api/macro-indicator/{country}
+        """
+        if not settings.EODHD_API_KEY:
+            return None
+
+        indicators = {
+            "gdp": "gdp_current_usd",
+            "inflation": "inflation_consumer_prices_annual",
+            "unemployment": "unemployment_total",
+        }
+
+        try:
+            data = {}
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                for name, indicator in indicators.items():
+                    resp = await client.get(
+                        "https://eodhd.com/api/macro-indicator/USA",
+                        params={
+                            "api_token": settings.EODHD_API_KEY,
+                            "indicator": indicator,
+                            "fmt": "json",
+                        },
+                    )
+                    if resp.status_code == 200:
+                        obs = resp.json()
+                        if isinstance(obs, list) and obs:
+                            latest = obs[-1]
+                            data[name] = {
+                                "value": latest.get("Value"),
+                                "date": latest.get("Date"),
+                            }
+            return data if data else None
+        except Exception as e:
+            logger.warning("eodhd_macro_failed", topic=topic, error=str(e))
+            return None

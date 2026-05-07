@@ -21,11 +21,79 @@ router = APIRouter(prefix="/api/export", tags=["Export"])
 
 SLIDE_COUNT_THRESHOLD = 12
 
+
 # Format → Celery task mapping
 ASYNC_TASK_MAP = {
     ExportFormat.HTML: "export.generate_html",
     ExportFormat.PNG: "export.generate_png",
 }
+
+SYNC_TASK_MAP = {
+    ExportFormat.PPTX: "export.generate_pptx",
+    ExportFormat.PDF: "export.generate_pdf",
+}
+
+CONTENT_TYPE_MAP = {
+    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "pdf": "application/pdf",
+    "html": "text/html",
+    "zip": "application/zip",
+}
+
+
+def _transform_slide_for_export(slide_doc: dict) -> dict:
+    """Transform GeneratedSlide (flat DB format) to builder format (nested content dict).
+
+    The export builders (pptx_builder, pdf_builder) expect slides with:
+    - 'layout' key (string)
+    - 'content' dict with keys: 'title', 'subtitle', 'bullets', 'body_text', etc.
+
+    But DB slides are flat (GeneratedSlide): 'headline', 'body', 'bullets', etc.
+    This function bridges the gap.
+    """
+    # Get layout - use layout_hint from skeleton, or default to 'bullets'
+    layout = slide_doc.get("layout") or slide_doc.get("layout_hint", "bullets")
+
+    # Transform quote dict to separate text/author if needed
+    quote = slide_doc.get("quote")
+    quote_text = ""
+    quote_author = ""
+    if isinstance(quote, dict):
+        quote_text = quote.get("text", "")
+        quote_author = quote.get("author", "")
+    elif isinstance(quote, str):
+        quote_text = quote
+
+    # Transform stat_blocks to metrics format
+    stat_blocks = slide_doc.get("stat_blocks", [])
+    metrics = []
+    for sb in stat_blocks[:4]:
+        if isinstance(sb, dict):
+            metrics.append({"value": sb.get("value", ""), "label": sb.get("label", "")})
+        elif isinstance(sb, str):
+            parts = sb.strip().split(" ", 1)
+            metrics.append({"value": parts[0], "label": parts[1] if len(parts) > 1 else ""})
+
+    return {
+        "layout": layout,
+        "content": {
+            "title": slide_doc.get("headline", ""),
+            "subtitle": slide_doc.get("subheadline", ""),
+            "body_text": slide_doc.get("body", ""),
+            "bullets": slide_doc.get("bullets", []),
+            "quote_text": quote_text,
+            "quote_author": quote_author,
+            "metrics": metrics,
+            "chart_data": slide_doc.get("chart", {}),
+            "table_data": slide_doc.get("table", {}),
+            "timeline_events": slide_doc.get("timeline", {}),
+            "comparison_data": slide_doc.get("comparison", {}),
+            "diagram_data": slide_doc.get("diagram", {}),
+            "image_url": slide_doc.get("image_url", ""),
+            "image_prompt": slide_doc.get("image_prompt", ""),
+        },
+        "speaker_notes": slide_doc.get("speaker_notes", ""),
+    }
 
 SYNC_TASK_MAP = {
     ExportFormat.PPTX: "export.generate_pptx",
@@ -116,8 +184,11 @@ async def _handle_pptx_sync(db, job_id, pres, slides, theme):
     """Generate PPTX synchronously and upload to blob storage."""
     from app.mcp.render_mcp.builders.pptx_builder import PptxBuilder
 
+    # Transform DB slides (GeneratedSlide format) to builder format
+    transformed_slides = [_transform_slide_for_export(s) for s in slides]
+
     builder = PptxBuilder()
-    pptx_bytes = builder.build(slides, theme, _build_metadata(pres))
+    pptx_bytes = builder.build(transformed_slides, theme, _build_metadata(pres))
 
     blob_service = BlobStorageService()
     blob_name = f"exports/{pres['_id']}/presentation.pptx"
@@ -136,8 +207,11 @@ async def _handle_pdf_sync(db, job_id, pres, slides, theme):
     """Generate PDF synchronously and upload to blob storage."""
     from app.mcp.render_mcp.builders.pdf_builder import PdfBuilder
 
+    # Transform DB slides (GeneratedSlide format) to builder format
+    transformed_slides = [_transform_slide_for_export(s) for s in slides]
+
     builder = PdfBuilder()
-    pdf_bytes = builder.build(slides, theme, _build_metadata(pres))
+    pdf_bytes = builder.build(transformed_slides, theme, _build_metadata(pres))
 
     blob_service = BlobStorageService()
     blob_name = f"exports/{pres['_id']}/presentation.pdf"

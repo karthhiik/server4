@@ -6,6 +6,7 @@ Exposes the new multi-agent slide generation system.
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
 
@@ -23,6 +24,7 @@ class GeneratePresentationRequest(BaseModel):
     slide_count: Optional[int] = 10
     writing_style: Optional[str] = "general"
     company_name: Optional[str] = None
+    preset: Optional[str] = "yc_pitch"
 
 
 class GenerateWithFeedbackRequest(GeneratePresentationRequest):

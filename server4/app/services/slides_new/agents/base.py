@@ -1,7 +1,12 @@
 """
-Base Agent Class - Phase 1 Foundation
+Base Agent Class - V7 Phase 2
 All slide generation agents inherit from this base class.
-Provides LLM calling, error handling, logging, and common utilities.
+Provides LLM calling, error handling, logging, Context Board integration, and common utilities.
+
+Updated for Phase 2:
+- Context Board integration for inter-agent communication
+- New Layout and VFX agent types
+- Enhanced execution tracking
 """
 
 import asyncio
@@ -10,25 +15,32 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import structlog
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.services.llm import ModelRouter, TaskType
 
+if TYPE_CHECKING:
+    from app.services.context_board import ContextBoard
+    from app.services.slides_new.agents.protocols import ContextBoardProtocol
+
 logger = structlog.get_logger()
 
 
 class AgentType(str, Enum):
-    """Agent types in the slide generation pipeline"""
+    """Agent types in the slide generation pipeline - V7"""
 
     CEO = "ceo"
     RESEARCHER = "researcher"
     DESIGNER = "designer"
-    ASSEMBLER = "assembler"
+    LAYOUT = "layout"  # NEW in Phase 2
     CODE_AGENT = "code_agent"
+    VFX = "vfx"  # NEW - 3D/VFX Agent
+    ASSEMBLER = "assembler"
     QA = "qa"
+    TEACHER = "teacher"  # Self-learning: evaluates and teaches
 
 
 @dataclass
@@ -43,11 +55,13 @@ class AgentOutput:
     tokens_used: int = 0
     latency_ms: int = 0
     warnings: List[str] = field(default_factory=list)
+    context_board_writes: List[str] = field(default_factory=list)  # V7: Track writes
+    hitl_checkpoint: Optional[Dict[str, Any]] = None  # V7: HITL gate data
 
 
 @dataclass
 class AgentContext:
-    """Shared context passed between agents"""
+    """Shared context passed between agents - V7 Enhanced"""
 
     task_id: str
     user_id: str
@@ -56,20 +70,26 @@ class AgentContext:
     purpose: str
     audience: str
     slide_count: int
-    mode: str
+    mode: str  # "fast" | "standard" | "deep"
     writing_style: str = "general"
     selected_style_preset: Optional[str] = None
     company_name: Optional[str] = None
     custom_theme: Optional[Dict] = None
     previous_outputs: Dict[str, AgentOutput] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
+    # V7 additions
+    fast_mode: bool = False  # Skip HITL gates
+    research_depth: str = "standard"  # "quick" | "standard" | "deep"
+    enable_3d: bool = False  # Whether to use 3D/VFX agent
+    target_renderers: List[str] = field(default_factory=lambda: ["revealjs"])
 
 
 class BaseAgent(ABC):
     """
-    Base class for all slide generation agents.
+    Base class for all slide generation agents - V7 Phase 2.
     Provides:
-    - LLM calling with proper error handling
+    - LLM calling with proper error handling and fallback chains
+    - Context Board integration for inter-agent communication
     - Logging and observability
     - Database access
     - Common utilities
@@ -79,17 +99,64 @@ class BaseAgent(ABC):
     DEFAULT_MODEL = "deepseek-v3"
     FALLBACK_MODELS = ["gpt-4o-mini", "mistral-medium", "cf-qwen"]
 
-    def __init__(self, db: AsyncIOMotorDatabase, context: AgentContext):
+    def __init__(
+        self,
+        db: AsyncIOMotorDatabase,
+        context: AgentContext,
+        context_board: Optional["ContextBoard"] = None,
+    ):
         """
-        Initialize agent with database connection and context.
+        Initialize agent with database connection, context, and optional Context Board.
 
         Args:
             db: MongoDB database instance
             context: Shared context for this generation task
+            context_board: Optional Context Board for inter-agent communication
         """
         self.db = db
         self.context = context
         self.router = ModelRouter.get_instance()
+        self._context_board = context_board
+        self._protocol: Optional["ContextBoardProtocol"] = None
+        self._board_writes: List[str] = []
+        self._start_time: Optional[float] = None
+
+    @property
+    def context_board(self) -> Optional["ContextBoard"]:
+        """Get the Context Board instance"""
+        return self._context_board
+
+    @property
+    def protocol(self) -> Optional["ContextBoardProtocol"]:
+        """Get the Context Board Protocol helper for typed access"""
+        if self._protocol is None and self._context_board is not None:
+            from app.services.slides_new.agents.protocols import ContextBoardProtocol
+            self._protocol = ContextBoardProtocol(self._context_board)
+        return self._protocol
+
+    async def write_to_board(self, key: str, value: Any) -> None:
+        """Write a value to the Context Board with tracking"""
+        if self._context_board is not None:
+            await self._context_board.set(key, value, self.agent_type.value)
+            self._board_writes.append(key)
+            logger.debug(
+                "agent_board_write",
+                agent=self.agent_type.value,
+                key=key,
+                task_id=self.context.task_id,
+            )
+
+    async def read_from_board(self, key: str) -> Optional[Any]:
+        """Read a value from the Context Board"""
+        if self._context_board is not None:
+            return await self._context_board.get(key)
+        return None
+
+    async def get_board_section(self, section: str) -> Dict[str, Any]:
+        """Get all values from a Context Board section"""
+        if self._context_board is not None:
+            return await self._context_board.get_section(section)
+        return {}
 
     @property
     @abstractmethod
@@ -319,37 +386,51 @@ Output clean, structured content that fits each slide layout perfectly."""
 
 
 class AgentFactory:
-    """Factory for creating agents"""
+    """Factory for creating agents - V7 Phase 2"""
 
     _agents = {
         AgentType.CEO: "CEOAgent",
         AgentType.RESEARCHER: "ResearcherAgent",
         AgentType.DESIGNER: "DesignerAgent",
+        AgentType.LAYOUT: "LayoutAgent",  # NEW in Phase 2
         AgentType.ASSEMBLER: "AssemblerAgent",
+        AgentType.CODE_AGENT: "CodeAgent",
+        AgentType.VFX: "VFXAgent",  # NEW in Phase 2
         AgentType.QA: "QAAgent",
+        AgentType.TEACHER: "TeacherAgent",  # Self-learning
     }
 
     @classmethod
     def create(
-        cls, agent_type: AgentType, db: AsyncIOMotorDatabase, context: AgentContext
+        cls,
+        agent_type: AgentType,
+        db: AsyncIOMotorDatabase,
+        context: AgentContext,
+        context_board: Optional["ContextBoard"] = None,
     ) -> BaseAgent:
-        """Create an agent instance"""
+        """Create an agent instance with optional Context Board integration"""
         from app.services.slides_new.agents.ceo_agent import CEOAgent
         from app.services.slides_new.agents.researcher_agent import ResearcherAgent
         from app.services.slides_new.agents.designer_agent import DesignerAgent
+        from app.services.slides_new.agents.layout_agent import LayoutAgent
         from app.services.slides_new.agents.assembler_agent import AssemblerAgent
+        from app.services.slides_new.agents.code_agent import CodeAgent
         from app.services.slides_new.agents.qa_agent import QAAgent
+        from app.services.slides_new.learning.teacher_agent import TeacherAgent
 
         agent_map = {
             AgentType.CEO: CEOAgent,
             AgentType.RESEARCHER: ResearcherAgent,
             AgentType.DESIGNER: DesignerAgent,
+            AgentType.LAYOUT: LayoutAgent,
             AgentType.ASSEMBLER: AssemblerAgent,
+            AgentType.CODE_AGENT: CodeAgent,
             AgentType.QA: QAAgent,
+            AgentType.TEACHER: TeacherAgent,
         }
 
         agent_class = agent_map.get(agent_type)
         if not agent_class:
             raise ValueError(f"Unknown agent type: {agent_type}")
 
-        return agent_class(db, context)
+        return agent_class(db, context, context_board)

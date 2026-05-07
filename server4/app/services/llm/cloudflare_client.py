@@ -8,6 +8,7 @@ Modes:
   - "image":  Image generation workers from pp.py pattern (prompt → raw bytes)
 """
 
+import json
 import time
 from typing import Optional
 
@@ -23,6 +24,58 @@ logger = structlog.get_logger()
 
 class CloudflareWorkerClient(BaseLLMClient):
     """Generic Cloudflare Worker LLM client with mode switching."""
+
+    @staticmethod
+    def _build_text_prompt(messages: list[dict[str, str]], response_format: Optional[dict]) -> str:
+        parts = [f"{m.get('role', 'user').upper()}:\n{m.get('content', '')}" for m in messages]
+        prompt = "\n\n".join(parts)
+        if response_format and response_format.get("type") == "json_object":
+            prompt += (
+                "\n\nSTRICT OUTPUT CONTRACT:\n"
+                "Return ONLY one valid JSON object. No prose. No markdown fences. "
+                "The first character must be { and the last character must be }."
+            )
+        return prompt
+
+    @staticmethod
+    def _extract_first_json_object(text: str) -> Optional[str]:
+        start = text.find("{")
+        if start == -1:
+            return None
+
+        depth = 0
+        in_string = False
+        escaped = False
+        for idx in range(start, len(text)):
+            ch = text[idx]
+            if escaped:
+                escaped = False
+                continue
+            if ch == "\\":
+                escaped = True
+                continue
+            if ch == '"':
+                in_string = not in_string
+                continue
+            if in_string:
+                continue
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    return text[start:idx + 1]
+        return None
+
+    @classmethod
+    def _normalize_json_content(cls, content: str) -> str:
+        try:
+            return json.dumps(json.loads(content), ensure_ascii=False)
+        except Exception:
+            extracted = cls._extract_first_json_object(content)
+            if not extracted:
+                raise ValueError("Cloudflare text worker did not return a valid JSON object")
+            return json.dumps(json.loads(extracted), ensure_ascii=False)
 
     def __init__(self, name: str, worker_url: str, token: str, mode: str = "openai"):
         self.name = name
@@ -47,7 +100,7 @@ class CloudflareWorkerClient(BaseLLMClient):
         # Build payload based on mode
         if self.mode == "text":
             # pp.py pattern: flatten messages to single prompt string
-            prompt = "\n".join(m["content"] for m in messages)
+            prompt = self._build_text_prompt(messages, response_format)
             payload = {"message": prompt}
         else:
             # OpenAI-compatible format
@@ -56,6 +109,8 @@ class CloudflareWorkerClient(BaseLLMClient):
                 "temperature": temperature,
                 "max_tokens": max_tokens,
             }
+            if response_format:
+                payload["response_format"] = response_format
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(
@@ -80,6 +135,8 @@ class CloudflareWorkerClient(BaseLLMClient):
                 or data.get("output")
                 or str(data)
             )
+            if response_format and response_format.get("type") == "json_object":
+                content = self._normalize_json_content(content)
         else:
             # OpenAI-compatible or unknown format
             content = ""
@@ -157,6 +214,15 @@ def create_cf_gemma_client() -> CloudflareWorkerClient:
         settings.CF_WORKER_GEMMA_URL,
         settings.CF_WORKER_GEMMA_TOKEN,
         mode="text",
+    )
+
+
+def create_cf_phoenix_client() -> CloudflareWorkerClient:
+    return CloudflareWorkerClient(
+        "cf-phoenix",
+        settings.CF_WORKER_PHOENIX_URL,
+        settings.CF_WORKER_PHOENIX_TOKEN,
+        mode="image",
     )
 
 

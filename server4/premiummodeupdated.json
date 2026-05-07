@@ -1,0 +1,83 @@
+{
+  "mode": "premium",
+  "status": "success",
+  "project_id": "test_premium_001",
+  "query": "Create an investor pitch deck for a revolutionary AI-powered cyber-insurance platform that also explores space technology applications",
+  "skeleton": {
+    "title": "CyberSpace AI Investor Pitch",
+    "narrative_arc": "investor_pitch",
+    "slide_count": 10,
+    "slides": [
+      {
+        "index": 0,
+        "intent": "title",
+        "headline_target": "CyberSpace AI Investor Pitch",
+        "layout_hint": "title-only",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 1,
+        "intent": "problem",
+        "headline_target": "Defining the Pain at CyberSpace AI",
+        "layout_hint": "two-column",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 2,
+        "intent": "solution",
+        "headline_target": "How We Solve It at CyberSpace AI",
+        "layout_hint": "two-column",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 3,
+        "intent": "unique_advantage",
+        "headline_target": "Our Unique Value Proposition",
+        "layout_hint": "two-column",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 4,
+        "intent": "how_it_works",
+        "headline_target": "How It Works in 3 Steps",
+        "layout_hint": "diagram",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 5,
+        "intent": "market",
+        "headline_target": "Quantifying the Market Opportunity",
+        "layout_hint": "stat-hero",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 6,
+        "intent": "traction",
+        "headline_target": "Proving Momentum",
+        "layout_hint": "stat-hero",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 7,
+        "intent": "business_model",
+        "headline_target": "How We Make Money",
+        "layout_hint": "two-column",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 8,
+        "intent": "competition",
+        "headline_target": "Our Competitive Advantage",
+        "layout_hint": "comparison",
+        "thesis_sentence": ""
+      },
+      {
+        "index": 9,
+        "intent": "team",
+        "headline_target": "Why This Team Wins",
+        "layout_hint": "team-grid",
+        "thesis_sentence": ""
+      }
+    ]
+  }
+}

@@ -8,6 +8,7 @@ Usage:
 """
 
 import argparse
+import os
 import sys
 import uvicorn
 
@@ -25,6 +26,11 @@ def main():
     )
     args = parser.parse_args()
 
+    # Always run from server4 directory so "main:app" resolves correctly
+    import pathlib
+    server4_root = pathlib.Path(__file__).resolve().parent
+    os.chdir(server4_root)
+
     print(f"\n{'=' * 60}")
     print(f"  Barise Presentation Service (Server4)")
     print(f"  URL: http://{args.host}:{args.port}")
@@ -33,12 +39,15 @@ def main():
     print(f"  Mode: {'production' if args.prod else 'development (auto-reload)'}")
     print(f"{'=' * 60}\n")
 
+    # Reload only server4 files, not the entire workspace
+    reload_dirs = [str(server4_root / "app"), str(server4_root)]
+
     uvicorn.run(
         "main:app",
         host=args.host,
         port=args.port,
         reload=not args.prod,
-        reload_dirs=["app", "."],
+        reload_dirs=reload_dirs,
         log_level="info",
         access_log=True,
     )

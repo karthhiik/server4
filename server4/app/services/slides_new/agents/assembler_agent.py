@@ -65,12 +65,36 @@ class AssemblerAgent(BaseAgent):
         researcher_output = self.context.previous_outputs.get(AgentType.RESEARCHER)
         designer_output = self.context.previous_outputs.get(AgentType.DESIGNER)
 
-        if not ceo_output or not researcher_output or not designer_output:
+        # FIX: Allow assembly with partial outputs (designer might have failed)
+        if not ceo_output:
             return AgentOutput(
                 success=False,
                 agent_type=self.agent_type,
                 output={},
-                errors=["One or more agent outputs missing"],
+                errors=["CEO Agent output missing - cannot assemble slides"],
+            )
+
+        # If researcher or designer failed, create fallback data
+        research = []
+        design = []
+
+        if researcher_output and researcher_output.success:
+            research = researcher_output.output.get("research_items", [])
+        else:
+            self.log_progress(
+                "Researcher output missing/failed - using fallback research",
+                level="warning",
+            )
+
+        if designer_output and designer_output.success:
+            design = designer_output.output.get("slide_specs", [])
+        else:
+            self.log_progress(
+                "Designer output missing/failed - using fallback design",
+                level="warning",
+            )
+            design = self._generate_fallback_design(
+                ceo_output.output.get("structure", [])
             )
 
         structure = ceo_output.output.get("structure", [])
@@ -166,6 +190,10 @@ class AssemblerAgent(BaseAgent):
         design: Dict,
     ) -> Dict[str, Any]:
         """Generate final content for a single slide"""
+
+        design_json = json.dumps(design) if design else "{}"
+        research_json = json.dumps(research) if research else "{}"
+
         prompt = f"""Generate final slide content for slide {slide_index}.
 
 SLIDE DETAILS:
@@ -174,37 +202,15 @@ SLIDE DETAILS:
 - Purpose: {purpose}
 
 RESEARCH DATA:
-{json.dumps(research, indent=2)}
+{research_json}
 
 DESIGN SPEC:
-{json.dumps(design, indent=2)}
+{design_json}
 
 TOPIC: {self.context.topic}
 DESCRIPTION: {self.context.description}
 
-Provide final slide JSON:
-{{
-  "index": {slide_index},
-  "title": "{title}",
-  "layout": "{layout}",
-  "purpose": "{purpose}",
-  "content": {{
-    "headline": "compelling headline if needed",
-    "bullets": ["point 1", "point 2", "point 3"],
-    "data": {research.get("data_points", [])},
-    "chart": {{"type": "bar", "data": []}},
-    "quote": {{"text": "", "author": ""}}
-  }},
-  "design": {{
-    "background": {design.get("background", {{}})},
-    "heading": {design.get("heading", {{}})},
-    "body": {design.get("body", {{}})},
-    "accent": {design.get("accent", {{}})}
-  }},
-  "animation": {{"type": "fade", "duration": 0.5}},
-  "notes": "speaker notes for this slide"
-}}
-
+Provide final slide JSON with: index, title, layout, purpose, content (headline, bullets, data, chart, quote), design, animation, notes.
 Respond with ONLY valid JSON."""
 
         result = await self.call_llm_json(
@@ -212,7 +218,7 @@ Respond with ONLY valid JSON."""
             prompt=prompt,
             temperature=0.4,
             max_tokens=2500,
-            system_prompt="You are a presentation content specialist. Generate polished, presentation-ready content. Make bullets concise, data specific, and content compelling. Match the design system provided.",
+            system_prompt="You are a presentation content specialist. Generate polished, presentation-ready content. Make bullets concise, data specific, and content compelling.",
         )
 
         if result.success:
@@ -271,3 +277,44 @@ Respond with ONLY valid JSON."""
                 },
             },
         }
+
+    def _generate_fallback_design(self, structure: List[Dict]) -> List[Dict]:
+        """Generate fallback design specs when Designer Agent fails"""
+        default_colors = {
+            "primary": "#1A1A2E",
+            "secondary": "#16213E",
+            "accent": "#E94560",
+            "background": "#0A0A0F",
+            "text": "#F3F4F6",
+            "muted": "#6B7280",
+        }
+
+        fallback_design = []
+        for slide in structure:
+            slide_index = slide.get("index", 0)
+            layout = slide.get("layout", "bullets")
+
+            fallback_design.append(
+                {
+                    "slide_index": slide_index,
+                    "layout": layout,
+                    "background": {
+                        "type": "gradient-linear",
+                        "colors": ["#1A1A2E", "#E94560"],
+                        "angle": 135,
+                    },
+                    "heading": {
+                        "color": default_colors["primary"],
+                        "font": "DM Sans",
+                    },
+                    "body": {
+                        "color": default_colors["text"],
+                        "font": "Inter",
+                    },
+                    "accent": {"color": default_colors["accent"]},
+                    "surface_style": "glass",
+                    "shadow_level": "card",
+                }
+            )
+
+        return fallback_design

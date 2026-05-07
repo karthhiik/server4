@@ -1,0 +1,2 @@
+D:\Python programming fies\Lib\site-packages\motor\core.py:171: UserWarning: You appear to be connected to a CosmosDB cluster. For more information regarding feature compatibility and support please visit https://www.mongodb.com/supportability/cosmosdb
+  delegate = self.__delegate_class__(*args, **kwargs)

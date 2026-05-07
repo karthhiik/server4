@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Optional
 
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas
+from azure.storage.blob import BlobSasPermissions, ContentSettings, generate_blob_sas
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 
 from app.config import settings
@@ -72,7 +72,7 @@ class BlobStorageService:
         blob_client = container.get_blob_client(blob_name)
         await blob_client.upload_blob(
             file_data,
-            content_settings={"content_type": content_type},
+            content_settings=ContentSettings(content_type=content_type),
             overwrite=True,
         )
 

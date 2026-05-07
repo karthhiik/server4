@@ -1,10 +1,17 @@
 """
-CEO Agent - Strategy & Presentation Structure
-Agent 1: Creates presentation strategy, determines archetype, creates structured outline.
+CEO Agent — V7 Phase 2
+Agent 1: Strategic planning for presentations.
+
+Creates presentation strategy, determines archetype, creates structured outline.
+Uses Kimi-K2-Thinking for deep reasoning about narrative structure.
+
+Writes to Context Board: strategy section
 """
 
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
+
+import structlog
 
 from app.services.llm import TaskType
 from app.services.slides_new.agents.base import (
@@ -13,19 +20,32 @@ from app.services.slides_new.agents.base import (
     AgentType,
     AgentContext,
 )
+from app.services.slides_new.agents.protocols import (
+    StrategyData,
+    ArchetypeType,
+    WritingStyle,
+    SlideStructure,
+)
+
+if TYPE_CHECKING:
+    from app.services.context_board import ContextBoard
+
+logger = structlog.get_logger()
 
 
 class CEOAgent(BaseAgent):
     """
-    Agent 1: Strategic planning for presentations.
+    Agent 1: Strategic planning for presentations - V7 Phase 2.
 
     Responsibilities:
     - Determine presentation archetype (YC seed, Series A, consulting, etc.)
     - Create structured slide outline with layouts
     - Define narrative arc and writing style
     - Set purpose and audience context
+    - Write strategy to Context Board
+    - Support HITL checkpoint for narrative approval
 
-    Uses YC/Sequoia pitch deck best practices for investor presentations.
+    Uses Kimi-K2-Thinking for deep reasoning about narrative structure.
     """
 
     DEFAULT_MODEL = "kimi-k2-thinking"
@@ -213,11 +233,14 @@ class CEOAgent(BaseAgent):
         Steps:
         1. Determine archetype based on purpose/audience
         2. Get template structure
-        3. Generate detailed outline with AI
-        4. Determine writing style
-        5. Return strategy output
+        3. Generate detailed outline with AI (using Kimi-K2-Thinking)
+        4. Generate narrative arc and key message
+        5. Determine writing style
+        6. Build strategy and write to Context Board
+        7. Prepare HITL checkpoint data (if not in fast mode)
         """
         self.log_progress("Starting CEO Agent execution")
+        self._board_writes = []
 
         # Step 1: Determine archetype
         archetype = self._determine_archetype(
@@ -232,34 +255,195 @@ class CEOAgent(BaseAgent):
         )
 
         # Step 3: Generate detailed outline with AI
+        target_count = self.context.slide_count or 10
         outline = await self._generate_detailed_outline(
-            archetype=archetype, template=template
+            archetype=archetype, template=template, target_count=target_count
         )
 
         # If outline generation failed, use template structure
         if not outline:
             outline = template["slides"]
 
-        # Step 4: Determine writing style
-        writing_style = self.WRITING_STYLES.get(archetype, "general")
+        # Step 3b: Adapt outline to exact user-requested count
+        outline = self._adapt_outline_to_count(outline, target_count)
 
-        # Step 5: Build strategy output
-        strategy = {
+        # Step 4: Generate narrative arc and key message
+        narrative_result = await self._generate_narrative_arc(archetype, outline)
+        narrative_arc = narrative_result.get("narrative_arc", "Standard presentation flow")
+        key_message = narrative_result.get("key_message", self.context.topic)
+
+        # Step 5: Determine writing style
+        writing_style_str = self.WRITING_STYLES.get(archetype, "general")
+        try:
+            writing_style = WritingStyle(writing_style_str)
+        except ValueError:
+            writing_style = WritingStyle.GENERAL
+
+        # Step 6: Build strategy data
+        try:
+            archetype_enum = ArchetypeType(archetype)
+        except ValueError:
+            archetype_enum = ArchetypeType.SALES
+
+        strategy_data = StrategyData(
+            archetype=archetype_enum,
+            archetype_name=template["name"],
+            narrative_arc=narrative_arc,
+            target_audience=self.context.audience,
+            writing_style=writing_style,
+            slide_count=target_count,
+            structure=outline,
+            key_message=key_message,
+            success_criteria=self._get_success_criteria(archetype),
+        )
+
+        # Step 7: Write to Context Board
+        if self.protocol:
+            await self.protocol.write_strategy(strategy_data, agent="ceo")
+            self._board_writes.extend([
+                "strategy.archetype",
+                "strategy.archetype_name",
+                "strategy.narrative_arc",
+                "strategy.target_audience",
+                "strategy.writing_style",
+                "strategy.slide_count",
+                "strategy.structure",
+                "strategy.key_message",
+            ])
+
+        # Step 8: Prepare HITL checkpoint (if not fast mode)
+        hitl_checkpoint = None
+        if not self.context.fast_mode:
+            hitl_checkpoint = {
+                "gate": "narrative_approval",
+                "data": {
+                    "archetype": archetype,
+                    "archetype_name": template["name"],
+                    "slide_count": target_count,
+                    "outline_preview": outline[:5],  # First 5 slides for preview
+                    "narrative_arc": narrative_arc,
+                    "key_message": key_message,
+                },
+                "awaiting_approval": True,
+            }
+
+        # Build output dict for backwards compatibility
+        strategy_dict = {
             "archetype": archetype,
             "archetype_name": template["name"],
-            "slide_count": len(outline),
+            "slide_count": target_count,
             "structure": outline,
-            "writing_style": writing_style,
+            "writing_style": writing_style_str,
             "purpose": self.context.purpose,
             "audience": self.context.audience,
             "topic": self.context.topic,
+            "narrative_arc": narrative_arc,
+            "key_message": key_message,
         }
 
         self.log_progress(f"Strategy created with {len(outline)} slides")
 
         return AgentOutput(
-            success=True, agent_type=self.agent_type, output=strategy, warnings=[]
+            success=True,
+            agent_type=self.agent_type,
+            output=strategy_dict,
+            context_board_writes=self._board_writes,
+            hitl_checkpoint=hitl_checkpoint,
         )
+
+    async def _generate_narrative_arc(
+        self, archetype: str, outline: List[Dict]
+    ) -> Dict[str, str]:
+        """
+        Generate the narrative arc and key message using AI.
+        Uses deep reasoning for compelling storytelling.
+        """
+        slide_titles = [s.get("title", s.get("purpose", "")) for s in outline]
+
+        prompt = f"""Analyze this presentation structure and create a compelling narrative arc.
+
+PRESENTATION TYPE: {archetype}
+TOPIC: {self.context.topic}
+DESCRIPTION: {self.context.description}
+AUDIENCE: {self.context.audience}
+PURPOSE: {self.context.purpose}
+
+SLIDE TITLES/PURPOSES:
+{json.dumps(slide_titles, indent=2)}
+
+## THINK STEP BY STEP:
+1. Identify the single transformative insight this presentation must convey.
+2. Define the emotional journey: curiosity → tension → relief → conviction → action.
+3. Map each slide to one stage of that journey.
+4. Verify the "bar test": could you explain the key message in one sentence at a noisy bar?
+5. Check the "so what?" test: after every claim, ask "so what?" — the arc must answer it.
+
+## NARRATIVE FRAMEWORKS (pick the best fit):
+- **Problem-Solution-Proof**: Pain → Fix → Evidence → Ask (best for YC/seed)
+- **Situation-Complication-Resolution**: Status quo → Disruption → Our answer (best for consulting)
+- **Before-After-Bridge**: World without us → World with us → How we bridge it (best for sales)
+- **Hero's Journey**: Challenge → Discovery → Transformation → Return with proof (best for product launch)
+
+Create a JSON response with:
+{{
+  "narrative_arc": "A 2-3 sentence description of the story flow. Start with [hook], build through [problem/opportunity], [solution], [evidence], and end with [call to action].",
+  "key_message": "The single most important takeaway in one sentence. This is what the audience should remember.",
+  "emotional_journey": ["curiosity", "tension", "relief", "conviction", "action"],
+  "framework_used": "problem-solution-proof|situation-complication-resolution|before-after-bridge|heros-journey"
+}}
+
+Make it compelling and specific to the topic, not generic.
+If you cannot determine a compelling arc from the slides, state why and propose a reordering.
+Respond with ONLY valid JSON."""
+
+        result = await self.call_llm_json(
+            task_type=TaskType.OUTLINE_PLANNING,
+            prompt=prompt,
+            temperature=0.5,
+            max_tokens=800,
+            system_prompt="You are a master storyteller and pitch strategist who has coached 500+ YC founders and designed decks that raised $2B+ collectively. You think in narrative arcs, not bullet points. Every presentation is a story — your job is to find the emotional spine. Apply the 'Pixar pitch' structure: Once upon a time → Every day → One day → Because of that → Until finally.",
+        )
+
+        if result.success and isinstance(result.output, dict):
+            return result.output
+
+        return {
+            "narrative_arc": f"Introduction → Problem → Solution → Evidence → Call to Action",
+            "key_message": self.context.topic,
+        }
+
+    def _get_success_criteria(self, archetype: str) -> List[str]:
+        """Get success criteria based on archetype"""
+        criteria_map = {
+            "yc_seed": [
+                "Clear one-liner value proposition",
+                "Quantified problem with market size",
+                "Unique insight or solution differentiation",
+                "Early traction or validation signals",
+                "Credible team-market fit",
+            ],
+            "series_a": [
+                "Strong product-market fit evidence",
+                "Clear unit economics",
+                "Scalable go-to-market strategy",
+                "Competitive moat articulation",
+                "Experienced team with execution track record",
+            ],
+            "consulting": [
+                "Clear problem definition",
+                "Data-driven insights",
+                "Actionable recommendations",
+                "Implementation roadmap",
+                "Risk mitigation plan",
+            ],
+            "sales": [
+                "Pain point resonance",
+                "Clear ROI articulation",
+                "Social proof/testimonials",
+                "Easy next steps",
+            ],
+        }
+        return criteria_map.get(archetype, ["Clear message", "Compelling visuals", "Strong call to action"])
 
     def _determine_archetype(self, purpose: str, audience: str) -> str:
         """
@@ -318,14 +502,83 @@ class CEOAgent(BaseAgent):
         # Default to sales deck
         return "sales"
 
+    # ---- Supplementary slide topics for extending outlines beyond template size ----
+    SUPPLEMENTARY_SLIDE_POOL = [
+        {"layout": "bullets", "purpose": "Why Now - Market Timing"},
+        {"layout": "chart", "purpose": "Case Study / Success Story"},
+        {"layout": "two-column", "purpose": "Go-to-Market Strategy"},
+        {"layout": "kpi-dashboard", "purpose": "Key Performance Metrics"},
+        {"layout": "bullets", "purpose": "Product Demo / Features Deep Dive"},
+        {"layout": "comparison", "purpose": "Competitive Landscape"},
+        {"layout": "timeline", "purpose": "Product Roadmap"},
+        {"layout": "chart", "purpose": "Financial Projections"},
+        {"layout": "bullets", "purpose": "Partnerships & Ecosystem"},
+        {"layout": "quote", "purpose": "Customer Testimonial"},
+        {"layout": "bullets", "purpose": "Risk Analysis & Mitigation"},
+        {"layout": "chart", "purpose": "Unit Economics"},
+        {"layout": "two-column", "purpose": "Market Expansion Plans"},
+        {"layout": "bullets", "purpose": "Technology Architecture"},
+        {"layout": "kpi-dashboard", "purpose": "Operational Metrics"},
+        {"layout": "bullets-with-image", "purpose": "User Journey"},
+        {"layout": "bullets", "purpose": "Appendix"},
+    ]
+
+    def _adapt_outline_to_count(
+        self, outline: List[Dict], target_count: int
+    ) -> List[Dict]:
+        """
+        Adapt an outline to the exact number requested by the user.
+
+        - If outline is longer: keep title (first) and ask/close (last), trim middle.
+        - If outline is shorter: extend with supplementary slides.
+        - Always re-index afterwards.
+        """
+        if len(outline) == target_count:
+            return outline
+
+        if len(outline) > target_count:
+            # Keep first slide (title) and last slide (ask/close),
+            # pick the strongest middle slides to fill the gap.
+            if target_count <= 1:
+                outline = outline[:target_count]
+            elif target_count == 2:
+                outline = [outline[0], outline[-1]]
+            else:
+                middle_budget = target_count - 2
+                outline = [outline[0]] + outline[1:-1][:middle_budget] + [outline[-1]]
+        else:
+            # Need more slides — pull from supplementary pool
+            used_purposes = {s.get("purpose", "").lower() for s in outline}
+            pool = [
+                s
+                for s in self.SUPPLEMENTARY_SLIDE_POOL
+                if s["purpose"].lower() not in used_purposes
+            ]
+            # Insert supplementary slides before the last slide (ask/close)
+            insert_pos = max(len(outline) - 1, 0)
+            needed = target_count - len(outline)
+            for i in range(needed):
+                slide = pool[i % len(pool)] if pool else {
+                    "layout": "bullets",
+                    "purpose": f"Additional Content {i + 1}",
+                }
+                outline.insert(insert_pos + i, dict(slide))
+
+        # Re-index all slides
+        for idx, slide in enumerate(outline):
+            slide["index"] = idx
+
+        return outline
+
     async def _generate_detailed_outline(
-        self, archetype: str, template: Dict
+        self, archetype: str, template: Dict, target_count: int = 10
     ) -> List[Dict]:
         """
         Generate detailed slide outline using AI.
 
         Creates specific, non-generic slide titles and purposes
         based on the topic and presentation type.
+        Instructs the LLM to produce exactly `target_count` slides.
         """
         prompt = f"""Create a detailed outline for a {self.ARCHETYPE_TEMPLATES[archetype]["name"]} presentation.
 
@@ -333,6 +586,23 @@ TOPIC: {self.context.topic}
 DESCRIPTION: {self.context.description}
 AUDIENCE: {self.context.audience}
 PURPOSE: {self.context.purpose}
+SLIDE COUNT: Generate EXACTLY {target_count} slides. Not more, not fewer.
+
+## THINK STEP BY STEP:
+1. What is the ONE thing the audience must believe after this presentation?
+2. What evidence would make a skeptic believe it?
+3. What is the logical order to build that belief?
+4. Which slides are "foundation" (must come first) vs "payoff" (earn the ask)?
+5. Where does the audience's attention peak? Place your strongest content there.
+
+## YC/SEQUOIA PITCH DECK PRINCIPLES:
+- Slide 1 must pass the "5-second test": can someone understand your company in 5 seconds?
+- Problem slide: quantify the pain ($X lost, Y hours wasted, Z% failure rate)
+- Solution slide: show, don't tell — product screenshots > descriptions
+- Market slide: bottom-up TAM only (# customers × price point), never top-down handwaving
+- Traction slide: show velocity (MoM growth), not just totals
+- Team slide: why THIS team for THIS problem — domain expertise > pedigree
+- Ask slide: specific amount, specific use of funds, specific milestone it unlocks
 
 For each slide provide (as JSON array):
 - index: slide number (0-based)
@@ -355,7 +625,7 @@ Respond with ONLY valid JSON array, no explanation."""
             prompt=prompt,
             temperature=0.4,
             max_tokens=2500,
-            system_prompt="You are an expert pitch deck strategist. Create specific, compelling slide titles that grab investor attention. Avoid generic titles. Use numbers, specific claims, and clear value propositions.",
+            system_prompt="You are an expert pitch deck strategist who has reviewed 10,000+ decks for YC, Sequoia, and a16z. You know that the best decks have: (1) specific titles with numbers, not generic labels, (2) a clear 'aha moment' by slide 3, (3) data that makes the market feel inevitable, and (4) an ask that feels like a privilege, not a request. Create titles that a founder would be proud to present. Avoid corporate jargon. Write like a human, not a committee.",
         )
 
         if result.success:

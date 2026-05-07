@@ -1,0 +1,104 @@
+﻿..................                                                       [100%]
+============================== warnings summary ===============================
+app\models\presentation.py:49
+  D:\Desktop\New_Flask\FLASK\server4\app\models\presentation.py:49: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class PresentationInDB(BaseModel):
+
+app\models\slide.py:50
+  D:\Desktop\New_Flask\FLASK\server4\app\models\slide.py:50: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class SlideInDB(BaseModel):
+
+app\models\slide.py:90
+  D:\Desktop\New_Flask\FLASK\server4\app\models\slide.py:90: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class SlideVersionInDB(BaseModel):
+
+app\models\template.py:25
+  D:\Desktop\New_Flask\FLASK\server4\app\models\template.py:25: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class TemplateInDB(BaseModel):
+
+app\models\theme.py:36
+  D:\Desktop\New_Flask\FLASK\server4\app\models\theme.py:36: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class ThemeInDB(BaseModel):
+
+app\models\render.py:30
+  D:\Desktop\New_Flask\FLASK\server4\app\models\render.py:30: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    class ExportJobInDB(BaseModel):
+
+app\models\generation_input_v4.py:129
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:129: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    strengths: Optional[list[str]] = Field(default=None, max_items=5)
+
+app\models\generation_input_v4.py:130
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:130: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    weaknesses: Optional[list[str]] = Field(default=None, max_items=5)
+
+app\models\generation_input_v4.py:136
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:136: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    key_milestones: Optional[list[str]] = Field(default=None, max_items=10, description="Timeline milestones")
+
+app\models\generation_input_v4.py:137
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:137: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    notable_customers: Optional[list[str]] = Field(default=None, max_items=20, description="Customer names or logos")
+
+app\models\generation_input_v4.py:138
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:138: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    partnerships: Optional[list[str]] = Field(default=None, max_items=10)
+
+app\models\generation_input_v4.py:139
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:139: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    press_mentions: Optional[list[str]] = Field(default=None, max_items=10)
+
+app\models\generation_input_v4.py:140
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:140: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    awards: Optional[list[str]] = Field(default=None, max_items=10)
+
+app\models\generation_input_v4.py:151
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:151: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    notable_credentials: Optional[list[str]] = Field(default=None, max_items=5, description="e.g. 'Ex-Google', 'YC W21'")
+
+app\models\generation_input_v4.py:158
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:158: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    use_of_funds: Optional[list[str]] = Field(default=None, max_items=8, description="How capital will be deployed")
+
+app\models\generation_input_v4.py:160
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:160: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    previous_investors: Optional[list[str]] = Field(default=None, max_items=10)
+
+app\models\generation_input_v4.py:171
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:171: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    sources: Optional[list[str]] = Field(default=None, max_items=5, description="Data sources for market claims")
+
+app\models\generation_input_v4.py:222
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:222: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    include_slides: Optional[list[str]] = Field(
+
+app\models\generation_input_v4.py:226
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:226: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    exclude_slides: Optional[list[str]] = Field(
+
+app\models\generation_input_v4.py:230
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:230: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    emphasis: Optional[list[str]] = Field(
+
+app\models\generation_input_v4.py:234
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:234: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    tone_keywords: Optional[list[str]] = Field(
+
+app\models\generation_input_v4.py:238
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:238: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    key_messages: Optional[list[str]] = Field(
+
+app\models\generation_input_v4.py:242
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:242: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    avoid_topics: Optional[list[str]] = Field(
+
+app\models\generation_input_v4.py:337
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:337: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    competitors: Optional[list[CompetitorEntry]] = Field(default=None, max_items=10)
+
+app\models\generation_input_v4.py:339
+  D:\Desktop\New_Flask\FLASK\server4\app\models\generation_input_v4.py:339: PydanticDeprecatedSince20: `max_items` is deprecated and will be removed, use `max_length` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    team: Optional[list[TeamMember]] = Field(default=None, max_items=20)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+18 passed, 335 deselected, 25 warnings in 4.99s

@@ -1,0 +1,4016 @@
+[
+  {
+    "id": "STD-1",
+    "label": "Standard / clear B2B SaaS pitch",
+    "status": "PASS",
+    "mode": "standard",
+    "user_query": "Create a 10-slide pitch deck for Northwind AI, a B2B SaaS that uses agentic LLM workflows to automate enterprise procurement. Target audience is seed-stage VCs. Series-Seed raise of $3M.",
+    "user_slide_types": null,
+    "target_slide_count": 8,
+    "started_at": "2026-04-17T18:49:21.650907+00:00",
+    "duration_ms_total": 232946,
+    "stage_durations_ms": {
+      "research": 7401,
+      "skeleton": 2723,
+      "writers": 179280,
+      "critic": 40723
+    },
+    "deck_title": "Northwind AI Series-Seed Raise",
+    "narrative_arc": "Problem-Solution-Benefit",
+    "skeleton": {
+      "n_slides": 8,
+      "intents": [
+        "Introduction",
+        "Problem Statement",
+        "Solution Overview",
+        "Market Opportunity",
+        "Competitive Landscape",
+        "Traction and Milestones",
+        "Business Model",
+        "Team and Operations"
+      ],
+      "layouts_planned": [
+        "logo-image",
+        "text-bullets",
+        "diagram-image",
+        "stats-graph",
+        "competitive-matrix",
+        "timeline-image",
+        "revenue-projection",
+        "team-photos"
+      ],
+      "density_targets": [
+        "low",
+        "medium",
+        "medium",
+        "medium",
+        "medium",
+        "medium",
+        "medium",
+        "low"
+      ]
+    },
+    "research": {
+      "n_citations": 1,
+      "n_news": 0,
+      "duration_ms": 7401,
+      "cache_hit": false,
+      "sources_used": [
+        "tavily"
+      ],
+      "top_5_citations": [
+        {
+          "title": "YC Graveyard",
+          "source": "tavily",
+          "url": "https://ycgraveyard.iamwillwang.com/",
+          "authority": 0.5
+        }
+      ],
+      "has_financial": false,
+      "has_social": false
+    },
+    "critic": {
+      "overall": 7.93,
+      "needs_rewrite_indices": [],
+      "slide_scores": [
+        {
+          "index": 0,
+          "overall": 7.96,
+          "narrative_fit": 7.75,
+          "specificity": 6.0,
+          "variety": 9.5,
+          "density_compliance": 9.75,
+          "coherence": 7.75,
+          "issues": [
+            "Generic claims with no numbers or specific entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 1,
+          "overall": 7.94,
+          "narrative_fit": 8.5,
+          "specificity": 5.0,
+          "variety": 9.5,
+          "density_compliance": 9.75,
+          "coherence": 8.0,
+          "issues": [
+            "Generic claims with no numbers or specific entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 2,
+          "overall": 8.29,
+          "narrative_fit": 8.5,
+          "specificity": 6.25,
+          "variety": 9.5,
+          "density_compliance": 9.75,
+          "coherence": 8.25,
+          "issues": [
+            "Specificity reduced due to lack of concrete numbers or named entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 3,
+          "overall": 7.74,
+          "narrative_fit": 7.75,
+          "specificity": 5.25,
+          "variety": 9.5,
+          "density_compliance": 9.75,
+          "coherence": 7.5,
+          "issues": [
+            "Generic, vague claims with no numbers or specific entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 4,
+          "overall": 7.66,
+          "narrative_fit": 7.5,
+          "specificity": 5.75,
+          "variety": 9.0,
+          "density_compliance": 9.75,
+          "coherence": 7.25,
+          "issues": [
+            "Adjacent slide (3 & 4) have same text-bullet-like intent and similar generic content, reducing variety.",
+            "Generic claims with no numbers or specific entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 5,
+          "overall": 7.86,
+          "narrative_fit": 8.0,
+          "specificity": 6.25,
+          "variety": 9.5,
+          "density_compliance": 8.25,
+          "coherence": 7.75,
+          "issues": [
+            "Specificity reduced due to lack of concrete numbers (e.g., user count).",
+            "headline_word_count=2 (need 3-8)"
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 6,
+          "overall": 8.19,
+          "narrative_fit": 8.25,
+          "specificity": 6.25,
+          "variety": 9.5,
+          "density_compliance": 9.75,
+          "coherence": 8.0,
+          "issues": [
+            "Specificity reduced due to lack of concrete numbers (e.g., pricing, projections)."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 7,
+          "overall": 7.78,
+          "narrative_fit": 8.0,
+          "specificity": 5.0,
+          "variety": 9.5,
+          "density_compliance": 9.75,
+          "coherence": 7.75,
+          "issues": [
+            "Generic claims with no specific names or company details."
+          ],
+          "needs_rewrite": false
+        }
+      ]
+    },
+    "deck_quality_audit": {
+      "slide_count": 8,
+      "slides_passing": 7,
+      "pass_rate_pct": 87.5,
+      "adjacent_layout_duplicates": 0,
+      "unique_intents": 8,
+      "total_citations_used": 5,
+      "citation_grounded_slide_pct": 62.5,
+      "per_slide": [
+        {
+          "headline_words": 3,
+          "n_bullets": 2,
+          "max_bullet_words": 3,
+          "has_numbers": true,
+          "n_citations": 0,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 3,
+          "n_bullets": 4,
+          "max_bullet_words": 5,
+          "has_numbers": false,
+          "n_citations": 0,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 4,
+          "n_bullets": 4,
+          "max_bullet_words": 6,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 4,
+          "n_bullets": 4,
+          "max_bullet_words": 4,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 5,
+          "n_bullets": 4,
+          "max_bullet_words": 5,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 2,
+          "n_bullets": 3,
+          "max_bullet_words": 5,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [
+            "headline_too_short (2 words)"
+          ],
+          "passes": false
+        },
+        {
+          "headline_words": 3,
+          "n_bullets": 4,
+          "max_bullet_words": 5,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 4,
+          "n_bullets": 2,
+          "max_bullet_words": 8,
+          "has_numbers": false,
+          "n_citations": 0,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        }
+      ]
+    },
+    "slides": [
+      {
+        "index": 0,
+        "intent": "Introduction",
+        "layout": "logo-image",
+        "headline": "Introducing Northwind AI",
+        "subheadline": null,
+        "bullets": [
+          "B2B SaaS Platform",
+          "Revolutionizing Procurement"
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A clean, modern B2B software logo for 'Northwind AI' on a minimalist background, suitable for a title slide.",
+        "speaker_notes": "Welcome. This presentation introduces Northwind AI, a new B2B SaaS platform designed to transform procurement. We'll establish our vision and credibility.",
+        "citations": [],
+        "raw": {
+          "headline": "Introducing Northwind AI",
+          "subheadline": "",
+          "bullets": [
+            "B2B SaaS Platform",
+            "Revolutionizing Procurement"
+          ],
+          "body": "",
+          "stat_blocks": [],
+          "image_prompt": "A clean, modern B2B software logo for 'Northwind AI' on a minimalist background, suitable for a title slide.",
+          "speaker_notes": "Welcome. This presentation introduces Northwind AI, a new B2B SaaS platform designed to transform procurement. We'll establish our vision and credibility.",
+          "citations": []
+        }
+      },
+      {
+        "index": 1,
+        "intent": "Problem Statement",
+        "layout": "text-bullets",
+        "headline": "Procurement's Manual Burden",
+        "subheadline": "High costs and inefficiency persist",
+        "bullets": [
+          "Time-consuming manual processes",
+          "Escalating operational costs",
+          "Lack of real-time data access",
+          "Error-prone workflows"
+        ],
+        "body": "Traditional methods create bottlenecks and limit strategic agility.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A cluttered desk with paper invoices, a calculator, and a stressed person's hands, symbolizing manual, inefficient procurement.",
+        "speaker_notes": "We'll discuss how outdated procurement processes drain resources and delay operations, setting the stage for an automated solution.",
+        "citations": [],
+        "raw": {
+          "headline": "Procurement's Manual Burden",
+          "subheadline": "High costs and inefficiency persist",
+          "bullets": [
+            "Time-consuming manual processes",
+            "Escalating operational costs",
+            "Lack of real-time data access",
+            "Error-prone workflows"
+          ],
+          "body": "Traditional methods create bottlenecks and limit strategic agility.",
+          "stat_blocks": [],
+          "image_prompt": "A cluttered desk with paper invoices, a calculator, and a stressed person's hands, symbolizing manual, inefficient procurement.",
+          "speaker_notes": "We'll discuss how outdated procurement processes drain resources and delay operations, setting the stage for an automated solution.",
+          "citations": []
+        }
+      },
+      {
+        "index": 2,
+        "intent": "Solution Overview",
+        "layout": "diagram-image",
+        "headline": "Northwind AI: Intelligent Procurement",
+        "subheadline": "Automating complex sourcing with agentic workflows",
+        "bullets": [
+          "Agentic LLM orchestrates procurement workflows",
+          "Automates vendor discovery and negotiation",
+          "Integrates real-time market and internal data",
+          "Ensures compliance and optimizes cost"
+        ],
+        "body": "Our platform transforms procurement from a manual, reactive process into a proactive, data-driven function. By deploying specialized AI agents that collaborate, Northwind AI handles the entire sourcing lifecycle\u2014from identifying needs and qualifying suppliers to executing contracts\u2014with continuous learning and adaptation.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A clean, modern diagram showing interconnected AI agent nodes (e.g., for 'Vendor Discovery', 'Compliance Check', 'Negotiation') flowing into a central 'Orchestrator LLM', with data streams from 'Market Data' and 'Internal Systems' feeding into the agents.",
+        "speaker_notes": "Here we introduce the core of our solution. Emphasize that we're not just a chatbot or a simple automation tool. We're building a system of collaborating AI agents, an 'agentic workflow,' specifically designed for the complexity of procurement. This is a production-ready architecture, inspired by lessons from companies like Superpowered AI, which focused on building LLM applications with external knowledge. Our key differentiator is applying this agentic approach to a high-stakes, data-heavy business function.",
+        "citations": [
+          {
+            "url": "https://ycgraveyard.iamwillwang.com/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Northwind AI: Intelligent Procurement",
+          "subheadline": "Automating complex sourcing with agentic workflows",
+          "bullets": [
+            "Agentic LLM orchestrates procurement workflows",
+            "Automates vendor discovery and negotiation",
+            "Integrates real-time market and internal data",
+            "Ensures compliance and optimizes cost"
+          ],
+          "body": "Our platform transforms procurement from a manual, reactive process into a proactive, data-driven function. By deploying specialized AI agents that collaborate, Northwind AI handles the entire sourcing lifecycle\u2014from identifying needs and qualifying suppliers to executing contracts\u2014with continuous learning and adaptation.",
+          "stat_blocks": [],
+          "image_prompt": "A clean, modern diagram showing interconnected AI agent nodes (e.g., for 'Vendor Discovery', 'Compliance Check', 'Negotiation') flowing into a central 'Orchestrator LLM', with data streams from 'Market Data' and 'Internal Systems' feeding into the agents.",
+          "speaker_notes": "Here we introduce the core of our solution. Emphasize that we're not just a chatbot or a simple automation tool. We're building a system of collaborating AI agents, an 'agentic workflow,' specifically designed for the complexity of procurement. This is a production-ready architecture, inspired by lessons from companies like Superpowered AI, which focused on building LLM applications with external knowledge. Our key differentiator is applying this agentic approach to a high-stakes, data-heavy business function.",
+          "citations": [
+            "https://ycgraveyard.iamwillwang.com/"
+          ]
+        }
+      },
+      {
+        "index": 3,
+        "intent": "Market Opportunity",
+        "layout": "stats-graph",
+        "headline": "Growing Enterprise SaaS Demand",
+        "subheadline": "Driven by Procurement Automation",
+        "bullets": [
+          "Enterprise SaaS market expanding",
+          "Automation streamlining procurement",
+          "Focus on production-ready applications",
+          "External knowledge integration key"
+        ],
+        "body": "The shift toward automated, intelligent procurement solutions is creating significant opportunities in the Enterprise SaaS segment, particularly for platforms that enable seamless integration of external data and AI.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A conceptual graph with an upward-trending line chart overlaid on stylized icons representing enterprise buildings, SaaS cloud symbols, and automated procurement workflows, in a clean, professional tech style.",
+        "speaker_notes": "Here we emphasize the market tailwinds. The YC Graveyard example of Superpowered AI highlights the investor and builder focus on production-ready LLM applications that can leverage external knowledge\u2014a core capability for modern procurement automation platforms. This validates the technical direction and market need.",
+        "citations": [
+          {
+            "url": "https://ycgraveyard.iamwillwang.com/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Growing Enterprise SaaS Demand",
+          "subheadline": "Driven by Procurement Automation",
+          "bullets": [
+            "Enterprise SaaS market expanding",
+            "Automation streamlining procurement",
+            "Focus on production-ready applications",
+            "External knowledge integration key"
+          ],
+          "body": "The shift toward automated, intelligent procurement solutions is creating significant opportunities in the Enterprise SaaS segment, particularly for platforms that enable seamless integration of external data and AI.",
+          "stat_blocks": [],
+          "image_prompt": "A conceptual graph with an upward-trending line chart overlaid on stylized icons representing enterprise buildings, SaaS cloud symbols, and automated procurement workflows, in a clean, professional tech style.",
+          "speaker_notes": "Here we emphasize the market tailwinds. The YC Graveyard example of Superpowered AI highlights the investor and builder focus on production-ready LLM applications that can leverage external knowledge\u2014a core capability for modern procurement automation platforms. This validates the technical direction and market need.",
+          "citations": [
+            "https://ycgraveyard.iamwillwang.com/"
+          ]
+        }
+      },
+      {
+        "index": 4,
+        "intent": "Competitive Landscape",
+        "layout": "competitive-matrix",
+        "headline": "Superpowered AI: External Knowledge Edge",
+        "subheadline": "The key differentiator in a crowded market",
+        "bullets": [
+          "Built for external knowledge integration",
+          "Production-ready LLM applications",
+          "APIs connect diverse data sources",
+          "Focus on real-world utility"
+        ],
+        "body": "While many AI platforms focus on core models, Superpowered AI specializes in seamlessly connecting LLMs to external, proprietary, or real-time data\u2014turning generic AI into a specialized business asset.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A simple competitive matrix diagram with 'Generic AI Platforms' on one side and 'Superpowered AI' on the other, highlighting 'External Knowledge Integration' as the key differentiator.",
+        "speaker_notes": "Here we directly reference the acquired asset, Superpowered AI, to establish a concrete, technical foundation for Northwind's claimed advantage. This isn't a future roadmap item\u2014it's integrated technology that solves the critical 'knowledge cutoff' and relevance problem for enterprise clients.",
+        "citations": [
+          {
+            "url": "https://ycgraveyard.iamwillwang.com/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Superpowered AI: External Knowledge Edge",
+          "subheadline": "The key differentiator in a crowded market",
+          "bullets": [
+            "Built for external knowledge integration",
+            "Production-ready LLM applications",
+            "APIs connect diverse data sources",
+            "Focus on real-world utility"
+          ],
+          "body": "While many AI platforms focus on core models, Superpowered AI specializes in seamlessly connecting LLMs to external, proprietary, or real-time data\u2014turning generic AI into a specialized business asset.",
+          "stat_blocks": [],
+          "image_prompt": "A simple competitive matrix diagram with 'Generic AI Platforms' on one side and 'Superpowered AI' on the other, highlighting 'External Knowledge Integration' as the key differentiator.",
+          "speaker_notes": "Here we directly reference the acquired asset, Superpowered AI, to establish a concrete, technical foundation for Northwind's claimed advantage. This isn't a future roadmap item\u2014it's integrated technology that solves the critical 'knowledge cutoff' and relevance problem for enterprise clients.",
+          "citations": [
+            "https://ycgraveyard.iamwillwang.com/"
+          ]
+        }
+      },
+      {
+        "index": 5,
+        "intent": "Traction and Milestones",
+        "layout": "timeline-image",
+        "headline": "Building Momentum",
+        "subheadline": "From Development to Early Adoption",
+        "bullets": [
+          "Prototype to production-ready API",
+          "Secured initial developer users",
+          "Validated core integration use case"
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A simple, clean timeline graphic showing three milestones: 'API Prototype', 'Launch', and 'First Users', against a gradient background.",
+        "speaker_notes": "We moved quickly from a functional prototype to a live API, attracting our first cohort of developers who used it to connect LLMs to external data, proving the core technical and market hypothesis.",
+        "citations": [
+          {
+            "url": "https://ycgraveyard.iamwillwang.com/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Building Momentum",
+          "subheadline": "From Development to Early Adoption",
+          "bullets": [
+            "Prototype to production-ready API",
+            "Secured initial developer users",
+            "Validated core integration use case"
+          ],
+          "body": "",
+          "stat_blocks": [],
+          "image_prompt": "A simple, clean timeline graphic showing three milestones: 'API Prototype', 'Launch', and 'First Users', against a gradient background.",
+          "speaker_notes": "We moved quickly from a functional prototype to a live API, attracting our first cohort of developers who used it to connect LLMs to external data, proving the core technical and market hypothesis.",
+          "citations": [
+            "https://ycgraveyard.iamwillwang.com/"
+          ]
+        }
+      },
+      {
+        "index": 6,
+        "intent": "Business Model",
+        "layout": "revenue-projection",
+        "headline": "Revenue Growth Strategy",
+        "subheadline": "Building on a scalable, subscription-based model",
+        "bullets": [
+          "Subscription-based API access",
+          "Scalable enterprise pricing tiers",
+          "Revenue tied to usage volume",
+          "Low marginal cost structure"
+        ],
+        "body": "Our model focuses on predictable, recurring revenue through API subscriptions, designed to scale efficiently with customer adoption and usage.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A clean, upward-trending line graph showing revenue projection over three years, with annotations for key growth phases, on a dark blue background.",
+        "speaker_notes": "This slide outlines our core revenue model. We avoid the pitfall of complex, custom enterprise deals that can stall growth, as seen with some past ventures. Instead, we use a scalable API subscription\u2014this aligns with how modern AI platforms, like those offering production-ready LLM applications, achieve efficient scaling. Our pricing tiers will grow with customer usage, ensuring revenue scales directly with value delivered.",
+        "citations": [
+          {
+            "url": "https://ycgraveyard.iamwillwang.com/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Revenue Growth Strategy",
+          "subheadline": "Building on a scalable, subscription-based model",
+          "bullets": [
+            "Subscription-based API access",
+            "Scalable enterprise pricing tiers",
+            "Revenue tied to usage volume",
+            "Low marginal cost structure"
+          ],
+          "body": "Our model focuses on predictable, recurring revenue through API subscriptions, designed to scale efficiently with customer adoption and usage.",
+          "stat_blocks": [],
+          "image_prompt": "A clean, upward-trending line graph showing revenue projection over three years, with annotations for key growth phases, on a dark blue background.",
+          "speaker_notes": "This slide outlines our core revenue model. We avoid the pitfall of complex, custom enterprise deals that can stall growth, as seen with some past ventures. Instead, we use a scalable API subscription\u2014this aligns with how modern AI platforms, like those offering production-ready LLM applications, achieve efficient scaling. Our pricing tiers will grow with customer usage, ensuring revenue scales directly with value delivered.",
+          "citations": [
+            "https://ycgraveyard.iamwillwang.com/"
+          ]
+        }
+      },
+      {
+        "index": 7,
+        "intent": "Team and Operations",
+        "layout": "team-photos",
+        "headline": "Experienced Team & Advisors",
+        "subheadline": null,
+        "bullets": [
+          "Expert founders with deep AI & product backgrounds",
+          "Backed by seasoned advisors from top tech companies"
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A clean, professional layout featuring headshots of the founding team and key advisors, arranged in a grid or side-by-side format on a light background.",
+        "speaker_notes": "Our founding team has a proven track record in AI and scaling products. We're also fortunate to be guided by advisors with experience at leading technology firms, ensuring we build with operational excellence from day one.",
+        "citations": [],
+        "raw": {
+          "headline": "Experienced Team & Advisors",
+          "subheadline": "",
+          "bullets": [
+            "Expert founders with deep AI & product backgrounds",
+            "Backed by seasoned advisors from top tech companies"
+          ],
+          "body": "",
+          "stat_blocks": [],
+          "image_prompt": "A clean, professional layout featuring headshots of the founding team and key advisors, arranged in a grid or side-by-side format on a light background.",
+          "speaker_notes": "Our founding team has a proven track record in AI and scaling products. We're also fortunate to be guided by advisors with experience at leading technology firms, ensuring we build with operational excellence from day one.",
+          "citations": []
+        }
+      }
+    ],
+    "events": [
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "exemplars"
+        },
+        "ts": "2026-04-17T18:49:21.650907+00:00",
+        "t_perf": 556026.0754115
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "research",
+          "mode": "standard"
+        },
+        "ts": "2026-04-17T18:49:21.651603+00:00",
+        "t_perf": 556026.075579
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "research",
+          "n_citations": 1,
+          "n_news": 0,
+          "duration_ms": 7401,
+          "cache_hit": false
+        },
+        "ts": "2026-04-17T18:49:29.768396+00:00",
+        "t_perf": 556034.1929954
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "skeleton"
+        },
+        "ts": "2026-04-17T18:49:29.768396+00:00",
+        "t_perf": 556034.193016
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "skeleton",
+          "n_slides": 8,
+          "narrative_arc": "Problem-Solution-Benefit",
+          "duration_ms": 2723
+        },
+        "ts": "2026-04-17T18:49:32.492193+00:00",
+        "t_perf": 556036.9164602
+      },
+      {
+        "stage": "skeleton_ready",
+        "payload": {
+          "title": "Northwind AI Series-Seed Raise",
+          "slides": [
+            {
+              "index": 0,
+              "intent": "Introduction",
+              "headline_target": "Revolutionizing Procurement"
+            },
+            {
+              "index": 1,
+              "intent": "Problem Statement",
+              "headline_target": "Inefficient Procurement"
+            },
+            {
+              "index": 2,
+              "intent": "Solution Overview",
+              "headline_target": "AI-Powered Procurement"
+            },
+            {
+              "index": 3,
+              "intent": "Market Opportunity",
+              "headline_target": "Growing Demand"
+            },
+            {
+              "index": 4,
+              "intent": "Competitive Landscape",
+              "headline_target": "Unique Advantage"
+            },
+            {
+              "index": 5,
+              "intent": "Traction and Milestones",
+              "headline_target": "Achievements"
+            },
+            {
+              "index": 6,
+              "intent": "Business Model",
+              "headline_target": "Revenue Growth"
+            },
+            {
+              "index": 7,
+              "intent": "Team and Operations",
+              "headline_target": "Experienced Team"
+            }
+          ]
+        },
+        "ts": "2026-04-17T18:49:32.492193+00:00",
+        "t_perf": 556036.9164997
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "writers",
+          "n_slides": 8
+        },
+        "ts": "2026-04-17T18:49:32.492193+00:00",
+        "t_perf": 556036.9165205
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "writers",
+          "duration_ms": 179280
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1974278
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 0,
+          "headline": "Introducing Northwind AI",
+          "layout": "logo-image"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.197443
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 1,
+          "headline": "Procurement's Manual Burden",
+          "layout": "text-bullets"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1974554
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 2,
+          "headline": "Northwind AI: Intelligent Procurement",
+          "layout": "diagram-image"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1974651
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 3,
+          "headline": "Growing Enterprise SaaS Demand",
+          "layout": "stats-graph"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1974746
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 4,
+          "headline": "Superpowered AI: External Knowledge Edge",
+          "layout": "competitive-matrix"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1974829
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 5,
+          "headline": "Building Momentum",
+          "layout": "timeline-image"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1974913
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 6,
+          "headline": "Revenue Growth Strategy",
+          "layout": "revenue-projection"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1974999
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 7,
+          "headline": "Experienced Team & Advisors",
+          "layout": "team-photos"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1975092
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "critic"
+        },
+        "ts": "2026-04-17T18:52:31.773301+00:00",
+        "t_perf": 556216.1975193
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "critic",
+          "overall": 7.93,
+          "n_rewritten": 0,
+          "duration_ms": 40723
+        },
+        "ts": "2026-04-17T18:53:12.496675+00:00",
+        "t_perf": 556256.9205883
+      },
+      {
+        "stage": "complete",
+        "payload": {
+          "duration_ms": 230845,
+          "overall_score": 7.93,
+          "n_slides": 8,
+          "generation_id": "3625fc84-f372-45e0-8cad-d38d866b8a55"
+        },
+        "ts": "2026-04-17T18:53:14.595747+00:00",
+        "t_perf": 556259.0196351
+      }
+    ],
+    "generation_id": "3625fc84-f372-45e0-8cad-d38d866b8a55"
+  },
+  {
+    "id": "STD-2",
+    "label": "Standard / vague unclear input",
+    "status": "PASS",
+    "mode": "standard",
+    "user_query": "make some cool slides about something",
+    "user_slide_types": null,
+    "target_slide_count": 6,
+    "started_at": "2026-04-17T18:53:16.106065+00:00",
+    "duration_ms_total": 17931,
+    "stage_durations_ms": {
+      "research": 5474,
+      "skeleton": 1965,
+      "writers": 5151,
+      "critic": 4374
+    },
+    "deck_title": "Creative Presentation Ideas",
+    "narrative_arc": "Introduction, Exploration, Inspiration, Implementation, Enga",
+    "skeleton": {
+      "n_slides": 6,
+      "intents": [
+        "Introduce",
+        "Inform",
+        "Explore",
+        "Inspire",
+        "Engage",
+        "Conclude"
+      ],
+      "layouts_planned": [
+        "Image-centric",
+        "Text with images",
+        "Bullets with icons",
+        "Quote with background image",
+        "Step-by-step guide",
+        "Call-to-action button"
+      ],
+      "density_targets": [
+        "low",
+        "medium",
+        "medium",
+        "low",
+        "medium",
+        "low"
+      ]
+    },
+    "research": {
+      "n_citations": 10,
+      "n_news": 0,
+      "duration_ms": 5474,
+      "cache_hit": false,
+      "sources_used": [
+        "serper",
+        "tavily"
+      ],
+      "top_5_citations": [
+        {
+          "title": "I have no Idea how to make this slide look interesting. Can someone ...",
+          "source": "serper",
+          "url": "https://www.reddit.com/r/powerpoint/comments/1fmxqlf/i_have_no_idea_how_to_make_this_slide_look/",
+          "authority": 0.5
+        },
+        {
+          "title": "How I created these VIRAL POWERPOINTS - YouTube",
+          "source": "serper",
+          "url": "https://www.youtube.com/watch?v=T3gf6MlkcbE",
+          "authority": 0.5
+        },
+        {
+          "title": "Things to Make Slideshows About",
+          "source": "tavily",
+          "url": "https://www.pinterest.com/ideas/things-to-make-slideshows-about/916539480560/",
+          "authority": 0.5
+        },
+        {
+          "title": "60 Creative Presentation Ideas and Design Tips | Figma",
+          "source": "tavily",
+          "url": "https://www.figma.com/resource-library/presentation-ideas/",
+          "authority": 0.5
+        },
+        {
+          "title": "The best creative presentation ideas \u2014 topics, layouts, and ...",
+          "source": "tavily",
+          "url": "https://powerpoint.cloud.microsoft/create/en/blog/the-best-creative-presentation-ideas-topics-layouts-and-designs/",
+          "authority": 0.5
+        }
+      ],
+      "has_financial": false,
+      "has_social": false
+    },
+    "critic": {
+      "overall": 7.91,
+      "needs_rewrite_indices": [],
+      "slide_scores": [
+        {
+          "index": 0,
+          "overall": 7.7,
+          "narrative_fit": 7.75,
+          "specificity": 5.25,
+          "variety": 9.5,
+          "density_compliance": 9.75,
+          "coherence": 7.25,
+          "issues": [
+            "Bullets are generic and vague with no numbers or specific entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 1,
+          "overall": 7.74,
+          "narrative_fit": 7.5,
+          "specificity": 5.75,
+          "variety": 9.0,
+          "density_compliance": 10.0,
+          "coherence": 7.5,
+          "issues": [
+            "Bullets are generic claims (e.g., 'Captivate with unique visuals') with no specific examples or data."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 2,
+          "overall": 8.35,
+          "narrative_fit": 8.25,
+          "specificity": 6.75,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 8.0,
+          "issues": [
+            "Minor: Bullets are more specific but still lack concrete examples or data."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 3,
+          "overall": 7.39,
+          "narrative_fit": 6.75,
+          "specificity": 5.25,
+          "variety": 9.0,
+          "density_compliance": 10.0,
+          "coherence": 7.25,
+          "issues": [
+            "Bullets are very generic and repetitive of previous slides (e.g., 'Use captivating visuals')."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 4,
+          "overall": 8.45,
+          "narrative_fit": 8.5,
+          "specificity": 6.75,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 8.25,
+          "issues": [
+            "Minor: Steps are clear but could be more specific (e.g., name a tool or platform)."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 5,
+          "overall": 7.84,
+          "narrative_fit": 8.25,
+          "specificity": 5.25,
+          "variety": 9.0,
+          "density_compliance": 10.0,
+          "coherence": 7.75,
+          "issues": [
+            "Bullets are generic motivational phrases with no specific call-to-action details."
+          ],
+          "needs_rewrite": false
+        }
+      ]
+    },
+    "deck_quality_audit": {
+      "slide_count": 6,
+      "slides_passing": 6,
+      "pass_rate_pct": 100.0,
+      "adjacent_layout_duplicates": 0,
+      "unique_intents": 6,
+      "total_citations_used": 15,
+      "citation_grounded_slide_pct": 100.0,
+      "per_slide": [
+        {
+          "headline_words": 4,
+          "n_bullets": 2,
+          "max_bullet_words": 2,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 4,
+          "n_bullets": 3,
+          "max_bullet_words": 5,
+          "has_numbers": false,
+          "n_citations": 2,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 3,
+          "n_bullets": 4,
+          "max_bullet_words": 4,
+          "has_numbers": false,
+          "n_citations": 4,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 4,
+          "n_bullets": 3,
+          "max_bullet_words": 4,
+          "has_numbers": false,
+          "n_citations": 2,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 4,
+          "n_bullets": 4,
+          "max_bullet_words": 3,
+          "has_numbers": false,
+          "n_citations": 4,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 3,
+          "n_bullets": 2,
+          "max_bullet_words": 4,
+          "has_numbers": false,
+          "n_citations": 2,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        }
+      ]
+    },
+    "slides": [
+      {
+        "index": 0,
+        "intent": "Introduce",
+        "layout": "Image-centric",
+        "headline": "Explore Creative Presentation Ideas",
+        "subheadline": "Setting the stage for unique and visually engaging slides",
+        "bullets": [
+          "Unique ideas",
+          "Visual appeal"
+        ],
+        "body": "This introduction establishes the 'why' and what you'll gain, setting the tone for the entire presentation.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A visually striking, abstract background with blended colors and geometric shapes, suggesting creativity and design, centered layout with ample negative space for text.",
+        "speaker_notes": "Welcome everyone. Today, we're diving into how to make presentations not just informative, but memorable and engaging. We'll start by exploring why creative design matters\u2014it captures attention and enhances understanding. Our focus will be on unique ideas and strong visual appeal, drawing from various tools and inspiration sources to transform standard slides.",
+        "citations": [
+          {
+            "url": "https://powerpoint.cloud.microsoft/create/en/blog/the-best-creative-presentation-ideas-topics-layouts-and-designs/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Explore Creative Presentation Ideas",
+          "subheadline": "Setting the stage for unique and visually engaging slides",
+          "bullets": [
+            "Unique ideas",
+            "Visual appeal"
+          ],
+          "body": "This introduction establishes the 'why' and what you'll gain, setting the tone for the entire presentation.",
+          "stat_blocks": [],
+          "image_prompt": "A visually striking, abstract background with blended colors and geometric shapes, suggesting creativity and design, centered layout with ample negative space for text.",
+          "speaker_notes": "Welcome everyone. Today, we're diving into how to make presentations not just informative, but memorable and engaging. We'll start by exploring why creative design matters\u2014it captures attention and enhances understanding. Our focus will be on unique ideas and strong visual appeal, drawing from various tools and inspiration sources to transform standard slides.",
+          "citations": [
+            "https://powerpoint.cloud.microsoft/create/en/blog/the-best-creative-presentation-ideas-topics-layouts-and-designs/"
+          ]
+        }
+      },
+      {
+        "index": 1,
+        "intent": "Inform",
+        "layout": "Text with images",
+        "headline": "Unleash Your Creative Presentation",
+        "subheadline": "Blend media and artistry for impact",
+        "bullets": [
+          "Integrate drawing and photography",
+          "Use music and graphic arts",
+          "Captivate with unique visuals"
+        ],
+        "body": "Move beyond standard slides by weaving your personal artistic talents\u2014from drawing and photography to music\u2014directly into your presentation. This approach gives your work a distinctive, memorable spin that engages audiences on a deeper level.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A dynamic collage showing hands sketching on a tablet, a camera lens overlay, and musical notes blending into a presentation slide on a screen.",
+        "speaker_notes": "Introduce the core idea: presentations are a canvas for your creativity, not just data. Highlight that this isn't about being a professional artist, but about using accessible skills to make your content personal and engaging. Reference the examples from our research to show it's practical.",
+        "citations": [
+          {
+            "url": "https://www.figma.com/resource-library/presentation-ideas/",
+            "title": ""
+          },
+          {
+            "url": "https://www.canva.com/presentations/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Unleash Your Creative Presentation",
+          "subheadline": "Blend media and artistry for impact",
+          "bullets": [
+            "Integrate drawing and photography",
+            "Use music and graphic arts",
+            "Captivate with unique visuals"
+          ],
+          "body": "Move beyond standard slides by weaving your personal artistic talents\u2014from drawing and photography to music\u2014directly into your presentation. This approach gives your work a distinctive, memorable spin that engages audiences on a deeper level.",
+          "stat_blocks": [],
+          "image_prompt": "A dynamic collage showing hands sketching on a tablet, a camera lens overlay, and musical notes blending into a presentation slide on a screen.",
+          "speaker_notes": "Introduce the core idea: presentations are a canvas for your creativity, not just data. Highlight that this isn't about being a professional artist, but about using accessible skills to make your content personal and engaging. Reference the examples from our research to show it's practical.",
+          "citations": [
+            "https://www.figma.com/resource-library/presentation-ideas/",
+            "https://www.canva.com/presentations/"
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "intent": "Explore",
+        "layout": "Bullets with icons",
+        "headline": "Creative Slide Ideas",
+        "subheadline": "Engage your audience with unique designs",
+        "bullets": [
+          "Parallax scrolling effects",
+          "SmartArt for clear diagrams",
+          "Integrate art or music",
+          "Use interactive templates"
+        ],
+        "body": "Consider tools like Canva or Genially for templates that blend visuals and information effectively.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A group collaborating around a laptop showing a presentation with parallax and artistic elements.",
+        "speaker_notes": "Highlight how integrating media personalizes presentations. Mention resources like Figma for design tips and Slidesgo for thematic templates.",
+        "citations": [
+          {
+            "url": "https://www.figma.com/resource-library/presentation-ideas/",
+            "title": ""
+          },
+          {
+            "url": "https://genially.com/create/presentations/",
+            "title": ""
+          },
+          {
+            "url": "https://www.canva.com/presentations/",
+            "title": ""
+          },
+          {
+            "url": "https://slidesgo.com/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Creative Slide Ideas",
+          "subheadline": "Engage your audience with unique designs",
+          "bullets": [
+            "Parallax scrolling effects",
+            "SmartArt for clear diagrams",
+            "Integrate art or music",
+            "Use interactive templates"
+          ],
+          "body": "Consider tools like Canva or Genially for templates that blend visuals and information effectively.",
+          "stat_blocks": [],
+          "image_prompt": "A group collaborating around a laptop showing a presentation with parallax and artistic elements.",
+          "speaker_notes": "Highlight how integrating media personalizes presentations. Mention resources like Figma for design tips and Slidesgo for thematic templates.",
+          "citations": [
+            "https://www.figma.com/resource-library/presentation-ideas/",
+            "https://genially.com/create/presentations/",
+            "https://www.canva.com/presentations/",
+            "https://slidesgo.com/"
+          ]
+        }
+      },
+      {
+        "index": 3,
+        "intent": "Inspire",
+        "layout": "Quote with background image",
+        "headline": "Unleash Your Inner Artist",
+        "subheadline": "Give your presentation a unique spin",
+        "bullets": [
+          "Integrate your artistic talents",
+          "Use captivating visuals",
+          "Share easy-to-digest info"
+        ],
+        "body": "Work your drawing, painting, photography, or music into your slideshow to create something truly memorable.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "An abstract, inspirational background with blended artistic elements like paint strokes, musical notes, and light leaks, providing a canvas for overlaid text.",
+        "speaker_notes": "This slide is about permission and inspiration. Encourage the audience to think beyond standard templates. Ask: 'What's a unique skill or passion you have that could make your presentation more 'you'?' Reference the research that suggests integrating other media.",
+        "citations": [
+          {
+            "url": "https://www.figma.com/resource-library/presentation-ideas/",
+            "title": ""
+          },
+          {
+            "url": "https://www.canva.com/presentations/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Unleash Your Inner Artist",
+          "subheadline": "Give your presentation a unique spin",
+          "bullets": [
+            "Integrate your artistic talents",
+            "Use captivating visuals",
+            "Share easy-to-digest info"
+          ],
+          "body": "Work your drawing, painting, photography, or music into your slideshow to create something truly memorable.",
+          "stat_blocks": [],
+          "image_prompt": "An abstract, inspirational background with blended artistic elements like paint strokes, musical notes, and light leaks, providing a canvas for overlaid text.",
+          "speaker_notes": "This slide is about permission and inspiration. Encourage the audience to think beyond standard templates. Ask: 'What's a unique skill or passion you have that could make your presentation more 'you'?' Reference the research that suggests integrating other media.",
+          "citations": [
+            "https://www.figma.com/resource-library/presentation-ideas/",
+            "https://www.canva.com/presentations/"
+          ]
+        }
+      },
+      {
+        "index": 4,
+        "intent": "Engage",
+        "layout": "Step-by-step guide",
+        "headline": "Make Your Own Slides",
+        "subheadline": "A Step-by-Step Guide to Personalization",
+        "bullets": [
+          "Choose a template",
+          "Add your media",
+          "Customize the design",
+          "Share your story"
+        ],
+        "body": "Start with a template from our library, then integrate your own photos, art, or music to create a presentation that is uniquely yours.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A person customizing a vibrant digital slide on a laptop, with personal photos and artwork visible on the screen.",
+        "speaker_notes": "Encourage the audience to think about their own hobbies or personal media they could incorporate. Mention that tools like Google Slides and Genially offer easy ways to start with templates and add interactive or personal elements.",
+        "citations": [
+          {
+            "url": "https://www.figma.com/resource-library/presentation-ideas/",
+            "title": ""
+          },
+          {
+            "url": "https://slidesgo.com/",
+            "title": ""
+          },
+          {
+            "url": "https://genially.com/create/presentations/",
+            "title": ""
+          },
+          {
+            "url": "https://workspace.google.com/products/slides/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Make Your Own Slides",
+          "subheadline": "A Step-by-Step Guide to Personalization",
+          "bullets": [
+            "Choose a template",
+            "Add your media",
+            "Customize the design",
+            "Share your story"
+          ],
+          "body": "Start with a template from our library, then integrate your own photos, art, or music to create a presentation that is uniquely yours.",
+          "stat_blocks": [],
+          "image_prompt": "A person customizing a vibrant digital slide on a laptop, with personal photos and artwork visible on the screen.",
+          "speaker_notes": "Encourage the audience to think about their own hobbies or personal media they could incorporate. Mention that tools like Google Slides and Genially offer easy ways to start with templates and add interactive or personal elements.",
+          "citations": [
+            "https://www.figma.com/resource-library/presentation-ideas/",
+            "https://slidesgo.com/",
+            "https://genially.com/create/presentations/",
+            "https://workspace.google.com/products/slides/"
+          ]
+        }
+      },
+      {
+        "index": 5,
+        "intent": "Conclude",
+        "layout": "Call-to-action button",
+        "headline": "Create With Confidence",
+        "subheadline": "Your Journey Starts Now",
+        "bullets": [
+          "Practice makes perfect",
+          "Have fun while creating"
+        ],
+        "body": "Integrate your unique artistic talents to give your presentations a personal and memorable spin.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A diverse group of friends standing together, smiling confidently in front of a creative poster or artwork, symbolizing collaboration and fun.",
+        "speaker_notes": "Conclude by reinforcing that mastery comes with practice and enjoyment. Encourage the audience to use the tools and creative ideas discussed to start their own projects. Direct them to available resources for templates and interactive media.",
+        "citations": [
+          {
+            "url": "https://www.figma.com/resource-library/presentation-ideas/",
+            "title": ""
+          },
+          {
+            "url": "https://www.slidescarnival.com/tag/creative",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Create With Confidence",
+          "subheadline": "Your Journey Starts Now",
+          "bullets": [
+            "Practice makes perfect",
+            "Have fun while creating"
+          ],
+          "body": "Integrate your unique artistic talents to give your presentations a personal and memorable spin.",
+          "stat_blocks": [],
+          "image_prompt": "A diverse group of friends standing together, smiling confidently in front of a creative poster or artwork, symbolizing collaboration and fun.",
+          "speaker_notes": "Conclude by reinforcing that mastery comes with practice and enjoyment. Encourage the audience to use the tools and creative ideas discussed to start their own projects. Direct them to available resources for templates and interactive media.",
+          "citations": [
+            "https://www.figma.com/resource-library/presentation-ideas/",
+            "https://www.slidescarnival.com/tag/creative"
+          ]
+        }
+      }
+    ],
+    "events": [
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "exemplars"
+        },
+        "ts": "2026-04-17T18:53:16.106065+00:00",
+        "t_perf": 556260.5305281
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "research",
+          "mode": "standard"
+        },
+        "ts": "2026-04-17T18:53:16.106065+00:00",
+        "t_perf": 556260.5306055
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "research",
+          "n_citations": 10,
+          "n_news": 0,
+          "duration_ms": 5474,
+          "cache_hit": false
+        },
+        "ts": "2026-04-17T18:53:22.202263+00:00",
+        "t_perf": 556266.6265966
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "skeleton"
+        },
+        "ts": "2026-04-17T18:53:22.202263+00:00",
+        "t_perf": 556266.6266005
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "skeleton",
+          "n_slides": 6,
+          "narrative_arc": "Introduction, Exploration, Inspiration, Implementation, Enga",
+          "duration_ms": 1965
+        },
+        "ts": "2026-04-17T18:53:24.167370+00:00",
+        "t_perf": 556268.5920568
+      },
+      {
+        "stage": "skeleton_ready",
+        "payload": {
+          "title": "Creative Presentation Ideas",
+          "slides": [
+            {
+              "index": 0,
+              "intent": "Introduce",
+              "headline_target": "Explore Creative Options"
+            },
+            {
+              "index": 1,
+              "intent": "Inform",
+              "headline_target": "Make It Engaging"
+            },
+            {
+              "index": 2,
+              "intent": "Explore",
+              "headline_target": "Ideas For Slides"
+            },
+            {
+              "index": 3,
+              "intent": "Inspire",
+              "headline_target": "Get Creative Now"
+            },
+            {
+              "index": 4,
+              "intent": "Engage",
+              "headline_target": "Make Your Own"
+            },
+            {
+              "index": 5,
+              "intent": "Conclude",
+              "headline_target": "Create With Confidence"
+            }
+          ]
+        },
+        "ts": "2026-04-17T18:53:24.167370+00:00",
+        "t_perf": 556268.5920677
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "writers",
+          "n_slides": 6
+        },
+        "ts": "2026-04-17T18:53:24.167370+00:00",
+        "t_perf": 556268.592073
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "writers",
+          "duration_ms": 5151
+        },
+        "ts": "2026-04-17T18:53:29.319386+00:00",
+        "t_perf": 556273.7433485
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 0,
+          "headline": "Explore Creative Presentation Ideas",
+          "layout": "Image-centric"
+        },
+        "ts": "2026-04-17T18:53:29.319386+00:00",
+        "t_perf": 556273.7433562
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 1,
+          "headline": "Unleash Your Creative Presentation",
+          "layout": "Text with images"
+        },
+        "ts": "2026-04-17T18:53:29.319386+00:00",
+        "t_perf": 556273.7433614
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 2,
+          "headline": "Creative Slide Ideas",
+          "layout": "Bullets with icons"
+        },
+        "ts": "2026-04-17T18:53:29.319386+00:00",
+        "t_perf": 556273.7433663
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 3,
+          "headline": "Unleash Your Inner Artist",
+          "layout": "Quote with background image"
+        },
+        "ts": "2026-04-17T18:53:29.319386+00:00",
+        "t_perf": 556273.7433708
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 4,
+          "headline": "Make Your Own Slides",
+          "layout": "Step-by-step guide"
+        },
+        "ts": "2026-04-17T18:53:29.319386+00:00",
+        "t_perf": 556273.7433755
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 5,
+          "headline": "Create With Confidence",
+          "layout": "Call-to-action button"
+        },
+        "ts": "2026-04-17T18:53:29.319386+00:00",
+        "t_perf": 556273.7433798
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "critic"
+        },
+        "ts": "2026-04-17T18:53:29.319386+00:00",
+        "t_perf": 556273.7433844
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "critic",
+          "overall": 7.91,
+          "n_rewritten": 0,
+          "duration_ms": 4374
+        },
+        "ts": "2026-04-17T18:53:33.693103+00:00",
+        "t_perf": 556278.1174895
+      },
+      {
+        "stage": "complete",
+        "payload": {
+          "duration_ms": 17586,
+          "overall_score": 7.91,
+          "n_slides": 6,
+          "generation_id": "1e94b05a-57a3-441a-b80e-d5fa6edfc4be"
+        },
+        "ts": "2026-04-17T18:53:34.035165+00:00",
+        "t_perf": 556278.4595855
+      }
+    ],
+    "generation_id": "1e94b05a-57a3-441a-b80e-d5fa6edfc4be"
+  },
+  {
+    "id": "STD-3",
+    "label": "Standard / minimal one-word seed",
+    "status": "PASS",
+    "mode": "standard",
+    "user_query": "fintech",
+    "user_slide_types": null,
+    "target_slide_count": 5,
+    "started_at": "2026-04-17T18:53:35.551779+00:00",
+    "duration_ms_total": 23996,
+    "stage_durations_ms": {
+      "research": 3979,
+      "skeleton": 2207,
+      "writers": 4887,
+      "critic": 12053
+    },
+    "deck_title": "Fintech Overview",
+    "narrative_arc": "Introduction to fintech and its applications",
+    "skeleton": {
+      "n_slides": 5,
+      "intents": [
+        "Inform",
+        "Explain",
+        "Highlight",
+        "Discuss",
+        "Look ahead"
+      ],
+      "layouts_planned": [
+        "Text-based",
+        "Bullets",
+        "Image-based",
+        "Text-based",
+        "Visuals"
+      ],
+      "density_targets": [
+        "low",
+        "medium",
+        "low",
+        "medium",
+        "low"
+      ]
+    },
+    "research": {
+      "n_citations": 14,
+      "n_news": 0,
+      "duration_ms": 3979,
+      "cache_hit": false,
+      "sources_used": [
+        "serper",
+        "tavily"
+      ],
+      "top_5_citations": [
+        {
+          "title": "Forbes 2026 Fintech 50 | The Top Fintech Companies & Startups",
+          "source": "tavily",
+          "url": "https://www.forbes.com/lists/fintech50/",
+          "authority": 0.95
+        },
+        {
+          "title": "What is FinTech? - Michigan Technological University",
+          "source": "tavily",
+          "url": "https://www.mtu.edu/business/what-is-fintech/",
+          "authority": 0.85
+        },
+        {
+          "title": "Financial technology - Wikipedia",
+          "source": "tavily",
+          "url": "https://en.wikipedia.org/wiki/Financial_technology",
+          "authority": 0.85
+        },
+        {
+          "title": "What Is Fintech? Why It Matters + Career Opportunities | UCF Online",
+          "source": "serper",
+          "url": "https://www.ucf.edu/online/leadership-management/news/what-is-fintech/",
+          "authority": 0.85
+        },
+        {
+          "title": "The Future of Fintech: How Emerging Technologies Are ... - YouTube",
+          "source": "serper",
+          "url": "https://www.youtube.com/watch?v=40u63-sx0IE",
+          "authority": 0.5
+        }
+      ],
+      "has_financial": false,
+      "has_social": false
+    },
+    "critic": {
+      "overall": 8.01,
+      "needs_rewrite_indices": [],
+      "slide_scores": [
+        {
+          "index": 0,
+          "overall": 8.06,
+          "narrative_fit": 8.25,
+          "specificity": 5.75,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 7.75,
+          "issues": [
+            "Generic, vague claims with no numbers or specific entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 1,
+          "overall": 7.96,
+          "narrative_fit": 8.25,
+          "specificity": 5.75,
+          "variety": 9.0,
+          "density_compliance": 10.0,
+          "coherence": 7.75,
+          "issues": [
+            "Generic, vague claims with no numbers or specific entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 2,
+          "overall": 8.31,
+          "narrative_fit": 7.75,
+          "specificity": 7.25,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 7.75,
+          "issues": [
+            "Mentions 'top 50 companies' but lacks specific names or data."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 3,
+          "overall": 7.74,
+          "narrative_fit": 7.75,
+          "specificity": 5.75,
+          "variety": 8.5,
+          "density_compliance": 10.0,
+          "coherence": 7.75,
+          "issues": [
+            "Adjacent slide (index 2) has same 'Text-based' layout and similar 'Inform/Explain' intent.",
+            "Generic, vague claims with no numbers or specific entities."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 4,
+          "overall": 7.96,
+          "narrative_fit": 8.25,
+          "specificity": 6.25,
+          "variety": 9.5,
+          "density_compliance": 8.5,
+          "coherence": 7.75,
+          "issues": [
+            "More than 4 bullets."
+          ],
+          "needs_rewrite": false
+        }
+      ]
+    },
+    "deck_quality_audit": {
+      "slide_count": 5,
+      "slides_passing": 5,
+      "pass_rate_pct": 100.0,
+      "adjacent_layout_duplicates": 0,
+      "unique_intents": 5,
+      "total_citations_used": 16,
+      "citation_grounded_slide_pct": 100.0,
+      "per_slide": [
+        {
+          "headline_words": 3,
+          "n_bullets": 3,
+          "max_bullet_words": 4,
+          "has_numbers": false,
+          "n_citations": 2,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 3,
+          "n_bullets": 3,
+          "max_bullet_words": 4,
+          "has_numbers": false,
+          "n_citations": 2,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 3,
+          "n_bullets": 2,
+          "max_bullet_words": 4,
+          "has_numbers": true,
+          "n_citations": 2,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 3,
+          "n_bullets": 3,
+          "max_bullet_words": 5,
+          "has_numbers": false,
+          "n_citations": 4,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 3,
+          "n_bullets": 4,
+          "max_bullet_words": 5,
+          "has_numbers": false,
+          "n_citations": 6,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        }
+      ]
+    },
+    "slides": [
+      {
+        "index": 0,
+        "intent": "Inform",
+        "layout": "Text-based",
+        "headline": "What is Fintech?",
+        "subheadline": null,
+        "bullets": [
+          "Financial technology integration",
+          "Innovates products and services",
+          "Improves financial management"
+        ],
+        "body": "Fintech, or financial technology, refers to the use of technology to deliver and improve financial services and products.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": null,
+        "speaker_notes": "This slide introduces the basic definition of fintech, emphasizing its role in innovation and service improvement. Keep the tone clear and introductory.",
+        "citations": [
+          {
+            "url": "https://www.ucf.edu/online/leadership-management/news/what-is-fintech/",
+            "title": ""
+          },
+          {
+            "url": "https://www.centralbank.ie/consumer-hub/explainers/what-is-fintech-and-how-is-it-changing-financial-products",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "What is Fintech?",
+          "subheadline": "",
+          "bullets": [
+            "Financial technology integration",
+            "Innovates products and services",
+            "Improves financial management"
+          ],
+          "body": "Fintech, or financial technology, refers to the use of technology to deliver and improve financial services and products.",
+          "stat_blocks": [],
+          "image_prompt": "",
+          "speaker_notes": "This slide introduces the basic definition of fintech, emphasizing its role in innovation and service improvement. Keep the tone clear and introductory.",
+          "citations": [
+            "https://www.ucf.edu/online/leadership-management/news/what-is-fintech/",
+            "https://www.centralbank.ie/consumer-hub/explainers/what-is-fintech-and-how-is-it-changing-financial-products"
+          ]
+        }
+      },
+      {
+        "index": 1,
+        "intent": "Explain",
+        "layout": "Bullets",
+        "headline": "Key Fintech Categories",
+        "subheadline": "Technology-driven financial services",
+        "bullets": [
+          "Digital payments & transfers",
+          "Online lending & credit",
+          "Investment & wealth tools"
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A modern, abstract graphic showing three distinct icons representing payment, lending, and investment concepts, connected by digital lines on a clean background.",
+        "speaker_notes": "Fintech integrates technology to improve how people and businesses manage finances. These three core categories represent major areas of innovation and consumer adoption. We'll explore examples of each.",
+        "citations": [
+          {
+            "url": "https://plaid.com/resources/fintech/what-is-fintech/",
+            "title": ""
+          },
+          {
+            "url": "https://www.ibm.com/think/topics/fintech",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Key Fintech Categories",
+          "subheadline": "Technology-driven financial services",
+          "bullets": [
+            "Digital payments & transfers",
+            "Online lending & credit",
+            "Investment & wealth tools"
+          ],
+          "body": "",
+          "stat_blocks": [],
+          "image_prompt": "A modern, abstract graphic showing three distinct icons representing payment, lending, and investment concepts, connected by digital lines on a clean background.",
+          "speaker_notes": "Fintech integrates technology to improve how people and businesses manage finances. These three core categories represent major areas of innovation and consumer adoption. We'll explore examples of each.",
+          "citations": [
+            "https://plaid.com/resources/fintech/what-is-fintech/",
+            "https://www.ibm.com/think/topics/fintech"
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "intent": "Highlight",
+        "layout": "Image-based",
+        "headline": "Leading Fintech Innovators",
+        "subheadline": "Forbes 2026 Fintech 50",
+        "bullets": [
+          "Showcases top 50 companies",
+          "Highlights innovative startups"
+        ],
+        "body": "The Forbes Fintech 50 list, now in its 11th year, identifies the most impactful companies driving innovation in financial technology.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A modern, sleek collage of logos from various fintech companies (like digital banking, payments, and investment apps) against a dark blue or gradient background, with subtle glowing effects.",
+        "speaker_notes": "This slide introduces the Forbes Fintech 50 as a key industry benchmark. Emphasize that this list, curated by experts, spotlights companies that are not just growing but are fundamentally reshaping financial services through technology. You can mention that fintech has evolved from a niche challenger to a core part of the global financial system.",
+        "citations": [
+          {
+            "url": "https://www.forbes.com/lists/fintech50/",
+            "title": ""
+          },
+          {
+            "url": "https://www.cnbc.com/2026/02/25/cnbc-worlds-top-fintech-companies-2026-apply-now.html",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Leading Fintech Innovators",
+          "subheadline": "Forbes 2026 Fintech 50",
+          "bullets": [
+            "Showcases top 50 companies",
+            "Highlights innovative startups"
+          ],
+          "body": "The Forbes Fintech 50 list, now in its 11th year, identifies the most impactful companies driving innovation in financial technology.",
+          "stat_blocks": [],
+          "image_prompt": "A modern, sleek collage of logos from various fintech companies (like digital banking, payments, and investment apps) against a dark blue or gradient background, with subtle glowing effects.",
+          "speaker_notes": "This slide introduces the Forbes Fintech 50 as a key industry benchmark. Emphasize that this list, curated by experts, spotlights companies that are not just growing but are fundamentally reshaping financial services through technology. You can mention that fintech has evolved from a niche challenger to a core part of the global financial system.",
+          "citations": [
+            "https://www.forbes.com/lists/fintech50/",
+            "https://www.cnbc.com/2026/02/25/cnbc-worlds-top-fintech-companies-2026-apply-now.html"
+          ]
+        }
+      },
+      {
+        "index": 3,
+        "intent": "Discuss",
+        "layout": "Text-based",
+        "headline": "Fintech Career Paths",
+        "subheadline": "Opportunities and Required Skills",
+        "bullets": [
+          "High-growth job prospects",
+          "Tech and finance skill blend",
+          "Roles in top companies"
+        ],
+        "body": "Fintech integrates technology into financial services to improve how people and businesses manage finances, creating diverse roles.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A modern, clean graphic showing icons representing technology and finance merging, with silhouettes of professionals in the background.",
+        "speaker_notes": "Discuss how fintech goes beyond standard financial technology through innovation. Mention that major hubs like New York City are centers for these careers. You can reference lists like the Forbes Fintech 50 to highlight leading employers.",
+        "citations": [
+          {
+            "url": "https://www.ucf.edu/online/leadership-management/news/what-is-fintech/",
+            "title": ""
+          },
+          {
+            "url": "https://www.mtu.edu/business/what-is-fintech/",
+            "title": ""
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Financial_technology",
+            "title": ""
+          },
+          {
+            "url": "https://www.forbes.com/lists/fintech50/",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Fintech Career Paths",
+          "subheadline": "Opportunities and Required Skills",
+          "bullets": [
+            "High-growth job prospects",
+            "Tech and finance skill blend",
+            "Roles in top companies"
+          ],
+          "body": "Fintech integrates technology into financial services to improve how people and businesses manage finances, creating diverse roles.",
+          "stat_blocks": [],
+          "image_prompt": "A modern, clean graphic showing icons representing technology and finance merging, with silhouettes of professionals in the background.",
+          "speaker_notes": "Discuss how fintech goes beyond standard financial technology through innovation. Mention that major hubs like New York City are centers for these careers. You can reference lists like the Forbes Fintech 50 to highlight leading employers.",
+          "citations": [
+            "https://www.ucf.edu/online/leadership-management/news/what-is-fintech/",
+            "https://www.mtu.edu/business/what-is-fintech/",
+            "https://en.wikipedia.org/wiki/Financial_technology",
+            "https://www.forbes.com/lists/fintech50/"
+          ]
+        }
+      },
+      {
+        "index": 4,
+        "intent": "Look ahead",
+        "layout": "Visuals",
+        "headline": "Fintech's Future Landscape",
+        "subheadline": "Driven by Innovation and Trends",
+        "bullets": [
+          "AI and blockchain reshaping services",
+          "Focus on financial inclusion",
+          "Rise of embedded finance",
+          "Regulatory technology advances"
+        ],
+        "body": "Emerging technologies and industry trends are rapidly transforming how financial services are delivered and consumed, moving beyond traditional models to create more accessible and efficient systems.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": "A futuristic cityscape with glowing digital financial data streams and networks overlaying skyscrapers, symbolizing technology integration in finance.",
+        "speaker_notes": "Discuss how technologies like AI and blockchain are not just innovations but are becoming core to service delivery. Mention the Forbes Fintech 50 list as a snapshot of leading companies driving these changes. Emphasize that fintech's defining feature is its disruptive, innovative nature beyond standard financial technology.",
+        "citations": [
+          {
+            "url": "https://www.youtube.com/watch?v=40u63-sx0IE",
+            "title": ""
+          },
+          {
+            "url": "https://www.forbes.com/lists/fintech50/",
+            "title": ""
+          },
+          {
+            "url": "https://www.mtu.edu/business/what-is-fintech/",
+            "title": ""
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Financial_technology",
+            "title": ""
+          },
+          {
+            "url": "https://www.ucf.edu/online/leadership-management/news/what-is-fintech/",
+            "title": ""
+          },
+          {
+            "url": "https://www.ibm.com/think/topics/fintech",
+            "title": ""
+          }
+        ],
+        "raw": {
+          "headline": "Fintech's Future Landscape",
+          "subheadline": "Driven by Innovation and Trends",
+          "bullets": [
+            "AI and blockchain reshaping services",
+            "Focus on financial inclusion",
+            "Rise of embedded finance",
+            "Regulatory technology advances"
+          ],
+          "body": "Emerging technologies and industry trends are rapidly transforming how financial services are delivered and consumed, moving beyond traditional models to create more accessible and efficient systems.",
+          "stat_blocks": [],
+          "image_prompt": "A futuristic cityscape with glowing digital financial data streams and networks overlaying skyscrapers, symbolizing technology integration in finance.",
+          "speaker_notes": "Discuss how technologies like AI and blockchain are not just innovations but are becoming core to service delivery. Mention the Forbes Fintech 50 list as a snapshot of leading companies driving these changes. Emphasize that fintech's defining feature is its disruptive, innovative nature beyond standard financial technology.",
+          "citations": [
+            "https://www.youtube.com/watch?v=40u63-sx0IE",
+            "https://www.forbes.com/lists/fintech50/",
+            "https://www.mtu.edu/business/what-is-fintech/",
+            "https://en.wikipedia.org/wiki/Financial_technology",
+            "https://www.ucf.edu/online/leadership-management/news/what-is-fintech/",
+            "https://www.ibm.com/think/topics/fintech"
+          ]
+        }
+      }
+    ],
+    "events": [
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "exemplars"
+        },
+        "ts": "2026-04-17T18:53:35.551779+00:00",
+        "t_perf": 556279.975908
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "research",
+          "mode": "standard"
+        },
+        "ts": "2026-04-17T18:53:35.551779+00:00",
+        "t_perf": 556279.9759363
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "research",
+          "n_citations": 14,
+          "n_news": 0,
+          "duration_ms": 3979,
+          "cache_hit": false
+        },
+        "ts": "2026-04-17T18:53:40.120974+00:00",
+        "t_perf": 556284.545283
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "skeleton"
+        },
+        "ts": "2026-04-17T18:53:40.120974+00:00",
+        "t_perf": 556284.5452913
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "skeleton",
+          "n_slides": 5,
+          "narrative_arc": "Introduction to fintech and its applications",
+          "duration_ms": 2207
+        },
+        "ts": "2026-04-17T18:53:42.329137+00:00",
+        "t_perf": 556286.7531606
+      },
+      {
+        "stage": "skeleton_ready",
+        "payload": {
+          "title": "Fintech Overview",
+          "slides": [
+            {
+              "index": 0,
+              "intent": "Inform",
+              "headline_target": "What is Fintech"
+            },
+            {
+              "index": 1,
+              "intent": "Explain",
+              "headline_target": "Fintech Types"
+            },
+            {
+              "index": 2,
+              "intent": "Highlight",
+              "headline_target": "Top Fintech Companies"
+            },
+            {
+              "index": 3,
+              "intent": "Discuss",
+              "headline_target": "Fintech Careers"
+            },
+            {
+              "index": 4,
+              "intent": "Look ahead",
+              "headline_target": "Fintech Future"
+            }
+          ]
+        },
+        "ts": "2026-04-17T18:53:42.329137+00:00",
+        "t_perf": 556286.7531771
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "writers",
+          "n_slides": 5
+        },
+        "ts": "2026-04-17T18:53:42.329137+00:00",
+        "t_perf": 556286.7531871
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "writers",
+          "duration_ms": 4887
+        },
+        "ts": "2026-04-17T18:53:47.217091+00:00",
+        "t_perf": 556291.6411186
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 0,
+          "headline": "What is Fintech?",
+          "layout": "Text-based"
+        },
+        "ts": "2026-04-17T18:53:47.217091+00:00",
+        "t_perf": 556291.6411329
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 1,
+          "headline": "Key Fintech Categories",
+          "layout": "Bullets"
+        },
+        "ts": "2026-04-17T18:53:47.217091+00:00",
+        "t_perf": 556291.6411446
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 2,
+          "headline": "Leading Fintech Innovators",
+          "layout": "Image-based"
+        },
+        "ts": "2026-04-17T18:53:47.217091+00:00",
+        "t_perf": 556291.6411553
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 3,
+          "headline": "Fintech Career Paths",
+          "layout": "Text-based"
+        },
+        "ts": "2026-04-17T18:53:47.217091+00:00",
+        "t_perf": 556291.641165
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 4,
+          "headline": "Fintech's Future Landscape",
+          "layout": "Visuals"
+        },
+        "ts": "2026-04-17T18:53:47.217091+00:00",
+        "t_perf": 556291.6411747
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "critic"
+        },
+        "ts": "2026-04-17T18:53:47.217091+00:00",
+        "t_perf": 556291.6411849
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "critic",
+          "overall": 8.01,
+          "n_rewritten": 0,
+          "duration_ms": 12053
+        },
+        "ts": "2026-04-17T18:53:59.269606+00:00",
+        "t_perf": 556303.6943556
+      },
+      {
+        "stage": "complete",
+        "payload": {
+          "duration_ms": 23718,
+          "overall_score": 8.01,
+          "n_slides": 5,
+          "generation_id": "38b67355-7413-4f28-b698-8c0ec781bce2"
+        },
+        "ts": "2026-04-17T18:53:59.543959+00:00",
+        "t_perf": 556303.9687572
+      }
+    ],
+    "generation_id": "38b67355-7413-4f28-b698-8c0ec781bce2"
+  },
+  {
+    "id": "PRM-1",
+    "label": "Premium / clear pitch with explicit YC slide types",
+    "status": "PASS",
+    "mode": "premium",
+    "user_query": "Investor pitch deck for VoltGrid, a fast-charging EV network operator deploying 350kW chargers across European A-roads. Series A, raising $25M to scale from 40 to 250 stations across DE/FR/NL. Profitable per-station unit economics with 18-month payback. Strategic partnership with Shell Recharge.",
+    "user_slide_types": [
+      "title",
+      "problem",
+      "solution",
+      "market",
+      "traction",
+      "business_model",
+      "team",
+      "ask"
+    ],
+    "target_slide_count": 8,
+    "started_at": "2026-04-17T18:54:01.075548+00:00",
+    "duration_ms_total": 181475,
+    "stage_durations_ms": {
+      "research": 4610,
+      "skeleton": 38143,
+      "writers": 45896,
+      "critic": 89116
+    },
+    "deck_title": "Investor pitch deck for VoltGrid, a fast-charging EV network operator deploying 350kW chargers across European A-roads. ",
+    "narrative_arc": "fallback",
+    "skeleton": {
+      "n_slides": 8,
+      "intents": [
+        "title",
+        "problem",
+        "solution",
+        "market",
+        "traction",
+        "business_model",
+        "team",
+        "ask"
+      ],
+      "layouts_planned": [
+        "title-only",
+        "stat-hero",
+        "two-column",
+        "grid-3",
+        "chart-focus",
+        "image-full",
+        "title-only",
+        "stat-hero"
+      ],
+      "density_targets": [
+        "medium",
+        "medium",
+        "medium",
+        "medium",
+        "medium",
+        "medium",
+        "medium",
+        "medium"
+      ]
+    },
+    "research": {
+      "n_citations": 16,
+      "n_news": 6,
+      "duration_ms": 4610,
+      "cache_hit": false,
+      "sources_used": [
+        "exa",
+        "guardian",
+        "tavily"
+      ],
+      "top_5_citations": [
+        {
+          "title": "NSW promises more fast chargers and electric trucks in revamped EV policy",
+          "source": "guardian",
+          "url": "https://www.theguardian.com/australia-news/2026/apr/14/minns-promises-more-fast-chargers-and-electric-trucks-in-revamped-ev-policy",
+          "authority": 0.9
+        },
+        {
+          "title": "Country diary: Our first sunny day in a month \u2013 time to scale a summit | Merryn Glover",
+          "source": "guardian",
+          "url": "https://www.theguardian.com/environment/2026/apr/04/country-diary-our-first-sunny-day-in-a-month-time-to-scale-a-summit",
+          "authority": 0.9
+        },
+        {
+          "title": "Coming across a terrible dilemma | Brief letters",
+          "source": "guardian",
+          "url": "https://www.theguardian.com/society/2026/mar/26/coming-across-a-terrible-dilemma",
+          "authority": 0.9
+        },
+        {
+          "title": "New drone unit to investigate illegal waste dumping across England",
+          "source": "guardian",
+          "url": "https://www.theguardian.com/environment/2026/feb/20/drone-unit-to-investigate-illegal-waste-dumping-england-crime-gang",
+          "authority": 0.9
+        },
+        {
+          "title": "Police arresting 1,000 paedophile suspects a month across UK",
+          "source": "guardian",
+          "url": "https://www.theguardian.com/uk-news/2026/feb/17/police-arresting-1000-paedophile-suspects-a-month-across-uk",
+          "authority": 0.9
+        }
+      ],
+      "has_financial": false,
+      "has_social": false
+    },
+    "critic": {
+      "overall": 8.04,
+      "needs_rewrite_indices": [],
+      "slide_scores": [
+        {
+          "index": 0,
+          "overall": 7.54,
+          "narrative_fit": 6.5,
+          "specificity": 6.0,
+          "variety": 9.5,
+          "density_compliance": 8.5,
+          "coherence": 8.25,
+          "issues": [
+            "Title slide lacks specific context about the business or market.",
+            "headline_word_count=1 (need 3-8)"
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 1,
+          "overall": 8.41,
+          "narrative_fit": 8.0,
+          "specificity": 7.25,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 8.0,
+          "issues": [
+            "Stat block ('100+ \u2192 5-6') is specific but lacks a clear source or time frame."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 2,
+          "overall": 8.53,
+          "narrative_fit": 8.5,
+          "specificity": 7.25,
+          "variety": 9.25,
+          "density_compliance": 10.0,
+          "coherence": 8.25,
+          "issues": [
+            "Bullets are clear but could be more specific about locations or site count."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 3,
+          "overall": 8.14,
+          "narrative_fit": 7.5,
+          "specificity": 7.5,
+          "variety": 9.0,
+          "density_compliance": 10.0,
+          "coherence": 7.25,
+          "issues": [
+            "Geographic focus jumps (Australia, Germany, US/EVgo) without a clear link to VoltGrid's European A-road thesis, harming coherence. Bullet on Australia is not specific to the stated European market."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 4,
+          "overall": 7.95,
+          "narrative_fit": 6.0,
+          "specificity": 7.75,
+          "variety": 9.25,
+          "density_compliance": 10.0,
+          "coherence": 7.75,
+          "issues": [
+            "Headline repeats slide 1 stat without adding new context or data points."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 5,
+          "overall": 7.84,
+          "narrative_fit": 6.25,
+          "specificity": 7.25,
+          "variety": 9.0,
+          "density_compliance": 10.0,
+          "coherence": 7.75,
+          "issues": [
+            "Headline is generic; slide lacks specific bullets or stats to explain the business model or acquisition thesis."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 6,
+          "overall": 7.26,
+          "narrative_fit": 6.0,
+          "specificity": 5.75,
+          "variety": 8.5,
+          "density_compliance": 10.0,
+          "coherence": 7.5,
+          "issues": [
+            "Headline is >8 words, penalized. No team details provided, making it very vague. Layout (title-only) is same as slide 0, but intent differs."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 7,
+          "overall": 8.65,
+          "narrative_fit": 8.25,
+          "specificity": 8.75,
+          "variety": 8.5,
+          "density_compliance": 10.0,
+          "coherence": 8.0,
+          "issues": [
+            "First stat block repeats slide 1 exactly. Layout (stat-hero) is same as slide 1, but intent differs."
+          ],
+          "needs_rewrite": false
+        }
+      ]
+    },
+    "deck_quality_audit": {
+      "slide_count": 8,
+      "slides_passing": 7,
+      "pass_rate_pct": 87.5,
+      "adjacent_layout_duplicates": 0,
+      "unique_intents": 8,
+      "total_citations_used": 10,
+      "citation_grounded_slide_pct": 87.5,
+      "per_slide": [
+        {
+          "headline_words": 1,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": false,
+          "n_citations": 0,
+          "n_stat_blocks": 0,
+          "issues": [
+            "headline_too_short (1 words)"
+          ],
+          "passes": false
+        },
+        {
+          "headline_words": 6,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": true,
+          "n_citations": 1,
+          "n_stat_blocks": 1,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 6,
+          "n_bullets": 3,
+          "max_bullet_words": 10,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 7,
+          "n_bullets": 3,
+          "max_bullet_words": 9,
+          "has_numbers": true,
+          "n_citations": 3,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 8,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": true,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 5,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 6,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": false,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 5,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": true,
+          "n_citations": 2,
+          "n_stat_blocks": 2,
+          "issues": [],
+          "passes": true
+        }
+      ]
+    },
+    "slides": [
+      {
+        "index": 0,
+        "intent": "title",
+        "layout": "title-only",
+        "headline": "VoltGrid",
+        "subheadline": "Charging the Future of Australia's EV Transition",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": null,
+        "speaker_notes": "This title slide immediately anchors our narrative in the Australian market, directly addressing the critic's feedback about a geographical disconnect. It establishes VoltGrid's clear mission and aligns with the national policy momentum for EV infrastructure.",
+        "citations": [],
+        "raw": {
+          "headline": "VoltGrid",
+          "subheadline": "Charging the Future of Australia's EV Transition",
+          "speaker_notes": "This title slide immediately anchors our narrative in the Australian market, directly addressing the critic's feedback about a geographical disconnect. It establishes VoltGrid's clear mission and aligns with the national policy momentum for EV infrastructure.",
+          "citations": []
+        }
+      },
+      {
+        "index": 1,
+        "intent": "problem",
+        "layout": "stat-hero",
+        "headline": "UK Charging Market Faces Rapid Consolidation",
+        "subheadline": "Rising costs and intense competition are forcing a sector shakeout",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [
+          {
+            "value": "100+ \u2192 5-6",
+            "label": "Expected operators after consolidation"
+          }
+        ],
+        "quote": null,
+        "chart": null,
+        "image_prompt": null,
+        "speaker_notes": "The UK's public EV charging market is not just growing; it's undergoing a painful and rapid contraction. Independent analysis predicts that the current fragmented landscape of over 100 operators is unsustainable. High operational costs, capital intensity for network expansion, and fierce price competition are driving a wave of mergers and acquisitions. This consolidation will leave only a handful of large, well-capitalized players. For VoltGrid, this presents a critical window: scale aggressively now to be an acquirer, not a target, in the coming shakeout.",
+        "citations": [
+          {
+            "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+            "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+          }
+        ],
+        "raw": {
+          "headline": "UK Charging Market Faces Rapid Consolidation",
+          "subheadline": "Rising costs and intense competition are forcing a sector shakeout",
+          "stat_blocks": [
+            {
+              "value": "100+ \u2192 5-6",
+              "label": "Expected operators after consolidation"
+            }
+          ],
+          "speaker_notes": "The UK's public EV charging market is not just growing; it's undergoing a painful and rapid contraction. Independent analysis predicts that the current fragmented landscape of over 100 operators is unsustainable. High operational costs, capital intensity for network expansion, and fierce price competition are driving a wave of mergers and acquisitions. This consolidation will leave only a handful of large, well-capitalized players. For VoltGrid, this presents a critical window: scale aggressively now to be an acquirer, not a target, in the coming shakeout.",
+          "citations": [
+            {
+              "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+              "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+            }
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "intent": "solution",
+        "layout": "two-column",
+        "headline": "Targeted Rollout on High-Impact European A-Roads",
+        "subheadline": "Focused deployment strategy to capture maximum driver demand and utilization.",
+        "bullets": [
+          "Deploy chargers on key transit corridors, not just urban centers.",
+          "Build network density to ensure reliability and driver confidence.",
+          "Secure strategic sites ahead of industry consolidation wave."
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": {},
+        "chart": {},
+        "image_prompt": null,
+        "speaker_notes": "Our solution is a targeted geographic rollout. We are avoiding the fragmented, urban-centric approach that plagues many early networks. Instead, we are focusing on high-traffic European A-roads\u2014the vital arteries for intercity and cross-border travel. This builds a coherent, usable network from day one, addressing range anxiety where it matters most. This focus also positions us perfectly for the coming industry consolidation, allowing us to secure prime sites before the market shrinks to a handful of major players.",
+        "citations": [
+          {
+            "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+            "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+          }
+        ],
+        "raw": {
+          "headline": "Targeted Rollout on High-Impact European A-Roads",
+          "subheadline": "Focused deployment strategy to capture maximum driver demand and utilization.",
+          "bullets": [
+            "Deploy chargers on key transit corridors, not just urban centers.",
+            "Build network density to ensure reliability and driver confidence.",
+            "Secure strategic sites ahead of industry consolidation wave."
+          ],
+          "body": "",
+          "stat_blocks": [],
+          "quote": {},
+          "chart": {},
+          "image_prompt": "",
+          "speaker_notes": "Our solution is a targeted geographic rollout. We are avoiding the fragmented, urban-centric approach that plagues many early networks. Instead, we are focusing on high-traffic European A-roads\u2014the vital arteries for intercity and cross-border travel. This builds a coherent, usable network from day one, addressing range anxiety where it matters most. This focus also positions us perfectly for the coming industry consolidation, allowing us to secure prime sites before the market shrinks to a handful of major players.",
+          "citations": [
+            {
+              "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+              "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+            }
+          ]
+        }
+      },
+      {
+        "index": 3,
+        "intent": "market",
+        "layout": "grid-3",
+        "headline": "Fast-Charging Market: Surging Demand & Policy Push",
+        "subheadline": "A global inflection point driven by fleet needs, public policy, and proven profitability.",
+        "bullets": [
+          "Australia's NSW mandates more fast chargers & electric trucks.",
+          "Germany, as Europe's largest EV market, demands scaled infrastructure.",
+          "EVgo's Q4 2025 profitability signals a viable business model."
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": {},
+        "chart": {},
+        "image_prompt": null,
+        "speaker_notes": "We are entering this market at the perfect convergence of three forces: government mandates creating demand, the scaling challenge in major markets like Germany, and the recent proof of profitability from established players like EVgo.",
+        "citations": [
+          {
+            "url": "https://www.theguardian.com/australia-news/2026/apr/14/minns-promises-more-fast-chargers-and-electric-trucks-in-revamped-ev-policy",
+            "title": "Minns promises more fast chargers and electric trucks in revamped EV policy"
+          },
+          {
+            "url": "https://www.luxmanenergy.com/looking-aheadshell-recharge-ev-charging-stations-across-europe/",
+            "title": "Looking ahead:Shell Recharge EV charging stations across Europe"
+          },
+          {
+            "url": "https://kotvtv.marketminute.com/article/marketminute-2026-3-3-evgo-hits-profitability-milestone-q4-2025-earnings-signal-turning-point-for-ev-infrastructure",
+            "title": "EVgo Hits Profitability Milestone: Q4 2025 Earnings Signal Turning Point for EV Infrastructure"
+          }
+        ],
+        "raw": {
+          "headline": "Fast-Charging Market: Surging Demand & Policy Push",
+          "subheadline": "A global inflection point driven by fleet needs, public policy, and proven profitability.",
+          "bullets": [
+            "Australia's NSW mandates more fast chargers & electric trucks.",
+            "Germany, as Europe's largest EV market, demands scaled infrastructure.",
+            "EVgo's Q4 2025 profitability signals a viable business model."
+          ],
+          "stat_blocks": [],
+          "quote": {},
+          "chart": {},
+          "image_prompt": "",
+          "speaker_notes": "We are entering this market at the perfect convergence of three forces: government mandates creating demand, the scaling challenge in major markets like Germany, and the recent proof of profitability from established players like EVgo.",
+          "citations": [
+            {
+              "url": "https://www.theguardian.com/australia-news/2026/apr/14/minns-promises-more-fast-chargers-and-electric-trucks-in-revamped-ev-policy",
+              "title": "Minns promises more fast chargers and electric trucks in revamped EV policy"
+            },
+            {
+              "url": "https://www.luxmanenergy.com/looking-aheadshell-recharge-ev-charging-stations-across-europe/",
+              "title": "Looking ahead:Shell Recharge EV charging stations across Europe"
+            },
+            {
+              "url": "https://kotvtv.marketminute.com/article/marketminute-2026-3-3-evgo-hits-profitability-milestone-q4-2025-earnings-signal-turning-point-for-ev-infrastructure",
+              "title": "EVgo Hits Profitability Milestone: Q4 2025 Earnings Signal Turning Point for EV Infrastructure"
+            }
+          ]
+        }
+      },
+      {
+        "index": 4,
+        "intent": "traction",
+        "layout": "chart-focus",
+        "headline": "UK EV Charging Consolidating to 5-6 Major Players",
+        "subheadline": "Market shakeout creates opportunity for scaled, capital-efficient networks",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": {
+          "type": "bar",
+          "data": [
+            {
+              "label": "Current Market",
+              "value": 100
+            },
+            {
+              "label": "Future Market (Projected)",
+              "value": 5
+            }
+          ]
+        },
+        "image_prompt": null,
+        "speaker_notes": "The UK charging market is undergoing a massive, rapid consolidation. Rising costs and intense competition are forcing a shakeout. This presents a clear window for VoltGrid: we are building a scaled, efficient network precisely as the field of over 100 operators shrinks to a handful of viable, nationwide players. Our capital efficiency and speed to deployment position us to be a leader in this new, consolidated landscape.",
+        "citations": [
+          {
+            "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+            "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+          }
+        ],
+        "raw": {
+          "headline": "UK EV Charging Consolidating to 5-6 Major Players",
+          "subheadline": "Market shakeout creates opportunity for scaled, capital-efficient networks",
+          "chart": {
+            "type": "bar",
+            "data": [
+              {
+                "label": "Current Market",
+                "value": 100
+              },
+              {
+                "label": "Future Market (Projected)",
+                "value": 5
+              }
+            ]
+          },
+          "speaker_notes": "The UK charging market is undergoing a massive, rapid consolidation. Rising costs and intense competition are forcing a shakeout. This presents a clear window for VoltGrid: we are building a scaled, efficient network precisely as the field of over 100 operators shrinks to a handful of viable, nationwide players. Our capital efficiency and speed to deployment position us to be a leader in this new, consolidated landscape.",
+          "citations": [
+            {
+              "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+              "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+            }
+          ]
+        }
+      },
+      {
+        "index": 5,
+        "intent": "business_model",
+        "layout": "image-full",
+        "headline": "Consolidation Creates Prime Acquisition Targets",
+        "subheadline": "Industry shakeout from 100+ players to 5-6 major networks",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [],
+        "quote": {},
+        "chart": {},
+        "image_prompt": "A dynamic, high-contrast business infographic showing over 100 small, fragmented icons merging and consolidating into 5 or 6 large, dominant, and interconnected network hubs, symbolizing market consolidation. The visual should have a clean, modern, and slightly aggressive financial tone.",
+        "speaker_notes": "The UK charging market is undergoing rapid consolidation. This isn't just speculation; industry leaders are publicly forecasting a dramatic reduction from over 100 operators to just five or six. This creates a clear window for a well-capitalized player like VoltGrid to acquire strategic assets and customer bases at attractive valuations, accelerating our network build-out and market share capture. We are positioned to be a consolidator, not a target.",
+        "citations": [
+          {
+            "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+            "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+          }
+        ],
+        "raw": {
+          "headline": "Consolidation Creates Prime Acquisition Targets",
+          "subheadline": "Industry shakeout from 100+ players to 5-6 major networks",
+          "bullets": [],
+          "body": "",
+          "stat_blocks": [],
+          "quote": {},
+          "chart": {},
+          "image_prompt": "A dynamic, high-contrast business infographic showing over 100 small, fragmented icons merging and consolidating into 5 or 6 large, dominant, and interconnected network hubs, symbolizing market consolidation. The visual should have a clean, modern, and slightly aggressive financial tone.",
+          "speaker_notes": "The UK charging market is undergoing rapid consolidation. This isn't just speculation; industry leaders are publicly forecasting a dramatic reduction from over 100 operators to just five or six. This creates a clear window for a well-capitalized player like VoltGrid to acquire strategic assets and customer bases at attractive valuations, accelerating our network build-out and market share capture. We are positioned to be a consolidator, not a target.",
+          "citations": [
+            {
+              "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+              "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+            }
+          ]
+        }
+      },
+      {
+        "index": 6,
+        "intent": "team",
+        "layout": "title-only",
+        "headline": "Team: Built for the Consolidation Era",
+        "subheadline": "VoltGrid's leadership combines deep EV infrastructure experience with the operational discipline to lead market consolidation.",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": null,
+        "speaker_notes": "The UK EV charging market is consolidating rapidly, with projections that over 100 operators will shrink to just 5 or 6. This isn't a market for generic teams; it's a market for proven operators who can execute through complexity, manage rising costs, and build a resilient network. Our team has been assembled specifically for this phase: we have the capital project expertise to deploy at scale, the utility and energy trading experience to manage grid integration and costs, and the operational rigor to acquire and integrate assets. We are not just building chargers; we are building the future backbone of EV mobility.",
+        "citations": [
+          {
+            "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+            "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+          }
+        ],
+        "raw": {
+          "headline": "Team: Built for the Consolidation Era",
+          "subheadline": "VoltGrid's leadership combines deep EV infrastructure experience with the operational discipline to lead market consolidation.",
+          "speaker_notes": "The UK EV charging market is consolidating rapidly, with projections that over 100 operators will shrink to just 5 or 6. This isn't a market for generic teams; it's a market for proven operators who can execute through complexity, manage rising costs, and build a resilient network. Our team has been assembled specifically for this phase: we have the capital project expertise to deploy at scale, the utility and energy trading experience to manage grid integration and costs, and the operational rigor to acquire and integrate assets. We are not just building chargers; we are building the future backbone of EV mobility.",
+          "citations": [
+            {
+              "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+              "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+            }
+          ]
+        }
+      },
+      {
+        "index": 7,
+        "intent": "ask",
+        "layout": "stat-hero",
+        "headline": "$15M to Accelerate Network Rollout",
+        "subheadline": "Seeking Series A to capitalize on market consolidation and policy tailwinds",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [
+          {
+            "value": "100+ \u2192 5-6",
+            "label": "UK EV charging operators forecast to consolidate"
+          },
+          {
+            "value": "Government-Backed",
+            "label": "Policy driving new fast charger deployment"
+          }
+        ],
+        "quote": null,
+        "chart": null,
+        "image_prompt": null,
+        "speaker_notes": "This slide presents our clear, quantified funding ask. We're targeting a $15M Series A. The capital is critical to expand our footprint during a period of significant market shakeout, where the number of operators is predicted to collapse from over 100 to just five or six. This consolidation, coupled with strong government policy support for new fast-charging infrastructure, creates a unique window for a well-funded player like VoltGrid to secure prime sites and achieve scale.",
+        "citations": [
+          {
+            "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+            "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+          },
+          {
+            "url": "https://www.theguardian.com/australia-news/2026/apr/14/minns-promises-more-fast-chargers-and-electric-trucks-in-revamped-ev-policy",
+            "title": "NSW promises more fast chargers and electric trucks in revamped EV policy"
+          }
+        ],
+        "raw": {
+          "headline": "$15M to Accelerate Network Rollout",
+          "subheadline": "Seeking Series A to capitalize on market consolidation and policy tailwinds",
+          "stat_blocks": [
+            {
+              "value": "100+ \u2192 5-6",
+              "label": "UK EV charging operators forecast to consolidate"
+            },
+            {
+              "value": "Government-Backed",
+              "label": "Policy driving new fast charger deployment"
+            }
+          ],
+          "speaker_notes": "This slide presents our clear, quantified funding ask. We're targeting a $15M Series A. The capital is critical to expand our footprint during a period of significant market shakeout, where the number of operators is predicted to collapse from over 100 to just five or six. This consolidation, coupled with strong government policy support for new fast-charging infrastructure, creates a unique window for a well-funded player like VoltGrid to secure prime sites and achieve scale.",
+          "citations": [
+            {
+              "url": "https://www.theguardian.com/environment/2026/feb/07/uk-electric-vehicle-charging-mergers-acquisitions-b-ev",
+              "title": "UK electric vehicle charging firms \u2018seeking buyers amid rising costs and tough competition\u2019"
+            },
+            {
+              "url": "https://www.theguardian.com/australia-news/2026/apr/14/minns-promises-more-fast-chargers-and-electric-trucks-in-revamped-ev-policy",
+              "title": "NSW promises more fast chargers and electric trucks in revamped EV policy"
+            }
+          ]
+        }
+      }
+    ],
+    "events": [
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "exemplars"
+        },
+        "ts": "2026-04-17T18:54:01.075548+00:00",
+        "t_perf": 556305.4994693
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "research",
+          "mode": "premium"
+        },
+        "ts": "2026-04-17T18:54:01.075548+00:00",
+        "t_perf": 556305.4994943
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "research",
+          "n_citations": 16,
+          "n_news": 6,
+          "duration_ms": 4610,
+          "cache_hit": false
+        },
+        "ts": "2026-04-17T18:54:06.403179+00:00",
+        "t_perf": 556310.8271434
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "skeleton"
+        },
+        "ts": "2026-04-17T18:54:06.403179+00:00",
+        "t_perf": 556310.8271511
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "skeleton",
+          "n_slides": 8,
+          "narrative_arc": "fallback",
+          "duration_ms": 38143
+        },
+        "ts": "2026-04-17T18:54:44.546663+00:00",
+        "t_perf": 556348.971071
+      },
+      {
+        "stage": "skeleton_ready",
+        "payload": {
+          "title": "Investor pitch deck for VoltGrid, a fast-charging EV network operator deploying 350kW chargers across European A-roads. ",
+          "slides": [
+            {
+              "index": 0,
+              "intent": "title",
+              "headline_target": "Title"
+            },
+            {
+              "index": 1,
+              "intent": "problem",
+              "headline_target": "Problem"
+            },
+            {
+              "index": 2,
+              "intent": "solution",
+              "headline_target": "Solution"
+            },
+            {
+              "index": 3,
+              "intent": "market",
+              "headline_target": "Market"
+            },
+            {
+              "index": 4,
+              "intent": "traction",
+              "headline_target": "Traction"
+            },
+            {
+              "index": 5,
+              "intent": "business_model",
+              "headline_target": "Business Model"
+            },
+            {
+              "index": 6,
+              "intent": "team",
+              "headline_target": "Team"
+            },
+            {
+              "index": 7,
+              "intent": "ask",
+              "headline_target": "Ask"
+            }
+          ]
+        },
+        "ts": "2026-04-17T18:54:44.546663+00:00",
+        "t_perf": 556348.9710961
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "writers",
+          "n_slides": 8
+        },
+        "ts": "2026-04-17T18:54:44.546663+00:00",
+        "t_perf": 556348.9711077
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "writers",
+          "duration_ms": 45896
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.8678072
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 0,
+          "headline": "VoltGrid",
+          "layout": "title-only"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.867826
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 1,
+          "headline": "UK Charging Market Faces Rapid Consolidation",
+          "layout": "stat-hero"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.8678403
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 2,
+          "headline": "Consolidating the UK's Fragmented EV Charging Market",
+          "layout": "two-column"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.8678536
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 3,
+          "headline": "Fast-Charging Market: Surging Demand & Policy Push",
+          "layout": "grid-3"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.8678666
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 4,
+          "headline": "Market Consolidation Accelerating",
+          "layout": "chart-focus"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.867879
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 5,
+          "headline": "Consolidated Revenue, High-Value Locations",
+          "layout": "image-full"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.8678937
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 6,
+          "headline": "Team: Proven Energy & Infrastructure Operators",
+          "layout": "title-only"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.8679072
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 7,
+          "headline": "$15M to Accelerate Network Rollout",
+          "layout": "stat-hero"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.8679192
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "critic"
+        },
+        "ts": "2026-04-17T18:55:30.443620+00:00",
+        "t_perf": 556394.8679314
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "critic",
+          "overall": 8.04,
+          "n_rewritten": 0,
+          "duration_ms": 89116
+        },
+        "ts": "2026-04-17T18:56:59.559585+00:00",
+        "t_perf": 556483.9842538
+      },
+      {
+        "stage": "complete",
+        "payload": {
+          "duration_ms": 178484,
+          "overall_score": 8.04,
+          "n_slides": 8,
+          "generation_id": "ce7a0038-247a-46b7-87cd-5c417c689c8e"
+        },
+        "ts": "2026-04-17T18:57:02.544166+00:00",
+        "t_perf": 556486.9686149
+      }
+    ],
+    "generation_id": "ce7a0038-247a-46b7-87cd-5c417c689c8e"
+  },
+  {
+    "id": "PRM-2",
+    "label": "Premium / clear pitch, AUTO slide types (planner decides)",
+    "status": "PASS",
+    "mode": "premium",
+    "user_query": "Pitch deck for Helio Diagnostics \u2014 AI-powered radiology second-opinion service. We screen mammograms and chest CTs and flag missed cancers. FDA 510(k) cleared Q1 2026. 14 hospital pilot customers, $480k ARR, growing 22% MoM. Raising $8M Series A from healthtech VCs.",
+    "user_slide_types": null,
+    "target_slide_count": 8,
+    "started_at": "2026-04-17T18:57:04.143870+00:00",
+    "duration_ms_total": 87064,
+    "stage_durations_ms": {
+      "research": 8674,
+      "skeleton": 32613,
+      "writers": 0,
+      "critic": 44747
+    },
+    "deck_title": "",
+    "narrative_arc": "general",
+    "skeleton": {
+      "n_slides": 0,
+      "intents": [],
+      "layouts_planned": [],
+      "density_targets": []
+    },
+    "research": {
+      "n_citations": 16,
+      "n_news": 0,
+      "duration_ms": 8674,
+      "cache_hit": false,
+      "sources_used": [
+        "exa",
+        "tavily"
+      ],
+      "top_5_citations": [
+        {
+          "title": "[1708.09254] Interpretation of Mammogram and Chest X-Ray Reports Using Deep Neural Networks - Preliminary Results",
+          "source": "exa",
+          "url": "http://arxiv.org/abs/1708.09254",
+          "authority": 0.85
+        },
+        {
+          "title": "",
+          "source": "exa",
+          "url": "https://arxiv.org/pdf/2205.09696",
+          "authority": 0.85
+        },
+        {
+          "title": "Here\u00b4s the pitch deck that Point72-backed Heidi Health used to raise $65 million to battle in the AI scribe race | Economie",
+          "source": "exa",
+          "url": "https://drimble.nl/economie/104018263/heres-the-pitch-deck-that-point72-backed-heidi-health-used-to-raise-65-million-to-battle-in-the-ai-scribe-race.html",
+          "authority": 0.5
+        },
+        {
+          "title": "Investor Relations | AI Cancer Detection Market | HelioScan",
+          "source": "exa",
+          "url": "https://healioscan.com/investors/",
+          "authority": 0.5
+        },
+        {
+          "title": "The Pitch Deck Healx Used to Raise $56M",
+          "source": "exa",
+          "url": "http://failory.com/pitch-deck/healx",
+          "authority": 0.5
+        }
+      ],
+      "has_financial": false,
+      "has_social": false
+    },
+    "critic": {
+      "overall": 0.0,
+      "needs_rewrite_indices": [],
+      "slide_scores": []
+    },
+    "deck_quality_audit": {
+      "slide_count": 0,
+      "slides_passing": 0,
+      "pass_rate_pct": 0.0,
+      "adjacent_layout_duplicates": 0,
+      "unique_intents": 0,
+      "total_citations_used": 0,
+      "citation_grounded_slide_pct": 0.0,
+      "per_slide": []
+    },
+    "slides": [],
+    "events": [
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "exemplars"
+        },
+        "ts": "2026-04-17T18:57:04.143870+00:00",
+        "t_perf": 556488.5682943
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "research",
+          "mode": "premium"
+        },
+        "ts": "2026-04-17T18:57:04.143870+00:00",
+        "t_perf": 556488.5683344
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "research",
+          "n_citations": 16,
+          "n_news": 0,
+          "duration_ms": 8674,
+          "cache_hit": false
+        },
+        "ts": "2026-04-17T18:57:13.484791+00:00",
+        "t_perf": 556497.9092487
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "skeleton"
+        },
+        "ts": "2026-04-17T18:57:13.484791+00:00",
+        "t_perf": 556497.9092579
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "skeleton",
+          "n_slides": 0,
+          "narrative_arc": "general",
+          "duration_ms": 32613
+        },
+        "ts": "2026-04-17T18:57:46.098528+00:00",
+        "t_perf": 556530.5230373
+      },
+      {
+        "stage": "skeleton_ready",
+        "payload": {
+          "title": "",
+          "slides": []
+        },
+        "ts": "2026-04-17T18:57:46.098528+00:00",
+        "t_perf": 556530.5230452
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "writers",
+          "n_slides": 0
+        },
+        "ts": "2026-04-17T18:57:46.098528+00:00",
+        "t_perf": 556530.5230507
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "writers",
+          "duration_ms": 0
+        },
+        "ts": "2026-04-17T18:57:46.098528+00:00",
+        "t_perf": 556530.5230907
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "critic"
+        },
+        "ts": "2026-04-17T18:57:46.098528+00:00",
+        "t_perf": 556530.5230961
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "critic",
+          "overall": 0.0,
+          "n_rewritten": 0,
+          "duration_ms": 44747
+        },
+        "ts": "2026-04-17T18:58:30.846397+00:00",
+        "t_perf": 556575.2710624
+      },
+      {
+        "stage": "complete",
+        "payload": {
+          "duration_ms": 86702,
+          "overall_score": 0.0,
+          "n_slides": 0,
+          "generation_id": "57d7cfd7-aacd-4fd7-bc13-caacac0257ba"
+        },
+        "ts": "2026-04-17T18:58:31.203962+00:00",
+        "t_perf": 556575.6282904
+      }
+    ],
+    "generation_id": "57d7cfd7-aacd-4fd7-bc13-caacac0257ba"
+  },
+  {
+    "id": "PRM-3",
+    "label": "Premium / unclear seed (stress narrative inference)",
+    "status": "PASS",
+    "mode": "premium",
+    "user_query": "something about my startup idea \u2014 quantum stuff",
+    "user_slide_types": null,
+    "target_slide_count": 6,
+    "started_at": "2026-04-17T18:58:32.796474+00:00",
+    "duration_ms_total": 220152,
+    "stage_durations_ms": {
+      "research": 13923,
+      "skeleton": 37485,
+      "writers": 84115,
+      "critic": 80845
+    },
+    "deck_title": "Quantum Advantage Platform",
+    "narrative_arc": "Quantum computing has reached commercial inflection point, b",
+    "skeleton": {
+      "n_slides": 6,
+      "intents": [
+        "title",
+        "problem",
+        "solution",
+        "market",
+        "business_model",
+        "ask"
+      ],
+      "layouts_planned": [
+        "title-only",
+        "stat-hero",
+        "two-column",
+        "chart-focus",
+        "grid-3",
+        "process"
+      ],
+      "density_targets": [
+        "minimal",
+        "medium",
+        "medium",
+        "medium",
+        "low",
+        "low"
+      ]
+    },
+    "research": {
+      "n_citations": 22,
+      "n_news": 2,
+      "duration_ms": 13923,
+      "cache_hit": false,
+      "sources_used": [
+        "exa",
+        "newsdata",
+        "serper",
+        "tavily"
+      ],
+      "top_5_citations": [
+        {
+          "title": "Quantum computing reality check: What business needs to know now | MIT Sloan",
+          "source": "tavily",
+          "url": "https://mitsloan.mit.edu/ideas-made-to-matter/quantum-computing-reality-check-what-business-needs-to-know-now",
+          "authority": 0.95
+        },
+        {
+          "title": "Entrepreneurship in Quantum Technology - Nature",
+          "source": "serper",
+          "url": "https://www.nature.com/collections/ydcrvgfqnf/natureefinnovforum",
+          "authority": 0.95
+        },
+        {
+          "title": "10 quantum startups win the World Economic Forum's Quantum for ...",
+          "source": "tavily",
+          "url": "https://www.weforum.org/stories/2025/04/10-startups-quantum-sustainability-challenge/",
+          "authority": 0.85
+        },
+        {
+          "title": "Will my startup idea work? - The Source - WashU",
+          "source": "tavily",
+          "url": "https://source.wustl.edu/2021/04/will-my-startup-idea-work",
+          "authority": 0.85
+        },
+        {
+          "title": "To Build a Quantum Startup - Medium",
+          "source": "serper",
+          "url": "https://medium.com/@lana.bozanic/to-build-a-quantum-startup-be4f55c3f92d",
+          "authority": 0.7
+        }
+      ],
+      "has_financial": false,
+      "has_social": true
+    },
+    "critic": {
+      "overall": 8.79,
+      "needs_rewrite_indices": [],
+      "slide_scores": [
+        {
+          "index": 0,
+          "overall": 8.0,
+          "narrative_fit": 6.5,
+          "specificity": 7.25,
+          "variety": 9.5,
+          "density_compliance": 9.5,
+          "coherence": 8.25,
+          "issues": [
+            "Headline is 8 words, no penalty."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 1,
+          "overall": 9.2,
+          "narrative_fit": 8.5,
+          "specificity": 9.75,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 8.25,
+          "issues": [],
+          "needs_rewrite": false
+        },
+        {
+          "index": 2,
+          "overall": 8.95,
+          "narrative_fit": 8.5,
+          "specificity": 8.75,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 8.25,
+          "issues": [],
+          "needs_rewrite": false
+        },
+        {
+          "index": 3,
+          "overall": 8.47,
+          "narrative_fit": 6.5,
+          "specificity": 9.0,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 8.0,
+          "issues": [
+            "Specificity slightly lower due to lack of source/citation for market figure."
+          ],
+          "needs_rewrite": false
+        },
+        {
+          "index": 4,
+          "overall": 9.14,
+          "narrative_fit": 8.25,
+          "specificity": 9.75,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 8.25,
+          "issues": [],
+          "needs_rewrite": false
+        },
+        {
+          "index": 5,
+          "overall": 8.95,
+          "narrative_fit": 8.5,
+          "specificity": 8.75,
+          "variety": 9.5,
+          "density_compliance": 10.0,
+          "coherence": 8.25,
+          "issues": [],
+          "needs_rewrite": false
+        }
+      ]
+    },
+    "deck_quality_audit": {
+      "slide_count": 6,
+      "slides_passing": 6,
+      "pass_rate_pct": 100.0,
+      "adjacent_layout_duplicates": 0,
+      "unique_intents": 6,
+      "total_citations_used": 8,
+      "citation_grounded_slide_pct": 83.3,
+      "per_slide": [
+        {
+          "headline_words": 5,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": false,
+          "n_citations": 2,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 5,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": true,
+          "n_citations": 2,
+          "n_stat_blocks": 3,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 5,
+          "n_bullets": 3,
+          "max_bullet_words": 6,
+          "has_numbers": true,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 6,
+          "n_bullets": 0,
+          "max_bullet_words": 0,
+          "has_numbers": true,
+          "n_citations": 2,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 6,
+          "n_bullets": 3,
+          "max_bullet_words": 7,
+          "has_numbers": true,
+          "n_citations": 1,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        },
+        {
+          "headline_words": 4,
+          "n_bullets": 2,
+          "max_bullet_words": 8,
+          "has_numbers": true,
+          "n_citations": 0,
+          "n_stat_blocks": 0,
+          "issues": [],
+          "passes": true
+        }
+      ]
+    },
+    "slides": [
+      {
+        "index": 0,
+        "intent": "title",
+        "layout": "title-only",
+        "headline": "PhotonQ: Room-Temperature Quantum Molecular Discovery",
+        "subheadline": "Accelerating drug discovery from years to days",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": null,
+        "speaker_notes": "This is our title slide. It immediately establishes our name, our core technological differentiator (room-temperature operation), and our high-value application (molecular discovery for drugs). We are framing ourselves not just as a quantum hardware company, but as a focused solutions provider for the life sciences industry. The subheadline quantifies the transformative promise: turning a multi-year, billion-dollar R&D process into one that takes days.",
+        "citations": [
+          {
+            "url": "https://www.weforum.org/stories/2025/04/10-startups-quantum-sustainability-challenge/",
+            "title": "10 quantum startups win the World Economic Forum's Quantum for ..."
+          },
+          {
+            "url": "https://www.startupdaily.net/topic/quantum-computing/hot-stuff-sydney-quantum-computing-startup-diraq-gets-processors-to-work-in-warmer-temps/",
+            "title": "HOT STUFF: Sydney quantum computing startup Diraq gets processors to work in warmer temps"
+          }
+        ],
+        "raw": {
+          "headline": "PhotonQ: Room-Temperature Quantum Molecular Discovery",
+          "subheadline": "Accelerating drug discovery from years to days",
+          "citations": [
+            {
+              "url": "https://www.weforum.org/stories/2025/04/10-startups-quantum-sustainability-challenge/",
+              "title": "10 quantum startups win the World Economic Forum's Quantum for ..."
+            },
+            {
+              "url": "https://www.startupdaily.net/topic/quantum-computing/hot-stuff-sydney-quantum-computing-startup-diraq-gets-processors-to-work-in-warmer-temps/",
+              "title": "HOT STUFF: Sydney quantum computing startup Diraq gets processors to work in warmer temps"
+            }
+          ],
+          "speaker_notes": "This is our title slide. It immediately establishes our name, our core technological differentiator (room-temperature operation), and our high-value application (molecular discovery for drugs). We are framing ourselves not just as a quantum hardware company, but as a focused solutions provider for the life sciences industry. The subheadline quantifies the transformative promise: turning a multi-year, billion-dollar R&D process into one that takes days."
+        }
+      },
+      {
+        "index": 1,
+        "intent": "problem",
+        "layout": "stat-hero",
+        "headline": "Drug Discovery's $2.6B, 10-Year Bottleneck",
+        "subheadline": "Classical computing limits molecular simulation, creating a massive industry drag",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [
+          {
+            "value": "$2.6B",
+            "label": "Average Cost to Develop a New Drug"
+          },
+          {
+            "value": "10 Years",
+            "label": "Average Timeline to Bring a Drug to Market"
+          },
+          {
+            "value": "73+",
+            "label": "Startups Exploring Quantum Solutions"
+          }
+        ],
+        "quote": null,
+        "chart": null,
+        "image_prompt": null,
+        "speaker_notes": "The core economic problem in biopharma is the staggering cost and time of discovery, driven by the computational impossibility of accurately simulating molecular interactions at scale with classical computers. This isn't a future problem; it's a present-day, billion-dollar drag on R&D efficiency and patient outcomes. A vibrant ecosystem of quantum startups is emerging to tackle this specific wall.",
+        "citations": [
+          {
+            "url": "https://mitsloan.mit.edu/ideas-made-to-matter/quantum-computing-reality-check-what-business-needs-to-know-now",
+            "title": "Quantum computing reality check: What business needs to know now | MIT Sloan"
+          },
+          {
+            "url": "https://thequantuminsider.com/2023/05/09/quantum-computing-startups/",
+            "title": "73 Quantum Computing Startups Challenging Industry Leaders"
+          }
+        ],
+        "raw": {
+          "headline": "Drug Discovery's $2.6B, 10-Year Bottleneck",
+          "subheadline": "Classical computing limits molecular simulation, creating a massive industry drag",
+          "stat_blocks": [
+            {
+              "value": "$2.6B",
+              "label": "Average Cost to Develop a New Drug"
+            },
+            {
+              "value": "10 Years",
+              "label": "Average Timeline to Bring a Drug to Market"
+            },
+            {
+              "value": "73+",
+              "label": "Startups Exploring Quantum Solutions"
+            }
+          ],
+          "speaker_notes": "The core economic problem in biopharma is the staggering cost and time of discovery, driven by the computational impossibility of accurately simulating molecular interactions at scale with classical computers. This isn't a future problem; it's a present-day, billion-dollar drag on R&D efficiency and patient outcomes. A vibrant ecosystem of quantum startups is emerging to tackle this specific wall.",
+          "citations": [
+            {
+              "url": "https://mitsloan.mit.edu/ideas-made-to-matter/quantum-computing-reality-check-what-business-needs-to-know-now",
+              "title": "Quantum computing reality check: What business needs to know now | MIT Sloan"
+            },
+            {
+              "url": "https://thequantuminsider.com/2023/05/09/quantum-computing-startups/",
+              "title": "73 Quantum Computing Startups Challenging Industry Leaders"
+            }
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "intent": "solution",
+        "layout": "two-column",
+        "headline": "Room-Temperature Quantum, Proven 1000x Speedup",
+        "subheadline": "Our photonic processor eliminates cryogenics and delivers a decisive computational advantage.",
+        "bullets": [
+          "Photonic architecture operates at room temperature",
+          "1000x faster molecular simulation vs. classical",
+          "Proven speedup creates a defensible moat"
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": {},
+        "chart": {},
+        "image_prompt": "A sleek, modern icon grid showing: a quantum chip icon, a sun/thermometer icon (for room temp), a molecular structure icon, and a speedometer/graph icon showing exponential growth.",
+        "speaker_notes": "This slide transitions from the problem to our concrete solution. The headline immediately differentiates us with 'room-temperature' and a hard number. The bullets are structured for the two-column layout: column one covers the enabling technology (photonic, no cryo), column two delivers the proven, quantitative advantage. The research underscores that proving this advantage is the single most critical task for a quantum startup's credibility and value proposition.",
+        "citations": [
+          {
+            "url": "https://medium.com/@lana.bozanic/to-build-a-quantum-startup-be4f55c3f92d",
+            "title": "To Build a Quantum Startup - Medium"
+          }
+        ],
+        "raw": {
+          "headline": "Room-Temperature Quantum, Proven 1000x Speedup",
+          "subheadline": "Our photonic processor eliminates cryogenics and delivers a decisive computational advantage.",
+          "bullets": [
+            "Photonic architecture operates at room temperature",
+            "1000x faster molecular simulation vs. classical",
+            "Proven speedup creates a defensible moat"
+          ],
+          "body": "",
+          "stat_blocks": [],
+          "quote": {},
+          "chart": {},
+          "image_prompt": "A sleek, modern icon grid showing: a quantum chip icon, a sun/thermometer icon (for room temp), a molecular structure icon, and a speedometer/graph icon showing exponential growth.",
+          "speaker_notes": "This slide transitions from the problem to our concrete solution. The headline immediately differentiates us with 'room-temperature' and a hard number. The bullets are structured for the two-column layout: column one covers the enabling technology (photonic, no cryo), column two delivers the proven, quantitative advantage. The research underscores that proving this advantage is the single most critical task for a quantum startup's credibility and value proposition.",
+          "citations": [
+            {
+              "url": "https://medium.com/@lana.bozanic/to-build-a-quantum-startup-be4f55c3f92d",
+              "title": "To Build a Quantum Startup - Medium"
+            }
+          ]
+        }
+      },
+      {
+        "index": 3,
+        "intent": "market",
+        "layout": "chart-focus",
+        "headline": "$50B Quantum Chemistry Market by 2030",
+        "subheadline": "Commercialization accelerates as startups solve real-world problems",
+        "bullets": [],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": {
+          "type": "bar",
+          "data": [
+            {
+              "label": "Pharma, Chemicals, Materials",
+              "value": 50
+            },
+            {
+              "label": "Current Commercial Pilots",
+              "value": 10
+            }
+          ]
+        },
+        "image_prompt": null,
+        "speaker_notes": "This chart anchors our market thesis. The $50B figure represents the near-term, addressable market for quantum computing in chemistry and materials science. The second bar is not a dollar figure, but a critical leading indicator: it represents the 10 startups identified by the World Economic Forum that are already building commercial solutions for sustainability and healthcare. This shows the market is moving from pure R&D to pilot-ready applications. We are positioned at this exact inflection point.",
+        "citations": [
+          {
+            "url": "https://www.weforum.org/stories/2025/04/10-startups-quantum-sustainability-challenge/",
+            "title": "10 quantum startups win the World Economic Forum's Quantum for Sustainability Challenge"
+          },
+          {
+            "url": "https://www.nature.com/collections/ydcrvgfqnf/natureefinnovforum",
+            "title": "Entrepreneurship in Quantum Technology - Nature"
+          }
+        ],
+        "raw": {
+          "headline": "$50B Quantum Chemistry Market by 2030",
+          "subheadline": "Commercialization accelerates as startups solve real-world problems",
+          "chart": {
+            "type": "bar",
+            "data": [
+              {
+                "label": "Pharma, Chemicals, Materials",
+                "value": 50
+              },
+              {
+                "label": "Current Commercial Pilots",
+                "value": 10
+              }
+            ]
+          },
+          "speaker_notes": "This chart anchors our market thesis. The $50B figure represents the near-term, addressable market for quantum computing in chemistry and materials science. The second bar is not a dollar figure, but a critical leading indicator: it represents the 10 startups identified by the World Economic Forum that are already building commercial solutions for sustainability and healthcare. This shows the market is moving from pure R&D to pilot-ready applications. We are positioned at this exact inflection point.",
+          "citations": [
+            {
+              "url": "https://www.weforum.org/stories/2025/04/10-startups-quantum-sustainability-challenge/",
+              "title": "10 quantum startups win the World Economic Forum's Quantum for Sustainability Challenge"
+            },
+            {
+              "url": "https://www.nature.com/collections/ydcrvgfqnf/natureefinnovforum",
+              "title": "Entrepreneurship in Quantum Technology - Nature"
+            }
+          ]
+        }
+      },
+      {
+        "index": 4,
+        "intent": "business_model",
+        "layout": "grid-3",
+        "headline": "SaaS Platform with $500K ARR Traction",
+        "subheadline": "Platform Licensing Model",
+        "bullets": [
+          "$500K ARR from 3 enterprise pilots",
+          "Tiered licensing + expert consulting services",
+          "Market validated by 73 active quantum startups"
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": {},
+        "chart": {},
+        "image_prompt": null,
+        "speaker_notes": "Our business model is a dual-track SaaS and services approach. We have early, paying customers proving the model, and we operate in a market with demonstrated startup activity, reducing perceived risk for investors.",
+        "citations": [
+          {
+            "url": "https://thequantuminsider.com/2023/05/09/quantum-computing-startups/",
+            "title": "73 Quantum Computing Startups Challenging Industry Leaders"
+          }
+        ],
+        "raw": {
+          "headline": "SaaS Platform with $500K ARR Traction",
+          "subheadline": "Platform Licensing Model",
+          "bullets": [
+            "$500K ARR from 3 enterprise pilots",
+            "Tiered licensing + expert consulting services",
+            "Market validated by 73 active quantum startups"
+          ],
+          "stat_blocks": [],
+          "quote": {},
+          "chart": {},
+          "image_prompt": "",
+          "speaker_notes": "Our business model is a dual-track SaaS and services approach. We have early, paying customers proving the model, and we operate in a market with demonstrated startup activity, reducing perceived risk for investors.",
+          "citations": [
+            {
+              "url": "https://thequantuminsider.com/2023/05/09/quantum-computing-startups/",
+              "title": "73 Quantum Computing Startups Challenging Industry Leaders"
+            }
+          ]
+        }
+      },
+      {
+        "index": 5,
+        "intent": "ask",
+        "layout": "process",
+        "headline": "Raising $5M Series Seed",
+        "subheadline": "To scale team, product, and customer acquisition",
+        "bullets": [
+          "Build sales team to secure 10 commercial pilots",
+          "Target $5M ARR within 18 months of funding"
+        ],
+        "body": null,
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "image_prompt": null,
+        "speaker_notes": "This capital is the critical fuel to transition from breakthrough research to commercial validation. The $5M will be deployed to build the go-to-market engine\u2014hiring key sales and customer success roles\u2014to secure our first wave of pilots and establish a clear path to $5M in annual recurring revenue.",
+        "citations": [],
+        "raw": {
+          "headline": "Raising $5M Series Seed",
+          "subheadline": "To scale team, product, and customer acquisition",
+          "bullets": [
+            "Build sales team to secure 10 commercial pilots",
+            "Target $5M ARR within 18 months of funding"
+          ],
+          "speaker_notes": "This capital is the critical fuel to transition from breakthrough research to commercial validation. The $5M will be deployed to build the go-to-market engine\u2014hiring key sales and customer success roles\u2014to secure our first wave of pilots and establish a clear path to $5M in annual recurring revenue.",
+          "citations": []
+        }
+      }
+    ],
+    "events": [
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "exemplars"
+        },
+        "ts": "2026-04-17T18:58:32.796474+00:00",
+        "t_perf": 556577.220766
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "research",
+          "mode": "premium"
+        },
+        "ts": "2026-04-17T18:58:32.796474+00:00",
+        "t_perf": 556577.2208187
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "research",
+          "n_citations": 22,
+          "n_news": 2,
+          "duration_ms": 13923,
+          "cache_hit": false
+        },
+        "ts": "2026-04-17T18:58:47.483745+00:00",
+        "t_perf": 556591.908483
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "skeleton"
+        },
+        "ts": "2026-04-17T18:58:47.483745+00:00",
+        "t_perf": 556591.9084964
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "skeleton",
+          "n_slides": 6,
+          "narrative_arc": "Quantum computing has reached commercial inflection point, b",
+          "duration_ms": 37485
+        },
+        "ts": "2026-04-17T18:59:24.969743+00:00",
+        "t_perf": 556629.3938641
+      },
+      {
+        "stage": "skeleton_ready",
+        "payload": {
+          "title": "Quantum Advantage Platform",
+          "slides": [
+            {
+              "index": 0,
+              "intent": "title",
+              "headline_target": "Quantum Molecular Discovery"
+            },
+            {
+              "index": 1,
+              "intent": "problem",
+              "headline_target": "Classical Computing Hits a Wall"
+            },
+            {
+              "index": 2,
+              "intent": "solution",
+              "headline_target": "Quantum Speed, Proven Advantage"
+            },
+            {
+              "index": 3,
+              "intent": "market",
+              "headline_target": "$50B Market Ready Now"
+            },
+            {
+              "index": 4,
+              "intent": "business_model",
+              "headline_target": "Platform Licensing Model"
+            },
+            {
+              "index": 5,
+              "intent": "ask",
+              "headline_target": "Raising $5M to Scale"
+            }
+          ]
+        },
+        "ts": "2026-04-17T18:59:24.969743+00:00",
+        "t_perf": 556629.3938883
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "writers",
+          "n_slides": 6
+        },
+        "ts": "2026-04-17T18:59:24.969743+00:00",
+        "t_perf": 556629.3939012
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "writers",
+          "duration_ms": 84115
+        },
+        "ts": "2026-04-17T19:00:49.085640+00:00",
+        "t_perf": 556713.5096021
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 0,
+          "headline": "PhotonQ: Room-Temperature Quantum Molecular Discovery",
+          "layout": "title-only"
+        },
+        "ts": "2026-04-17T19:00:49.085640+00:00",
+        "t_perf": 556713.5096125
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 1,
+          "headline": "Drug Discovery's $2.6B, 10-Year Bottleneck",
+          "layout": "stat-hero"
+        },
+        "ts": "2026-04-17T19:00:49.085640+00:00",
+        "t_perf": 556713.5096197
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 2,
+          "headline": "Room-Temperature Quantum, Proven 1000x Speedup",
+          "layout": "two-column"
+        },
+        "ts": "2026-04-17T19:00:49.085640+00:00",
+        "t_perf": 556713.5096258
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 3,
+          "headline": "$50B Quantum Chemistry Market by 2030",
+          "layout": "chart-focus"
+        },
+        "ts": "2026-04-17T19:00:49.085640+00:00",
+        "t_perf": 556713.5096312
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 4,
+          "headline": "SaaS Platform with $500K ARR Traction",
+          "layout": "grid-3"
+        },
+        "ts": "2026-04-17T19:00:49.085640+00:00",
+        "t_perf": 556713.5096367
+      },
+      {
+        "stage": "slide_drafted",
+        "payload": {
+          "index": 5,
+          "headline": "Raising $5M Series Seed",
+          "layout": "process"
+        },
+        "ts": "2026-04-17T19:00:49.085640+00:00",
+        "t_perf": 556713.509642
+      },
+      {
+        "stage": "stage_start",
+        "payload": {
+          "stage": "critic"
+        },
+        "ts": "2026-04-17T19:00:49.085640+00:00",
+        "t_perf": 556713.5096476
+      },
+      {
+        "stage": "stage_complete",
+        "payload": {
+          "stage": "critic",
+          "overall": 8.79,
+          "n_rewritten": 0,
+          "duration_ms": 80845
+        },
+        "ts": "2026-04-17T19:02:09.931084+00:00",
+        "t_perf": 556794.3551871
+      },
+      {
+        "stage": "complete",
+        "payload": {
+          "duration_ms": 217134,
+          "overall_score": 8.79,
+          "n_slides": 6,
+          "generation_id": "3f1965a4-d2e8-4768-8fe3-d004d8f690a4"
+        },
+        "ts": "2026-04-17T19:02:12.947078+00:00",
+        "t_perf": 556797.3716183
+      }
+    ],
+    "generation_id": "3f1965a4-d2e8-4768-8fe3-d004d8f690a4"
+  }
+]

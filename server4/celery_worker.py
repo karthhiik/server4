@@ -11,12 +11,12 @@ from datetime import datetime, timedelta
 from celery import Celery
 from pymongo import MongoClient
 
-from app.config import settings
+from app.config import settings, _fix_rediss_url
 
 celery_app = Celery(
     "presentation_worker",
-    broker=settings.CELERY_BROKER_URL,
-    backend=settings.CELERY_RESULT_BACKEND,
+    broker=_fix_rediss_url(settings.CELERY_BROKER_URL),
+    backend=_fix_rediss_url(settings.CELERY_RESULT_BACKEND),
 )
 
 celery_app.conf.update(

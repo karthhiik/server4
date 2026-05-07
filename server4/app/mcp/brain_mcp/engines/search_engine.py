@@ -43,6 +43,8 @@ class SearchEngine:
             ("tavily", self._search_tavily),
             ("serpapi", self._search_serpapi),
             ("exa", self._search_exa),
+            ("scrapedo", self._search_scrapedo),
+            ("search_api", self._search_api_search),
         ]
 
         for name, fn in providers:
@@ -168,3 +170,140 @@ class SearchEngine:
             })
 
         return {"results": results, "query": query, "provider": "exa"}
+
+    async def _search_scrapedo(self, query: str, max_results: int = 10) -> dict:
+        """Search via ScrapeDo proxy — for sites that block direct requests.
+
+        API: https://api.scrape.do/search?api_key={key}&q={query}
+        ScrapeDo proxies Google search results through rotating IPs.
+        """
+        if not settings.SCRAPE_DO_API_KEY:
+            raise ConnectionError("ScrapeDo not configured")
+
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            resp = await client.get(
+                "https://api.scrape.do/search",
+                params={
+                    "api_key": settings.SCRAPE_DO_API_KEY,
+                    "q": query,
+                    "num": max_results,
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+        results = []
+        for item in data.get("organic_results", data.get("results", []))[:max_results]:
+            results.append({
+                "title": item.get("title", ""),
+                "url": item.get("link", item.get("url", "")),
+                "snippet": item.get("snippet", item.get("description", "")),
+            })
+
+        return {"results": results, "query": query, "provider": "scrapedo"}
+
+    async def _search_api_search(self, query: str, max_results: int = 10) -> dict:
+        """Generic Search API fallback.
+
+        API: https://www.searchapi.io/api/v1/search
+        Uses the Search API service as a last-resort provider.
+        """
+        if not settings.SEARCH_API_KEY:
+            raise ConnectionError("Search API not configured")
+
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            resp = await client.get(
+                "https://www.searchapi.io/api/v1/search",
+                params={
+                    "engine": "google",
+                    "q": query,
+                    "num": max_results,
+                    "api_key": settings.SEARCH_API_KEY,
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+        results = []
+        for item in data.get("organic_results", [])[:max_results]:
+            results.append({
+                "title": item.get("title", ""),
+                "url": item.get("link", ""),
+                "snippet": item.get("snippet", ""),
+            })
+
+        return {"results": results, "query": query, "provider": "search_api"}
+
+    async def search_with_health(
+        self,
+        query: str,
+        circuit_breaker=None,
+        emitter=None,
+        slide_id: str = "",
+        max_results: int = 10,
+    ) -> dict:
+        """Search with circuit breaker gating.
+
+        Checks circuit breaker health BEFORE trying each provider.
+        Emits events via ContentEventEmitter when provided.
+        """
+        providers = [
+            ("serper", self._search_serper),
+            ("tavily", self._search_tavily),
+            ("serpapi", self._search_serpapi),
+            ("exa", self._search_exa),
+            ("scrapedo", self._search_scrapedo),
+            ("search_api", self._search_api_search),
+        ]
+
+        for name, fn in providers:
+            # Check circuit breaker before attempting
+            if circuit_breaker and not circuit_breaker.allow_request(name):
+                logger.info("search_circuit_open", provider=name, query=query[:50])
+                continue
+
+            try:
+                if emitter and slide_id:
+                    await emitter.source_fetching(slide_id, name)
+
+                start = time.monotonic()
+                results = await fn(query, max_results)
+                elapsed = int((time.monotonic() - start) * 1000)
+
+                result_count = len(results.get("results", []))
+                logger.info(
+                    "search_health_success",
+                    provider=name,
+                    query=query[:50],
+                    results=result_count,
+                    latency_ms=elapsed,
+                )
+
+                if circuit_breaker:
+                    circuit_breaker.record_success(name)
+                if emitter and slide_id:
+                    await emitter.source_fetched(slide_id, name, result_count)
+
+                return results
+            except Exception as e:
+                logger.warning(
+                    "search_health_failed",
+                    provider=name,
+                    query=query[:50],
+                    error=str(e),
+                )
+                if circuit_breaker:
+                    circuit_breaker.record_failure(name)
+                if emitter and slide_id:
+                    await emitter.source_failed(
+                        slide_id, name, "error", str(e)[:200]
+                    )
+                continue
+
+        logger.error("all_search_health_providers_failed", query=query[:50])
+        return {
+            "results": [],
+            "query": query,
+            "provider": "none",
+            "error": "All providers failed (circuit breaker)",
+        }
