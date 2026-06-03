@@ -1,9 +1,0 @@
-WARNING:  Current configuration will not reload as not all conditions are met, please refer to documentation.
-INFO:     Started server process [23204]
-INFO:     Waiting for application startup.
-D:\Python programming fies\Lib\site-packages\motor\core.py:171: UserWarning: You appear to be connected to a CosmosDB cluster. For more information regarding feature compatibility and support please visit https://www.mongodb.com/supportability/cosmosdb
-  delegate = self.__delegate_class__(*args, **kwargs)
-D:\Python programming fies\Lib\site-packages\pymongo\pyopenssl_context.py:345: CryptographyDeprecationWarning: Parsed a serial number which wasn't positive (i.e., it was negative or zero), which is disallowed by RFC 5280. Loading this certificate will cause an exception in a future release of cryptography.
-  _crypto.X509.from_cryptography(x509.load_der_x509_certificate(cert))
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8003 (Press CTRL+C to quit)
