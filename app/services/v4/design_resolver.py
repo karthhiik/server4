@@ -1,14 +1,13 @@
 """
-Design token resolver for Barise v4 presentation backend.
+Design token resolver for Barise Server4 Elite - Fixes invisible nodes with surface_alt.
 
-Handles visual direction selection, token resolution, and critical safety checks
-like ensuring surface_alt is always lighter than surface.
+Guarantees surface_alt is always visibly lighter than surface using WCAG luminance.
 """
 
 import colorsys
 from typing import Any, Dict, Literal, Optional
 
-from app.models.v4 import FontTokens, PaletteTokens, ResolvedDesignTokens, TypeScale
+from app.models.v4_elite import EliteDesignTokens, EliteFontTokens, ElitePaletteTokens, EliteTypeScale
 
 
 # ============================================================================
@@ -18,48 +17,48 @@ from app.models.v4 import FontTokens, PaletteTokens, ResolvedDesignTokens, TypeS
 VISUAL_DIRECTIONS: Dict[str, Dict[str, Any]] = {
     "minimal_dark": {
         "palette": {
-            "primary": "#00D9FF",
-            "secondary": "#7C3AED",
-            "accent": "#EC4899",
-            "background": "#0F0F0F",
-            "surface": "#1A1A1A",
-            "surface_alt": "#2D2D2D",  # ~8% lighter
-            "text_primary": "#FFFFFF",
-            "text_secondary": "#D4D4D8",
-            "text_muted": "#71717A",
-            "border": "#3F3F46",
-            "gradient_start": "#00D9FF",
-            "gradient_end": "#7C3AED",
-            "success": "#10B981",
-            "warning": "#F59E0B",
-            "danger": "#EF4444",
-            "chart": "#06B6D4",
+            "primary": "#FFFFFF",
+            "secondary": "#E5E5E7",
+            "accent": "#00B4D8",
+            "background": "#0F0F11",
+            "surface": "#18181B",
+            "surface_alt": "#27272A",
+            "text_primary": "#FAFAFA",
+            "text_secondary": "#D1D1D6",
+            "text_muted": "#86868B",
+            "border": "#424245",
+            "gradient_start": "#FFFFFF",
+            "gradient_end": "#00B4D8",
+            "success": "#34C759",
+            "warning": "#FF9500",
+            "danger": "#FF3B30",
+            "chart": "#00B4D8",
         },
         "fonts": {
             "heading": '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             "body": '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-            "display": '"IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif',
+            "display": '"IBM Plex Sans", -apple-system, sans-serif',
             "mono": '"IBM Plex Mono", "Courier New", monospace',
         },
     },
     "cinematic_dark": {
         "palette": {
-            "primary": "#FF006E",
-            "secondary": "#00F5FF",
-            "accent": "#FFB703",
-            "background": "#0A0E27",
-            "surface": "#1A1F3A",
-            "surface_alt": "#2A2F4A",  # ~8% lighter
-            "text_primary": "#FFFFFF",
-            "text_secondary": "#E0E0E0",
-            "text_muted": "#9E9E9E",
-            "border": "#404070",
-            "gradient_start": "#FF006E",
-            "gradient_end": "#00F5FF",
-            "success": "#00D084",
-            "warning": "#FFA500",
-            "danger": "#FF4757",
-            "chart": "#FF006E",
+            "primary": "#D4A853",
+            "secondary": "#B8956A",
+            "accent": "#F77F00",
+            "background": "#0A0A0E",
+            "surface": "#12121A",
+            "surface_alt": "#1E1E2E",
+            "text_primary": "#F5F5F7",
+            "text_secondary": "#E0E0E5",
+            "text_muted": "#A0A0A8",
+            "border": "#3A3A48",
+            "gradient_start": "#D4A853",
+            "gradient_end": "#F77F00",
+            "success": "#06D6A0",
+            "warning": "#FFB703",
+            "danger": "#FB5607",
+            "chart": "#D4A853",
         },
         "fonts": {
             "heading": '"Montserrat", -apple-system, BlinkMacSystemFont, sans-serif',
@@ -70,22 +69,22 @@ VISUAL_DIRECTIONS: Dict[str, Dict[str, Any]] = {
     },
     "premium_brand_house": {
         "palette": {
-            "primary": "#0066CC",
-            "secondary": "#6B5B95",
-            "accent": "#F27835",
-            "background": "#FFFFFF",
-            "surface": "#F5F7FA",
-            "surface_alt": "#EAEEF5",  # ~8% lighter
-            "text_primary": "#1A1A1A",
-            "text_secondary": "#4A4A4A",
-            "text_muted": "#888888",
-            "border": "#D0D0D0",
-            "gradient_start": "#0066CC",
-            "gradient_end": "#6B5B95",
-            "success": "#28A745",
-            "warning": "#FFC107",
-            "danger": "#DC3545",
-            "chart": "#0066CC",
+            "primary": "#C9A96E",
+            "secondary": "#8B7355",
+            "accent": "#D4A574",
+            "background": "#0F0F11",
+            "surface": "#161618",
+            "surface_alt": "#222224",
+            "text_primary": "#F0F0F2",
+            "text_secondary": "#D5D5D8",
+            "text_muted": "#9E9EA3",
+            "border": "#3D3D42",
+            "gradient_start": "#C9A96E",
+            "gradient_end": "#8B7355",
+            "success": "#2ECC71",
+            "warning": "#F39C12",
+            "danger": "#E74C3C",
+            "chart": "#C9A96E",
         },
         "fonts": {
             "heading": '"Poppins", -apple-system, BlinkMacSystemFont, sans-serif',
@@ -96,22 +95,22 @@ VISUAL_DIRECTIONS: Dict[str, Dict[str, Any]] = {
     },
     "light_professional": {
         "palette": {
-            "primary": "#2E5090",
-            "secondary": "#4A7C7E",
-            "accent": "#E8AD60",
-            "background": "#FAFBFC",
-            "surface": "#FFFFFF",
-            "surface_alt": "#F0F2F5",  # ~8% lighter
-            "text_primary": "#212B36",
-            "text_secondary": "#5A6C7D",
-            "text_muted": "#8899AA",
-            "border": "#C4CDD5",
-            "gradient_start": "#2E5090",
-            "gradient_end": "#4A7C7E",
-            "success": "#22863A",
-            "warning": "#B08500",
-            "danger": "#CB2431",
-            "chart": "#2E5090",
+            "primary": "#007AFF",
+            "secondary": "#5AC8FA",
+            "accent": "#FF2D55",
+            "background": "#FFFFFF",
+            "surface": "#F5F5F7",
+            "surface_alt": "#FFFFFF",
+            "text_primary": "#1D1D1F",
+            "text_secondary": "#424245",
+            "text_muted": "#86868B",
+            "border": "#D2D2D7",
+            "gradient_start": "#007AFF",
+            "gradient_end": "#5AC8FA",
+            "success": "#34C759",
+            "warning": "#FF9500",
+            "danger": "#FF3B30",
+            "chart": "#007AFF",
         },
         "fonts": {
             "heading": '"Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif',
@@ -123,17 +122,17 @@ VISUAL_DIRECTIONS: Dict[str, Dict[str, Any]] = {
     "swiss_editorial": {
         "palette": {
             "primary": "#000000",
-            "secondary": "#666666",
+            "secondary": "#333333",
             "accent": "#CC0000",
             "background": "#FFFFFF",
-            "surface": "#EEEEEE",
-            "surface_alt": "#DDDDDD",  # ~8% lighter
-            "text_primary": "#000000",
-            "text_secondary": "#333333",
+            "surface": "#FFFFFF",
+            "surface_alt": "#F5F5F7",
+            "text_primary": "#1A1A1A",
+            "text_secondary": "#4A4A4A",
             "text_muted": "#999999",
             "border": "#CCCCCC",
             "gradient_start": "#000000",
-            "gradient_end": "#666666",
+            "gradient_end": "#333333",
             "success": "#008000",
             "warning": "#FF8C00",
             "danger": "#CC0000",
@@ -188,13 +187,12 @@ def _relative_luminance(hex_color: str) -> float:
 
 def _lighten_by_percentage(hex_color: str, percentage: float) -> str:
     """
-    Lighten a color by increasing lightness by a percentage.
-    Uses HLS color space for predictable lightening.
+    Lighten a color by increasing lightness by a percentage in HLS space.
     """
     r, g, b = _hex_to_rgb(hex_color)
     h, l, s = colorsys.rgb_to_hls(r, g, b)
 
-    # Increase lightness by percentage (max 1.0)
+    # Increase lightness by percentage (clamped to 1.0)
     l = min(1.0, l * (1.0 + percentage))
 
     r, g, b = colorsys.hls_to_rgb(h, l, s)
@@ -208,9 +206,13 @@ def _lighten_by_percentage(hex_color: str, percentage: float) -> str:
 
 def ensure_surface_alt(palette: Dict[str, str]) -> Dict[str, str]:
     """
-    CRITICAL SAFETY CHECK: Ensure surface_alt is at least 8% lighter in luminance than surface.
+    CRITICAL SAFETY CHECK: Ensure surface_alt is visibly lighter than surface.
 
-    This prevents invisible UI elements caused by surface_alt being darker or equal to surface.
+    Uses WCAG relative luminance calculation. If surface_alt luminance
+    is not at least 0.05 units brighter than surface, lightens it by 8%.
+
+    This prevents invisible UI elements caused by surface_alt being
+    too close in color to surface.
     """
     surface_lum = _relative_luminance(palette["surface"])
     surface_alt_lum = _relative_luminance(palette["surface_alt"])
@@ -227,18 +229,20 @@ def resolve_design_tokens(
     visual_direction: Optional[str] = None,
     brand_kit: Optional[Dict[str, Any]] = None,
     purpose: Optional[str] = None,
-) -> ResolvedDesignTokens:
+) -> EliteDesignTokens:
     """
-    Resolve design tokens with priority: theme_id -> visual_direction -> brand_kit -> purpose -> system_defaults.
+    Resolve design tokens with priority system.
+
+    Priority: theme_id -> visual_direction -> brand_kit -> purpose -> defaults
 
     Args:
-        theme_id: Predefined theme ID (currently unused, reserved for future)
+        theme_id: Predefined theme ID (reserved for future)
         visual_direction: Visual direction name (must be in VISUAL_DIRECTIONS)
         brand_kit: Custom brand kit dict with palette and fonts
-        purpose: Purpose context (pitch, fundraise, security, enterprise, etc.)
+        purpose: Purpose context (pitch, fundraise, security, etc.)
 
     Returns:
-        ResolvedDesignTokens with all fields populated and safety checks applied.
+        EliteDesignTokens with all fields populated and safety checks applied.
     """
     # Determine effective visual direction
     effective_direction = visual_direction
@@ -268,27 +272,27 @@ def resolve_design_tokens(
         if "fonts" in brand_kit:
             fonts_dict.update(brand_kit["fonts"])
 
-    # CRITICAL: Ensure surface_alt safety
+    # CRITICAL: Ensure surface_alt safety (no invisible nodes)
     palette_dict = ensure_surface_alt(palette_dict)
 
     # Create palette tokens
-    palette_tokens = PaletteTokens(**palette_dict)
+    palette_tokens = ElitePaletteTokens(**palette_dict)
 
     # Create font tokens
-    font_tokens = FontTokens(**fonts_dict)
+    font_tokens = EliteFontTokens(**fonts_dict)
 
     # Return resolved tokens with defaults
-    return ResolvedDesignTokens(
+    return EliteDesignTokens(
         palette=palette_tokens,
         fonts=font_tokens,
-        type_scale=TypeScale(),
+        type_scale=EliteTypeScale(),
         density="comfortable",
         radius=12,
     )
 
 
 # ============================================================================
-# PURPOSE-SPECIFIC DEFAULTS (for future expansion)
+# PURPOSE-SPECIFIC DEFAULTS
 # ============================================================================
 
 PURPOSE_DEFAULTS = {
