@@ -29,6 +29,8 @@ class AzureGPT4oMiniClient(BaseLLMClient):
             AsyncOpenAI(
                 base_url=endpoint.rstrip("/") if endpoint else None,
                 api_key=api_key,
+                timeout=12.0,
+                max_retries=0,
             )
             if endpoint
             else None

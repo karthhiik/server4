@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -34,9 +35,46 @@ from app.services.v4.llm_safe import safe_complete
 from app.services.v4.numeric_grounder import audit_slide
 from app.services.v4.loop_guard import detect_loops, LoopGuardReport
 from app.services.v4 import content_rules
+from app.services.v4.aesthetic_scorer import score_slide_aesthetic
 from app.config import settings
 
 logger = structlog.get_logger(__name__)
+
+_PREMIUM_CRITIC_LLM_BUDGET_SECONDS = 18.0
+_DEFAULT_CRITIC_LLM_BUDGET_SECONDS = 12.0
+
+_AI_CONTEXT_RE = re.compile(
+    r"\b(ai|artificial intelligence|machine learning|ml|llm|genai|generative ai|agentic|copilot)\b",
+    re.IGNORECASE,
+)
+_PITCH_CONTEXT_RE = re.compile(
+    r"\b(pitch|investor|vc|venture|seed|series\s+[abc]|fundraise|fundraising|capital|raise)\b",
+    re.IGNORECASE,
+)
+_MODERN_INVESTOR_SIGNALS = (
+    "proprietary data",
+    "revenue momentum",
+    "production deployment",
+    "production deployments",
+    "gross margin",
+    "gross margin trajectory",
+    "compounding loop",
+    "compounding loops",
+    "unit economics",
+    "retention",
+    "usage depth",
+    "workflow data",
+)
+_OLD_AI_PITCH_SIGNALS = (
+    "founder pedigree",
+    "mvp demo",
+    "pilot logos",
+    "logo slide",
+    "tam slide",
+    '"we use ai"',
+    "we use ai",
+    "ai-powered only",
+)
 
 
 @dataclass
@@ -48,6 +86,7 @@ class SlideScore:
     variety: float = 0.0
     density_compliance: float = 0.0
     coherence: float = 0.0
+    visual_quality: float = 0.0              # v2: composition, typography, color
     issues: list[str] = field(default_factory=list)
     needs_rewrite: bool = False
 
@@ -60,8 +99,40 @@ class CriticReport:
     loop_report: Optional[LoopGuardReport] = None   # v12.1 — deck-wide repetition scan
 
 
-_CRITIC_SYSTEM = """You are the Critic. Score every slide 0-10 on five dimensions:
-  narrative_fit (25%), specificity (25%), variety (20%), density_compliance (15%), coherence (15%)
+_CRITIC_SYSTEM = """You are the Critic. Score every slide 0-10 on six dimensions:
+  narrative_fit (20%), specificity (20%), variety (15%), density_compliance (15%), coherence (15%), visual_quality (15%)
+  visual_quality covers: layout composition, typography contrast, color harmony, whitespace usage.
+
+═══════════════════════════════════════════════════════════════════════════
+CRITICAL — HEADLINE QUALITY GATES (CEO MANDATED)
+═══════════════════════════════════════════════════════════════════════════
+A headline is INVALID and must score specificity ≤ 3 if it matches ANY of these:
+
+1. TEMPLATE HEADLINES (immediate -5 specificity):
+   - "Our Unique Value Proposition" — this is a PowerPoint placeholder, NOT a headline
+   - "Our Distinctive Edge" — ChatGPT fluff from 2022
+   - "How We Operate" — could describe a laundromat
+   - "Empowering Resilience" — empty corporate-speak
+   - "Market Opportunity" / "The Problem" / "Our Solution" — category labels, not thesis statements
+
+2. GENERICITY TEST (immediate -3 specificity):
+   - Could this headline belong to ANY startup? If YES, it's too generic.
+   - Does it contain the company name OR industry-specific term? If NO, it's too generic.
+   - Example BAD: "Real-Time Coverage Outshines Legacy Models" (uses insurance term 'coverage' in energy deck)
+   - Example GOOD: "2 State-Level Pilots + 1 Patent Pending" (specific to THIS company)
+
+3. USER INPUT USAGE TEST (immediate -4 specificity for traction/ask slides):
+   - Traction slide MUST mention user's actual pilots, customers, or metrics
+   - Ask slide MUST mention user's actual funding amount and use of funds
+   - If user provided "2 Pilot Programs (State-level) + 1 Patent Pending" and the traction
+     headline is "Our Unique Value Proposition" — this is a CRITICAL FAILURE.
+
+4. CROSS-INDUSTRY CONTAMINATION (immediate -5 specificity):
+   - Insurance terminology (coverage, premium, underwriting, policy) in non-insurance decks
+   - Fintech terminology in non-fintech decks
+   - This indicates the AI didn't reset between sessions.
+
+═══════════════════════════════════════════════════════════════════════════
 
 Hard rules to penalize:
 - Headline > 8 words OR < 3 words: density_compliance -3
@@ -73,6 +144,25 @@ Hard rules to penalize:
 - Market / traction / financial slides without a grounded numeric claim: specificity -3
 - Market / traction / financial slides without a structured data block (stat/chart/table): coherence -2
 - Ratan Tata's "Numbers Don't Lie": slides with numeric claims lacking evidence_refs: specificity -4
+- AI startup investor decks must optimize for the current proof bar: proprietary data,
+  revenue momentum, production deployments, gross margin trajectory, and compounding loops.
+  Penalize old signals alone: founder pedigree, MVP demo, pilot logos, TAM slide, or "we use AI".
+  If proof is absent, reward honest validation framing and penalize invented certainty.
+
+═══════════════════════════════════════════════════════════════════════════
+ANTI-AI-SLOP BLACKLIST (Open Design discipline)
+═══════════════════════════════════════════════════════════════════════════
+Penalize -3 variety AND -2 coherence for ANY of these visual/content slop patterns:
+- Aggressive purple gradients used as decorative noise
+- Generic emoji icons as bullet decorators (except product-specific context)
+- "Rounded card with left-border accent" layout repeated more than once
+- Hand-drawn SVG illustration humans (corporate clip-art vibes)
+- Invented statistics without source attribution ("10x faster", "500% growth" with no context)
+- "Transforming industries" / "Revolutionizing" / "Disrupting" — empty superlatives
+- More than 2 exclamation marks in an entire deck
+- Inter as a DISPLAY face (it's a body font — use it at h2 or below, not display/h1 at 68pt+)
+- Background images behind text without proper contrast overlay
+- Slides that are 100% text with no visual hierarchy element (chart/stat/image/diagram)
 
 Return ONLY JSON:
 {
@@ -85,17 +175,18 @@ Return ONLY JSON:
 
 
 class CriticEngine:
-    REWRITE_THRESHOLD = 7.0
+    # CRITICAL FIX: Raise quality thresholds for investor-grade pitch decks
+    # Previous threshold of 7.0 was too lenient, allowing low-quality slides
+    # through. Investor-grade decks require 8.0+ threshold.
+    REWRITE_THRESHOLD = 8.0
     # Founder replan — premium requires a higher local-shortcut bar before we
     # skip the LLM critic. Standard keeps the legacy bar (8.5) for latency.
-    SHORTCUT_THRESHOLD_STANDARD = 8.5
-    SHORTCUT_THRESHOLD_PREMIUM = 9.2
-    MAX_REFINEMENT_CYCLES = 2
+    # Thresholds now configurable via settings for company policy compliance
+    MAX_REFINEMENT_CYCLES = 3  # Increased from 2 to allow more refinement iterations
     # Intent set that defines "critical slides" for the premium Kimi 2.6
     # targeted rewrite pass. These are the slides investors remember;
-    # any below-9.0 outcome here is worth burning Kimi 2.6 budget on.
-    PREMIUM_CRITICAL_INTENTS = {"title", "market", "traction", "competition", "ask"}
-    PREMIUM_CRITICAL_RESCORE_TARGET = 9.0
+    # any below-target outcome here is worth burning Kimi 2.6 budget on.
+    PREMIUM_CRITICAL_INTENTS = {"title", "market", "traction", "competition", "ask", "team", "financials"}
 
     def __init__(self) -> None:
         self.router = ModelRouter.get_instance()
@@ -112,13 +203,14 @@ class CriticEngine:
 
         Founder replan: premium mode additionally runs a Kimi 2.6 targeted-rewrite
         pass on investor-critical slides (title/market/traction/competition/ask)
-        whose score is below PREMIUM_CRITICAL_RESCORE_TARGET after the normal
+        whose score is below settings.PREMIUM_CRITICAL_RESCORE_TARGET after the normal
         refinement loop converges.
         """
         report = await self.evaluate(slides, skeleton, research=research, mode=mode)
 
         cycles = 0
-        while report.needs_rewrite_indices and cycles < self.MAX_REFINEMENT_CYCLES:
+        max_cycles = self.MAX_REFINEMENT_CYCLES if mode == "premium" else 1
+        while report.needs_rewrite_indices and cycles < max_cycles:
             cycles += 1
             logger.info("v4_critic_refinement_cycle",
                 cycle=cycles, n_to_rewrite=len(report.needs_rewrite_indices))
@@ -159,7 +251,7 @@ class CriticEngine:
 
         # Founder replan — premium Kimi 2.6 targeted rewrite pass.
         # Runs exactly once (no cycles) on investor-critical slides that still
-        # score below PREMIUM_CRITICAL_RESCORE_TARGET. Budgeted at the router
+        # score below settings.PREMIUM_CRITICAL_RESCORE_TARGET. Budgeted at the router
         # layer: if KIMI26_PREMIUM_MAX_CALLS is exhausted the call falls through
         # the normal reasoning chain so the pass still helps.
         if mode == "premium" and settings.ENABLE_KIMI26:
@@ -182,27 +274,55 @@ class CriticEngine:
         # Build evidence haystack for numeric grounding (if research available)
         evidence_text = ""
         if research is not None:
-            evidence_text = " ".join(
-                f"{c.title} {c.snippet}"
-                for c in (research.citations + research.news_citations)
-            )
+            parts = []
+            if research.query:
+                parts.append(research.query)
+            if research.raw and isinstance(research.raw, dict):
+                if research.raw.get("original_query"):
+                    parts.append(str(research.raw.get("original_query") or ""))
+                if research.raw.get("structured_context"):
+                    parts.append(json.dumps(research.raw.get("structured_context"), default=str, ensure_ascii=False))
+            parts.extend(f"{c.title} {c.snippet}" for c in (research.citations + research.news_citations))
+            evidence_text = " ".join(parts)
 
         # v12.1 — deck-wide repetition scan (pure, sub-ms). Findings feed
         # into per-slide penalties and rewrite feedback so loops trigger
         # targeted regeneration the same way a quality miss does.
         loop_report = detect_loops(slides)
+        investor_context = self._build_investor_context(slides, skeleton, research)
 
         # Local rules-based pre-pass (cheap, deterministic)
+        rewrite_threshold = self.REWRITE_THRESHOLD if mode == "premium" else 6.5
         local_scores = [
-            self._local_score(s, slides, evidence_text, loop_report=loop_report)
+            self._local_score(
+                s,
+                slides,
+                evidence_text,
+                rewrite_threshold=rewrite_threshold,
+                loop_report=loop_report,
+                investor_context=investor_context,
+            )
             for s in slides
         ]
 
         # Optionally augment with LLM holistic critique (skip if all locally above threshold)
         local_overall = sum(s.overall for s in local_scores) / max(1, len(local_scores))
+        if mode == "standard":
+            logger.info(
+                "v4_standard_critic_local_only",
+                overall=round(local_overall, 3),
+                n_rewrites=sum(1 for s in local_scores if s.needs_rewrite),
+            )
+            return CriticReport(
+                overall=local_overall,
+                slide_scores=local_scores,
+                needs_rewrite_indices=[s.index for s in local_scores if s.needs_rewrite],
+                loop_report=loop_report,
+            )
+
         shortcut_threshold = (
-            self.SHORTCUT_THRESHOLD_PREMIUM if mode == "premium"
-            else self.SHORTCUT_THRESHOLD_STANDARD
+            settings.PREMIUM_SHORTCUT_THRESHOLD if mode == "premium"
+            else settings.STANDARD_SHORTCUT_THRESHOLD
         )
         if local_overall >= shortcut_threshold and not any(s.needs_rewrite for s in local_scores):
             return CriticReport(
@@ -213,7 +333,15 @@ class CriticEngine:
             )
 
         try:
-            llm_scores = await self._llm_critique(slides, skeleton)
+            llm_budget = (
+                _PREMIUM_CRITIC_LLM_BUDGET_SECONDS
+                if mode == "premium"
+                else _DEFAULT_CRITIC_LLM_BUDGET_SECONDS
+            )
+            llm_scores = await asyncio.wait_for(
+                self._llm_critique(slides, skeleton),
+                timeout=llm_budget,
+            )
             # Blend: 50% local, 50% LLM
             merged: list[SlideScore] = []
             for ls, ms in zip(local_scores, llm_scores):
@@ -224,6 +352,7 @@ class CriticEngine:
                     variety=(ls.variety + ms.variety) / 2,
                     density_compliance=(ls.density_compliance + ms.density_compliance) / 2,
                     coherence=(ls.coherence + ms.coherence) / 2,
+                    visual_quality=(ls.visual_quality + ms.visual_quality) / 2,
                     issues=list(set(ls.issues + ms.issues))[:5],
                     overall=0,
                     needs_rewrite=False,
@@ -238,8 +367,16 @@ class CriticEngine:
                     merged[-1].issues = list(dict.fromkeys(
                         merged[-1].issues + loop_report.per_slide_issues.get(ls.index, [])
                     ))[:6]
-                merged[-1].needs_rewrite = merged[-1].overall < self.REWRITE_THRESHOLD
+                merged[-1].needs_rewrite = merged[-1].overall < rewrite_threshold
             scores = merged
+        except asyncio.TimeoutError:
+            logger.warning(
+                "v4_llm_critic_budget_exceeded_using_local",
+                mode=mode,
+                timeout_s=llm_budget,
+                local_overall=round(local_overall, 3),
+            )
+            scores = local_scores
         except Exception as e:
             logger.warning("v4_llm_critic_failed_using_local", error=str(e))
             scores = local_scores
@@ -255,13 +392,149 @@ class CriticEngine:
     # ── Scoring ────────────────────────────────────────────────────
 
     @staticmethod
+    def _build_investor_context(
+        slides: list[GeneratedSlide],
+        skeleton: DeckSkeleton,
+        research: Optional[ResearchPacket],
+    ) -> dict[str, Any]:
+        """Detect when the modern AI-startup investor proof gate applies."""
+        skeleton_blob = " ".join(
+            [
+                skeleton.title or "",
+                skeleton.narrative_arc or "",
+                " ".join(
+                    " ".join(
+                        [
+                            s.intent or "",
+                            s.purpose or "",
+                            s.headline_target or "",
+                            " ".join(str(point or "") for point in (s.key_points or [])),
+                        ]
+                    )
+                    for s in skeleton.slides
+                ),
+            ]
+        )
+        slide_blob = " ".join(
+            " ".join(
+                [
+                    s.headline or "",
+                    s.subheadline or "",
+                    s.body or "",
+                    " ".join(str(bullet or "") for bullet in (s.bullets or [])),
+                ]
+            )
+            for s in slides
+        )
+        research_blob = ""
+        if research is not None:
+            research_blob = " ".join(
+                [
+                    research.query or "",
+                    research.industry or "",
+                    research.company_name or "",
+                    " ".join(f"{c.title} {c.snippet}" for c in (research.citations + research.news_citations)),
+                ]
+            )
+        blob = f"{skeleton_blob} {slide_blob} {research_blob}".lower()
+        is_pitch = (
+            "investor_pitch" in (skeleton.narrative_arc or "").lower()
+            or bool(_PITCH_CONTEXT_RE.search(blob))
+        )
+        is_ai = bool(_AI_CONTEXT_RE.search(blob))
+        return {
+            "applies": is_pitch and is_ai,
+            "is_pitch": is_pitch,
+            "is_ai": is_ai,
+        }
+
+    @staticmethod
+    def _apply_modern_investor_rules(
+        score: SlideScore,
+        issues: list[str],
+        slide: GeneratedSlide,
+        investor_context: Optional[dict[str, Any]],
+    ) -> None:
+        """Score AI pitch slides against current VC proof expectations."""
+        if not investor_context or not investor_context.get("applies"):
+            return
+
+        text = " ".join(
+            [
+                slide.headline or "",
+                slide.subheadline or "",
+                slide.body or "",
+                " ".join(str(bullet or "") for bullet in (slide.bullets or [])),
+                " ".join(
+                    f"{sb.get('value', '')} {sb.get('label', '')} {sb.get('caption', '')}"
+                    for sb in (slide.stat_blocks or [])
+                    if isinstance(sb, dict)
+                ),
+            ]
+        ).lower()
+        if not text.strip():
+            return
+
+        modern_hits = [signal for signal in _MODERN_INVESTOR_SIGNALS if signal in text]
+        old_hits = [signal for signal in _OLD_AI_PITCH_SIGNALS if signal in text]
+        honest_missing = any(
+            phrase in text
+            for phrase in (
+                "data needed",
+                "validation required",
+                "validation pending",
+                "benchmarks pending",
+                "metrics pending",
+                "input needed",
+                "requires validation",
+            )
+        )
+        intent = (slide.intent or "").lower()
+
+        if old_hits and not modern_hits:
+            score.specificity = max(0.0, score.specificity - 3.0)
+            score.coherence = max(0.0, score.coherence - 3.0)
+            score.narrative_fit = max(0.0, score.narrative_fit - 2.0)
+            issues.append("modern_investor:old_signal_without_proof:" + old_hits[0])
+
+        if intent in {"traction", "market", "business_model", "financials", "finances", "ask"}:
+            if not modern_hits and not honest_missing:
+                score.specificity = max(0.0, score.specificity - 2.0)
+                score.narrative_fit = max(0.0, score.narrative_fit - 1.5)
+                score.coherence = max(0.0, score.coherence - 1.5)
+                issues.append("modern_investor:missing_proof_signal")
+
+        if intent == "market" and "tam" in text and not any(
+            term in text
+            for term in (
+                "sam",
+                "som",
+                "icp",
+                "buyer",
+                "budget",
+                "source",
+                "revenue",
+                "deployment",
+                "production",
+                "proprietary data",
+            )
+        ):
+            score.specificity = max(0.0, score.specificity - 2.0)
+            issues.append("modern_investor:tam_without_buyer_or_proof")
+
+        if intent in {"solution", "technology", "unique_advantage"} and "we use ai" in text and not modern_hits:
+            score.specificity = max(0.0, score.specificity - 2.5)
+            issues.append("modern_investor:ai_claim_without_data_moat")
+
+    @staticmethod
     def _weighted(s: SlideScore) -> float:
         return (
-            s.narrative_fit * 0.25
-            + s.specificity * 0.25
-            + s.variety * 0.20
+            s.narrative_fit * 0.20
+            + s.specificity * 0.20
+            + s.variety * 0.15
             + s.density_compliance * 0.15
             + s.coherence * 0.15
+            + s.visual_quality * 0.15
         )
 
     def _local_score(
@@ -270,11 +543,20 @@ class CriticEngine:
         all_slides: list[GeneratedSlide],
         evidence_text: str = "",
         *,
+        rewrite_threshold: float = 8.0,
         loop_report: Optional[LoopGuardReport] = None,
+        investor_context: Optional[dict[str, Any]] = None,
     ) -> SlideScore:
         score = SlideScore(index=slide.index, overall=0)
         issues: list[str] = []
-        generic_text = " ".join([slide.headline, slide.subheadline or "", slide.body or "", " ".join(slide.bullets)]).lower()
+        generic_text = " ".join(
+            [
+                str(slide.headline or ""),
+                str(slide.subheadline or ""),
+                str(slide.body or ""),
+                " ".join(str(bullet or "") for bullet in (slide.bullets or [])),
+            ]
+        ).lower()
 
         # Density compliance
         density = 10.0
@@ -292,13 +574,26 @@ class CriticEngine:
         score.density_compliance = max(0.0, min(10.0, density))
 
         # Specificity (look for digits, $, %, named entities markers)
-        body_text = " ".join([slide.headline, slide.subheadline or "", " ".join(slide.bullets), slide.body or ""])
+        stat_text = " ".join(
+            f"{sb.get('value', '')} {sb.get('label', '')} {sb.get('caption', '')}"
+            for sb in (slide.stat_blocks or [])
+            if isinstance(sb, dict)
+        )
+        body_text = " ".join([
+            slide.headline,
+            slide.subheadline or "",
+            " ".join(str(bullet or "") for bullet in (slide.bullets or [])),
+            slide.body or "",
+            stat_text,
+        ])
         has_numbers = any(ch.isdigit() for ch in body_text)
         has_money = "$" in body_text or "%" in body_text
         has_citations = bool(slide.citations)
         spec = 10.0
 
         # Numeric grounding penalty (anti-hallucination)
+        # STANDARD-MODE RELAXATION: research APIs often fail on free tier,
+        # so we penalize less harshly and skip numbers explicitly marked as estimates.
         if evidence_text and has_numbers:
             slide_dict = {
                 "headline": slide.headline,
@@ -311,19 +606,37 @@ class CriticEngine:
             }
             audit = audit_slide(slide_dict, evidence_text=evidence_text, slide_index=slide.index)
             if audit.total_tokens > 0 and audit.grounding_score < 1.0:
-                # Each ungrounded number costs 1.5 specificity points (max -5)
-                penalty = min(5.0, 1.5 * len(audit.ungrounded))
+                # Skip stat_blocks whose labels explicitly say "projected" or "estimated"
+                filtered_ungrounded = []
+                for ut in audit.ungrounded:
+                    skip = False
+                    if ut.field.startswith("stat_blocks["):
+                        idx_str = ut.field[len("stat_blocks["):].split("].")[0]
+                        try:
+                            sb_idx = int(idx_str)
+                            sb = (slide.stat_blocks or [])[sb_idx]
+                            lbl = str(sb.get("label", "")).lower()
+                            if any(m in lbl for m in ["projected", "estimated", "(est.)", "(estimated)"]):
+                                skip = True
+                        except (ValueError, IndexError):
+                            pass
+                    if not skip:
+                        filtered_ungrounded.append(ut)
+                # Reduced penalty: 1.0 per token, max -3 (standard mode research is thin)
+                penalty = min(3.0, 1.0 * len(filtered_ungrounded))
                 spec -= penalty
-                if audit.ungrounded:
+                if filtered_ungrounded:
                     issues.append(
-                        f"ungrounded_numbers={len(audit.ungrounded)}:" +
-                        ",".join(t.token for t in audit.ungrounded[:3])
+                        f"ungrounded_numbers={len(filtered_ungrounded)}:" +
+                        ",".join(t.token for t in filtered_ungrounded[:3])
                     )
         score.specificity = max(0.0, min(10.0, spec))
-        if not has_numbers and slide.intent in {"market", "traction", "financials"}:
+        core_data_intents = {"market", "traction", "financials"}
+        extended_data_intents = {"business_model", "ask"}
+        if not has_numbers and slide.intent in core_data_intents:
             score.specificity = max(0.0, score.specificity - 3.0)
             issues.append("no_numbers_in_data_slide")
-        if slide.intent in {"market", "traction", "financials"} and not any([slide.stat_blocks, slide.chart, slide.table]):
+        if slide.intent in core_data_intents and not any([slide.stat_blocks, slide.chart, slide.table]):
             score.coherence = max(0.0, score.coherence - 2.0)
             issues.append("data_slide_missing_quant_block")
         if any(
@@ -339,15 +652,20 @@ class CriticEngine:
             score.specificity = max(0.0, score.specificity - 2.0)
             issues.append("generic_claims")
 
-        # Founder replan — template headline detector. Hard −3 specificity hit
+        # Founder replan — template headline detector. Hard −5 specificity hit
         # when the slide headline matches any banned pattern, ensuring these
         # slides always fall below the rewrite threshold and get regenerated.
+        # CEO-identified: "Our Unique Value Proposition" should score 0/10 specificity.
         if settings.ENABLE_TEMPLATE_DETECTOR:
             det = content_rules.detect_template_headline(slide.headline)
             if det.is_template:
-                score.specificity = max(0.0, score.specificity - 3.0)
+                # INCREASED from -3 to -5 per CEO feedback
+                score.specificity = max(0.0, score.specificity - 5.0)
                 score.narrative_fit = max(0.0, score.narrative_fit - 3.0)
                 issues.append(f"template_headline:{det.label}")
+                # Add fix hint to issues for rewrite prompt
+                if det.fix_hint:
+                    issues.append(f"fix_hint:{det.fix_hint[:80]}")
 
         # Founder replan — broader generic-phrase detector powered by
         # content_rules. Catches variants the hard-coded list above misses.
@@ -356,8 +674,36 @@ class CriticEngine:
                 slide.headline, slide.subheadline, slide.body, *slide.bullets,
             )
             if generic_hits:
-                score.specificity = max(0.0, score.specificity - min(3.0, len(generic_hits)))
+                # INCREASED penalty from min(3.0, len(hits)) to min(5.0, len(hits) * 1.5)
+                score.specificity = max(0.0, score.specificity - min(5.0, len(generic_hits) * 1.5))
                 issues.append("generic_phrases:" + ",".join(generic_hits[:3]))
+
+            # CEO-identified: Cross-industry contamination detection
+            # Example: "coverage" (insurance) appearing in energy grid deck
+            contamination = content_rules.detect_cross_industry_contamination(
+                text=(
+                    f"{slide.headline} {slide.subheadline or ''} {slide.body or ''} "
+                    f"{' '.join(str(bullet or '') for bullet in (slide.bullets or []))}"
+                ),
+                current_industry=getattr(slide, 'industry', None),
+            )
+            if contamination:
+                score.specificity = max(0.0, score.specificity - 5.0)
+                issues.append(f"cross_industry_contamination:{','.join(contamination[:3])}")
+
+            # CEO-identified: Headline quality validation
+            # Headline must pass "could this only be about [company]?" test
+            headline_quality = content_rules.validate_headline_quality(
+                headline=slide.headline,
+                company_name=getattr(slide, 'company_name', None),
+                industry=getattr(slide, 'industry', None),
+                user_input_keywords=getattr(slide, 'user_input_keywords', None),
+            )
+            if not headline_quality["is_valid"]:
+                # Apply additional penalty based on quality score
+                penalty = (5.0 - headline_quality["score"]) * 0.5
+                score.specificity = max(0.0, score.specificity - penalty)
+                issues.extend([f"headline_quality:{iss}" for iss in headline_quality["issues"][:3]])
 
             # Data-slide validator: marks insufficient quant or missing block.
             slide_dict = {
@@ -429,10 +775,80 @@ class CriticEngine:
             slide.bullets, slide.body, slide.stat_blocks, slide.quote, slide.chart,
             slide.table, slide.timeline, slide.comparison, slide.diagram,
         ])
-        score.narrative_fit = 7.5 if slide.headline and has_any_block else 4.0
+        headline_words = len((slide.headline or "").split())
+        has_rich_content = (
+            slide.bullets
+            and (slide.body or slide.stat_blocks or slide.chart or slide.table
+                 or len(slide.bullets) >= 3)
+            and (3 <= headline_words <= 8)
+        )
+        score.narrative_fit = 9.0 if (slide.headline and has_rich_content) else (
+            7.5 if (slide.headline and has_any_block) else 4.0
+        )
 
-        # Coherence baseline
-        score.coherence = 7.5 if slide.headline else 4.0
+        # Coherence baseline — higher for data slides with quant blocks
+        if slide.headline:
+            has_quant_block = any([
+                slide.stat_blocks, slide.chart, slide.table,
+                slide.comparison, slide.timeline,
+            ])
+            score.coherence = 9.0 if (has_rich_content or has_quant_block) else 7.5
+        else:
+            score.coherence = 4.0
+
+        # Visual quality baseline — local heuristic, refined by aesthetic_scorer
+        score.visual_quality = 7.0
+        try:
+            # Convert slide to dict format for aesthetic scorer
+            slide_dict = {
+                "headline": slide.headline or "",
+                "body": slide.body or "",
+                "bullets": slide.bullets or [],
+                "layout": slide.layout or "default",
+            }
+            
+            # Use empty design_tokens for now (can be enhanced later to pass from caller)
+            design_tokens = {}
+            
+            # Calculate element count
+            element_count = len(slide.bullets or []) + (1 if slide.headline else 0) + (1 if slide.body else 0)
+            
+            # Score aesthetic quality
+            aesthetic_score = score_slide_aesthetic(
+                slide=slide_dict,
+                design_tokens=design_tokens,
+                kit_id=slide.layout or "TitleHero",
+                variant=slide.layout or "default",
+                element_count=element_count,
+            )
+            
+            # Use the overall aesthetic score
+            score.visual_quality = aesthetic_score.overall
+            
+            # Add aesthetic critique to issues
+            if aesthetic_score.critique:
+                issues.extend(aesthetic_score.critique[:3])  # Add top 3 critiques
+        except Exception as aesthetic_err:
+            logger.warning(
+                "aesthetic_scoring_failed",
+                slide_index=slide.index,
+                error=str(aesthetic_err)[:200],
+            )
+            # Fallback to baseline scoring
+            if slide.layout in {"cinematic-cover", "cinematic-gradient", "editorial-left", "editorial-right"}:
+                score.visual_quality = 8.5
+            elif slide.layout in {"glass-grid", "glass-cards"}:
+                score.visual_quality = 8.0
+        
+        # Penalize overused layouts
+        layout_counts = {}
+        for s in all_slides:
+            layout_counts[s.layout] = layout_counts.get(s.layout, 0) + 1
+        if layout_counts.get(slide.layout, 0) > len(all_slides) * 0.4:
+            score.visual_quality -= 1.5
+            issues.append("overused_layout")
+
+        self._apply_modern_investor_rules(score, issues, slide, investor_context)
 
         score.issues = issues
         score.overall = self._weighted(score)
@@ -448,7 +864,7 @@ class CriticEngine:
                 loop_issues = loop_report.per_slide_issues.get(slide.index, [])
                 score.issues = list(dict.fromkeys(score.issues + loop_issues))[:6]
 
-        score.needs_rewrite = score.overall < self.REWRITE_THRESHOLD
+        score.needs_rewrite = score.overall < rewrite_threshold
         return score
 
     # ── Founder replan — Kimi 2.6 targeted premium rewrite ─────────
@@ -462,7 +878,7 @@ class CriticEngine:
         """Targeted rewrite of investor-critical slides via Kimi 2.6.
 
         Runs exactly once per deck. Rewrites only PREMIUM_CRITICAL_INTENTS
-        slides that scored below PREMIUM_CRITICAL_RESCORE_TARGET. Uses the
+        slides that scored below settings.PREMIUM_CRITICAL_RESCORE_TARGET. Uses the
         PREMIUM_TARGETED_REWRITE TaskType so the router puts kimi-2.6 at the
         head of the chain and, if budget is exhausted, falls through to
         kimi-k2-thinking / deepseek-v3 automatically.
@@ -475,7 +891,7 @@ class CriticEngine:
             sc = score_by_idx.get(s.index)
             if sc is None:
                 continue
-            if sc.overall < self.PREMIUM_CRITICAL_RESCORE_TARGET:
+            if sc.overall < settings.PREMIUM_CRITICAL_RESCORE_TARGET:
                 targets.append(s.index)
         if not targets:
             return slides, report

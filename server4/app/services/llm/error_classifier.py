@@ -126,6 +126,10 @@ def classify(exc: BaseException) -> ErrorClass:
 
     status = _extract_status(exc)
     text = f"{type(exc).__name__}: {exc}"
+    text_lower = text.lower()
+
+    if "providerpoolexhaustederror" in text_lower and "429" in text_lower:
+        return ErrorClass.RATE_LIMIT
 
     if status is not None:
         if status in _AUTH_STATUSES:

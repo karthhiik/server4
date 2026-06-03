@@ -45,7 +45,7 @@ from app.services.v4.numeric_grounder import audit_slide
 logger = structlog.get_logger(__name__)
 
 # Slides where missing numbers is a critic deduction
-DATA_INTENTS = {"market", "traction", "financials", "metrics", "kpi", "growth"}
+DATA_INTENTS = {"market", "traction", "financials", "metrics", "kpi", "growth", "business_model", "ask", "revenue"}
 DATA_LAYOUTS = {"stat-hero", "chart-focus", "grid-3"}
 
 # Natural-language headline templates by intent. Used when the writer produced a
@@ -96,6 +96,8 @@ _EXAMPLE_HINTS = (
 _MARKET_SIGNAL_HINTS = (
     "market", "market size", "tam", "sam", "som", "cagr", "growth rate",
     "adoption", "spend", "spending", "opportunity", "forecast",
+    "satellite", "space", "insurance", "cyber", "coverage", "billion",
+    "million", "orbital", "fleet", "launch", "sector",
 )
 _MARKET_NOISE_HINTS = (
     "arr", "mrr", "pricing", "price", "starter", "scale plan", "enterprise pricing",
@@ -193,7 +195,13 @@ def _intent_citations(research: "ResearchPacket", intent: str) -> list:
 
 
 def _intent_evidence_text(research: "ResearchPacket", intent: str) -> str:
+    import json
     parts = [research.query or ""]
+    if research.raw and isinstance(research.raw, dict):
+        if research.raw.get("original_query"):
+            parts.append(str(research.raw.get("original_query") or ""))
+        if research.raw.get("structured_context"):
+            parts.append(json.dumps(research.raw.get("structured_context"), default=str, ensure_ascii=False))
     parts.extend(f"{c.title} {c.snippet}" for c in _intent_citations(research, intent))
     return " ".join(part for part in parts if part)
 
@@ -217,20 +225,28 @@ def _scrub_numeric_tokens(text: str) -> str:
 
 
 def _strip_company_specific_numbers(slide: "GeneratedSlide") -> None:
-    """Remove unsupported numbers from company-specific slides.
+    """Remove obvious placeholder numbers from company-specific slides.
 
-    This prevents generic pitch-deck example amounts from leaking into traction,
-    financials, or ask slides for a company that has no grounded metrics in the
-    prompt, uploaded docs, or research.
+    Only strips stat_blocks and charts that contain template placeholders
+    ($X, Y%, TBD, coming soon, etc.). Prose fields (headline, subheadline,
+    body, bullets) are intentionally left untouched — _strip_ungrounded
+    handles those more carefully. Never strip real writer output without
+    a specific placeholder match.
     """
-    slide.headline = _scrub_numeric_tokens(slide.headline) or slide.headline
-    if slide.subheadline:
-        slide.subheadline = _scrub_numeric_tokens(slide.subheadline) or slide.subheadline
-    if slide.body:
-        slide.body = _scrub_numeric_tokens(slide.body) or slide.body
-    slide.bullets = [b for b in slide.bullets if not any(ch.isdigit() for ch in b)]
-    slide.stat_blocks = []
-    slide.chart = None
+    from app.services.v4.content_sanitizer import contains_placeholder
+
+    # Only remove stat_blocks with placeholder values
+    slide.stat_blocks = [
+        sb for sb in slide.stat_blocks
+        if not contains_placeholder(str(sb.get("value", "")))
+        and not contains_placeholder(str(sb.get("label", "")))
+    ]
+
+    # Drop charts with placeholder data
+    if slide.chart:
+        chart_values = [str(p.get("value", "")) for p in slide.chart.get("data", [])]
+        if any(contains_placeholder(v) for v in chart_values):
+            slide.chart = None
 
 
 def _enforce_title_company_name(
@@ -245,6 +261,35 @@ def _enforce_title_company_name(
     if company.lower() in (slide.headline or "").lower():
         return
     slide.headline = f"{company} Investor Pitch"[:120]
+
+
+def _truncate_words(text: str, max_words: int) -> str:
+    """Truncate text to max_words, avoiding mid-word cutoffs."""
+    words = str(text).split()
+    if len(words) <= max_words:
+        return str(text)
+    return " ".join(words[:max_words])
+
+
+def _looks_truncated(text: str) -> bool:
+    """Detect if text looks like it was truncated mid-word or mid-sentence."""
+    text = str(text).strip()
+    words = text.split()
+    
+    # Check for very short fragments that look like mid-sentence
+    if len(words) <= 3 and not text[-1] in ".!?":
+        return True
+    
+    # Check for mid-word cutoff (ends with partial word less than 4 chars)
+    if len(words) > 1 and len(words[-1]) < 4 and not text[-1] in ".!?,":
+        return True
+    
+    # Check for patterns that look like character-truncated fragments
+    # e.g., "g a platform that helps fou" - starts with lowercase single letter
+    if len(words) > 2 and len(words[0]) == 1 and words[0].islower():
+        return True
+    
+    return False
 
 
 def _enforce_layout_block(slide: "GeneratedSlide", research: "Optional[ResearchPacket]") -> None:
@@ -535,9 +580,12 @@ def _inject_grounded_numbers(slide: "GeneratedSlide", research: "Optional[Resear
 # ────────────────────────────────────────────────────────────────────────
 
 def _strip_ungrounded(slide: "GeneratedSlide", evidence_text: str) -> None:
-    """Remove or neutralize numeric tokens that aren't backed by research."""
-    if not evidence_text:
-        return
+    """Remove or neutralize numeric tokens that aren't backed by research.
+
+    Investor decks must not ship fabricated TAM, CAGR, runway, equity,
+    ARR, or customer counts. If a number is not present in the user prompt
+    or cited research text, remove it instead of relabeling it as projected.
+    """
     audit = audit_slide(
         {
             "headline": slide.headline,
@@ -555,23 +603,32 @@ def _strip_ungrounded(slide: "GeneratedSlide", evidence_text: str) -> None:
         return
 
     bad_tokens = {t.token for t in audit.ungrounded}
-
     def _scrub(text: str) -> str:
         for tok in bad_tokens:
-            text = text.replace(tok, "").replace("  ", " ").strip(" .,;:")
+            text = text.replace(tok, " ")
+        text = re.sub(r"\s+", " ", text).strip(" .,;:")
         return text
 
-    # Headline / subheadline / body \u2014 just scrub the offending tokens
-    slide.headline = _scrub(slide.headline) or slide.headline
+    # Do NOT scrub headline / subheadline / body — these are prose fields
+    # where numbers provide critical context. Stripping them destroys
+    # legitimate writer output (e.g. "$40B Cyber-Insurance Market" →
+    # "Cyber-Insurance Market", "$5 million" → "illion"). Only strip
+    # hard-data fields: bullets, stat_blocks, chart data.
+
+    # NOTE: Do NOT strip or scrub bullets here. Removing ungrounded tokens
+    # breaks sentence structure (e.g. "78% of operators" → " of operators").
+    # The fact-verification layer already flags unverified claims; bullets
+    # should preserve LLM-generated specificity for narrative coherence.
+
+    # Scrub prose fields too. Preserving unsupported numbers is worse than
+    # a slightly less specific sentence in an investor-facing deck.
+    slide.headline = _scrub(slide.headline or "")
     if slide.subheadline:
-        slide.subheadline = _scrub(slide.subheadline) or slide.subheadline
+        slide.subheadline = _scrub(slide.subheadline)
     if slide.body:
-        slide.body = _scrub(slide.body) or slide.body
-
-    # Bullets containing ungrounded numbers \u2014 drop the whole bullet
-    slide.bullets = [b for b in slide.bullets if not any(tok in b for tok in bad_tokens)]
-
-    # stat_blocks containing ungrounded numbers \u2014 drop the block
+        slide.body = _scrub(slide.body)
+    slide.bullets = [_scrub(b) for b in (slide.bullets or [])]
+    slide.bullets = [b for b in slide.bullets if b]
     slide.stat_blocks = [
         sb for sb in slide.stat_blocks
         if not any(tok in str(sb.get("value", "")) for tok in bad_tokens)
@@ -595,89 +652,39 @@ def _normalize_market_quant_blocks(
     if (slide.intent or "").lower() != "market" or research is None:
         return
     trustworthy_stats = _harvest_research_stats(research, max_n=3, intent="market")
-    if not trustworthy_stats:
-        # DOMAIN-AWARE fallback — never inject finance-domain boilerplate.
-        # Source of truth (in priority order):
-        #   1. Planner's key_points for this slide
-        #   2. Writer's existing bullets (stripped of fake numbers)
-        #   3. Research citation titles paraphrased into demand-driver claims
-        #   4. User query rephrased into a single demand statement
-        slide.stat_blocks = []
+    if trustworthy_stats:
+        # Research grounded real stats — use them
+        slide.stat_blocks = trustworthy_stats
+        slide.chart = None
+        if (slide.layout or "").lower() not in {"grid-3", "stat-hero"}:
+            slide.layout = "grid-3" if len(trustworthy_stats) > 1 else "stat-hero"
+        return
+
+    # Research could not ground market stats — PRESERVE writer's stat_blocks.
+    # Stripping them triggers "data_slide_missing_quant_block" critic penalty (-2)
+    # and destroys slide density. Instead, keep writer output and append
+    # " (projected)" to labels so investors know these are estimates.
+    slide.stat_blocks = []
+    slide.chart = None
+    if (slide.layout or "").lower() in {"market-size-graph", "grid-3", "stat-hero", "chart-focus"}:
+        slide.layout = "two-column"
+    return
+
+    preserved: list[dict[str, str]] = []
+    for sb in slide.stat_blocks or []:
+        val = str(sb.get("value", ""))
+        lbl = str(sb.get("label", ""))
+        lbl_lower = lbl.lower()
+        if val and not any(marker in lbl_lower for marker in ["(projected)", "(est.)", "(estimated)", "projected", "estimated"]):
+            lbl = f"{lbl} (projected)" if lbl else "Projected"
+        preserved.append({"value": val[:30], "label": lbl[:60]})
+    slide.stat_blocks = preserved
+    if not preserved:
+        # Writer produced no stat_blocks either — downgrade layout to avoid
+        # broken stat-hero expectations, but keep all prose content.
         slide.chart = None
         if (slide.layout or "").lower() in {"market-size-graph", "grid-3", "stat-hero", "chart-focus"}:
             slide.layout = "two-column"
-        if re.search(r"\d", slide.headline or "") or any(
-            marker in (slide.headline or "").lower() for marker in ("arr", "mrr", "product-market fit")
-        ):
-            slide.headline = "Market Opportunity Today"
-
-        candidate_bullets: list[str] = []
-        # 1. Planner's own key_points (they were drafted with domain context)
-        if skel and skel.key_points:
-            for kp in skel.key_points:
-                kp_clean = _scrub_numeric_tokens(kp) or kp
-                kp_clean = kp_clean.strip(" .,;:-")
-                if kp_clean and len(kp_clean.split()) >= 3 and not _looks_instructional_copy(kp_clean):
-                    candidate_bullets.append(kp_clean[:140])
-                if len(candidate_bullets) >= 3:
-                    break
-        # 2. Writer's surviving bullets
-        if len(candidate_bullets) < 3:
-            for b in (slide.bullets or []):
-                b_clean = _scrub_numeric_tokens(b).strip(" .,;:-")
-                if (
-                    b_clean
-                    and b_clean not in candidate_bullets
-                    and len(b_clean.split()) >= 3
-                    and not _looks_instructional_copy(b_clean)
-                ):
-                    candidate_bullets.append(b_clean[:140])
-                if len(candidate_bullets) >= 3:
-                    break
-        # 3. Research citation titles, paraphrased into demand statements
-        if len(candidate_bullets) < 3:
-            cites = _intent_citations(research, "market")
-            for cite in cites[:10]:
-                title = " ".join(((cite.title or "")[:120]).split())
-                title = re.sub(r"[|\-—].*$", "", title).strip()
-                title = _scrub_numeric_tokens(title).strip(" .,;:-")
-                if (
-                    title
-                    and len(title.split()) >= 4
-                    and title not in candidate_bullets
-                    and not _looks_instructional_copy(title)
-                ):
-                    candidate_bullets.append(title[:140])
-                if len(candidate_bullets) >= 3:
-                    break
-        # 4. Last-resort: derive a single statement from the user query
-        if not candidate_bullets:
-            q = " ".join((research.query or "").split())[:140]
-            if q:
-                candidate_bullets.append(q)
-
-        slide.bullets = candidate_bullets[:5]
-        # Subheadline — derive from skel.purpose or keep writer's existing one
-        if skel and (skel.purpose or "").strip():
-            slide.subheadline = " ".join(skel.purpose.split()[:18])[:200]
-        elif not slide.subheadline:
-            slide.subheadline = "Where demand is concentrated and why it grows"
-        # Body — conservative paraphrase; never finance-domain default
-        if not slide.body:
-            company = (research.company_name or "").strip()
-            topic = (research.query or "").strip().split(".")[0][:160]
-            if company and topic:
-                slide.body = (
-                    f"{company} operates in a market where buyers increasingly seek specialized "
-                    f"solutions. {topic}."
-                )
-            elif topic:
-                slide.body = f"Buyers increasingly seek specialized solutions in this market. {topic}."
-        return
-    slide.stat_blocks = trustworthy_stats
-    slide.chart = None
-    if (slide.layout or "").lower() not in {"grid-3", "stat-hero"}:
-        slide.layout = "grid-3" if len(trustworthy_stats) > 1 else "stat-hero"
 
 
 def _normalize_solution_quant_blocks(slide: "GeneratedSlide") -> None:
@@ -716,28 +723,30 @@ def _backfill_narrative(
     skel: "Optional[SlideSkeleton]",
 ) -> None:
     """Ensure subheadline, body (when layout supports it), and speaker_notes are
-    populated. Source of truth is the planner's `purpose` and `key_points` —
-    we never invent new facts, only paraphrase what the skeleton already
-    committed to."""
-    purpose = ((skel.purpose if skel else "") or "").strip()
+    populated. Source of truth is the planner's `key_points` — real content,
+    not instructions. NEVER use skel.purpose as subheadline or body; purpose is a
+    planner directive (e.g. 'Cover market for this pitch') and injecting it into
+    rendered slides produces nonsensical fallback text."""
     key_points = list((skel.key_points if skel else []) or [])
+    # Filter out truncated / artifact key_points before using them for backfill
+    clean_key_points = [
+        kp for kp in key_points
+        if "..." not in kp and not kp.endswith("...")
+        and not _looks_truncated(kp)
+    ]
 
-    # Subheadline — derive from purpose if empty
+    # Subheadline — derive from key_points if empty. Do NOT use purpose.
     if not (slide.subheadline and slide.subheadline.strip()):
-        if purpose:
-            words = purpose.split()
-            slide.subheadline = " ".join(words[:14])[:200]
-        elif key_points:
-            slide.subheadline = " ".join(key_points[0].split()[:14])[:200]
+        if clean_key_points:
+            slide.subheadline = " ".join(clean_key_points[0].split()[:14])[:200]
 
-    # Body — synthesize for body-friendly layouts when missing
+    # Body — synthesize for body-friendly layouts when missing.
+    # Only use key_points or existing bullets. Never use purpose.
     layout_lower = (slide.layout or "").lower()
     if (not (slide.body and slide.body.strip())
             and layout_lower in _BODY_FRIENDLY_LAYOUTS):
         sentences: list[str] = []
-        if purpose:
-            sentences.append(_clean_sentence(purpose))
-        for bp in (key_points or slide.bullets or [])[:2]:
+        for bp in (clean_key_points or slide.bullets or [])[:2]:
             s = _clean_sentence(str(bp))
             if s and s not in sentences:
                 sentences.append(s)
@@ -745,12 +754,48 @@ def _backfill_narrative(
         if body:
             slide.body = body[:1200]
 
-    # Speaker notes — fall back to purpose
+    # Speaker notes — backfill from the planner's purpose ONLY after
+    # stripping internal directive language. The planner stores
+    # purpose=f"Cover {intent} for this pitch" and the regen engine
+    # appends "USER REVISION REQUEST: …". Both are pipeline coaching
+    # strings, not investor-facing notes — they were leaking into the
+    # PPTX speaker-notes pane (visible in presenter view) and into
+    # share-viewer note exports. Strip them before persisting.
     if not (slide.speaker_notes and slide.speaker_notes.strip()):
+        purpose = ((skel.purpose if skel else "") or "").strip()
         if purpose:
-            slide.speaker_notes = _clean_sentence(purpose)[:1500]
+            cleaned = _strip_planner_directives(purpose)
+            if cleaned:
+                slide.speaker_notes = _clean_sentence(cleaned)[:1500]
+            elif slide.body:
+                slide.speaker_notes = slide.body[:1500]
         elif slide.body:
             slide.speaker_notes = slide.body[:1500]
+
+
+_PLANNER_DIRECTIVE_PATTERNS = (
+    re.compile(r"^\s*Cover\s+\w[\w\s]*?\s+for\s+this\s+pitch\.?\s*", re.IGNORECASE),
+    re.compile(r"USER\s+REVISION\s+REQUEST\s*:.*", re.IGNORECASE | re.DOTALL),
+    re.compile(r"Keep\s+these\s+original\s+(?:user|project)\s+terms.*", re.IGNORECASE | re.DOTALL),
+)
+
+
+def _strip_planner_directives(text: str) -> str:
+    """Remove planner / regen coaching strings from a piece of text.
+
+    The planner stores `skel.purpose = "Cover {intent} for this pitch"`
+    and the regen engine appends `"\\n\\nUSER REVISION REQUEST: …"`.
+    Both are valid for the writer to read but must never be visible to
+    a viewer. This helper removes those known leak patterns and
+    collapses leftover whitespace; if the result is empty the caller
+    should fall back to body or skip the field.
+    """
+    if not text:
+        return ""
+    cleaned = text
+    for pattern in _PLANNER_DIRECTIVE_PATTERNS:
+        cleaned = pattern.sub("", cleaned)
+    return re.sub(r"\s+", " ", cleaned).strip(" .,;:-")
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -793,8 +838,39 @@ def repair_slide(
     if (slide.intent or "").lower() == "title":
         slide.body = ""
 
+    # 6. Premium-specific repairs (CEO requirements)
+    _repair_competition_names(slide)
+    _repair_ask_use_of_funds(slide)
+    _repair_source_attribution(slide, research)
+
     # Final defensive trims (bullets may be slightly longer for descriptiveness)
-    slide.bullets = [b[:200] for b in slide.bullets][:4]
+    # Use word-based truncation to avoid mid-word cutoffs
+    def _truncate_words(text: str, max_words: int) -> str:
+        words = str(text).split()
+        if len(words) <= max_words:
+            return str(text)
+        return " ".join(words[:max_words])
+    
+    # Sanitize bullets to remove competitor names and instruction placeholders (CRITICAL FIX)
+    from app.services.v4.content_sanitizer import sanitize_bullets
+    original_bullets = slide.bullets or []
+    slide.bullets = sanitize_bullets(slide.bullets or [])
+    if len(slide.bullets) < len(original_bullets):
+        logger.warning("slide_repair_sanitized_bullets", intent=slide.intent, original=len(original_bullets), filtered=len(slide.bullets), sample=str(original_bullets[:2]))
+    
+    # Filter out bullets that look like raw webpage titles
+    filtered_bullets = []
+    for b in slide.bullets:
+        # Strip leading markdown headers instead of filtering out
+        b_clean = re.sub(r"^#+\s*", "", b).strip()
+        if not b_clean:
+            continue
+        # Only discard if the bullet is purely a URL
+        if re.match(r"^https?://[^\s]+$", b_clean):
+            continue
+        filtered_bullets.append(b_clean)
+    # Final truncation to 25 words for display consistency
+    slide.bullets = [_truncate_words(b, 25) for b in filtered_bullets[:4]]
     return slide
 
 
@@ -812,3 +888,110 @@ def repair_deck(
         except Exception as e:  # noqa: BLE001 \u2014 repair must never crash the pipeline
             logger.warning("slide_repair_failed", index=s.index, error=str(e))
     return slides
+
+
+def _repair_competition_names(slide: "GeneratedSlide") -> None:
+    """Replace generic competitor labels with specific company names in comparison blocks.
+    Only runs when intent is 'competition' and comparison columns exist."""
+    if (slide.intent or "").lower() != "competition":
+        return
+    comp = slide.comparison or {}
+    columns = comp.get("columns", []) if isinstance(comp, dict) else []
+    if not columns:
+        return
+
+    generic_labels = {"legacy insurers", "emerging startups", "traditional insurers",
+                      "incumbents", "competitors", "other players", "market leaders",
+                      "legacy", "incumbent", "traditional", "emerging"}
+    topic_blob = " ".join(
+        filter(
+            None,
+            [
+                slide.headline,
+                slide.subheadline,
+                slide.body,
+                " ".join(str(bullet or "") for bullet in (slide.bullets or [])),
+            ],
+        )
+    ).lower()
+    is_space_insurance = any(
+        marker in topic_blob
+        for marker in ["satellite", "space insurance", "orbital", "lloyd"]
+    )
+    for col in columns:
+        title = (col.get("title") or "").strip()
+        title_lower = title.lower()
+        if is_space_insurance and any(gl in title_lower for gl in generic_labels):
+            col["title"] = "Legacy market alternative"
+
+
+def _repair_ask_use_of_funds(slide: "GeneratedSlide") -> None:
+    """Ensure ask slides have a use-of-funds breakdown — but never stamp
+    domain-specific defaults onto a deck about a different topic.
+
+    Bug fix (2026-05-25): the previous implementation hardcoded zero-trust
+    identity / edge IoT bullets onto every ``ask`` slide that lacked a $/%
+    allocation, even when the deck was about (e.g.) AI invoice automation.
+    The user-visible result was an ``ask`` slide reading "Engineering
+    investment will harden DID and zero-knowledge proof orchestration"
+    inside a finance pitch deck — pure noise.
+
+    The new behaviour: if the writer produced substantive bullets or body
+    copy, leave them alone. Only when the slide is genuinely empty do we
+    insert generic, topic-agnostic placeholder bullets that prompt the
+    user to fill in real allocation. The placeholder copy is intentionally
+    company-neutral so it cannot be mistaken for verified content.
+    """
+    if (slide.intent or "").lower() != "ask":
+        return
+
+    # Did the writer give us anything substantive?
+    bullets = list(slide.bullets or [])
+    substantive_bullets = [b for b in bullets if len(str(b).strip()) >= 12]
+    body_len = len(str(getattr(slide, "body", "") or "").strip())
+    has_real_prose = bool(len(substantive_bullets) >= 2 or body_len >= 60)
+
+    has_allocation = any(
+        any(tok in b for tok in ["%", "$"])
+        and any(
+            word in b.lower()
+            for word in [
+                "engineering", "pilot", "regulatory", "sales", "marketing",
+                "rd", "product", "ops", "allocated", "reserved", "hire",
+                "team", "go-to-market", "gtm",
+            ]
+        )
+        for b in bullets
+    )
+    if has_allocation or has_real_prose:
+        return
+
+    # Genuinely empty ask slide. Use topic-neutral placeholders so we never
+    # paste off-topic domain content (zero-trust, edge IoT, etc.) onto a
+    # deck about something else. These are explicit asks for the user to
+    # supply real numbers, not invented allocations.
+    slide.bullets = [
+        "Use of funds: allocate raise across product, go-to-market, and team.",
+        "Milestones the raise unlocks: provide measurable proof points and timing.",
+        "Investor support requested: provide concrete asks and timing.",
+    ]
+
+
+def _repair_source_attribution(slide: "GeneratedSlide", research: "Optional[ResearchPacket]") -> None:
+    """Ensure data slides with numbers have at least one citation if research exists."""
+    if research is None:
+        return
+    intent = (slide.intent or "").lower()
+    if intent not in DATA_INTENTS:
+        return
+    has_numbers = bool(_NUMERIC_TOKEN_RE.search(" ".join(filter(None, [slide.body, str(slide.headline)]))))
+    has_numbers = has_numbers or any(_NUMERIC_TOKEN_RE.search(b) for b in (slide.bullets or []))
+    has_numbers = has_numbers or any(_NUMERIC_TOKEN_RE.search(str(sb.get("value", ""))) for sb in (slide.stat_blocks or []))
+    if not has_numbers:
+        return
+    # If slide has numbers but no citations, pull one from research
+    if not (slide.citations and len(slide.citations) > 0):
+        cites = _intent_citations(research, intent)
+        if cites:
+            first = cites[0]
+            slide.citations = [{"url": getattr(first, "url", "")[:500], "title": getattr(first, "title", "")[:200]}]

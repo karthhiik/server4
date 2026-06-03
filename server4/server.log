@@ -1,0 +1,4 @@
+{"port": 8003, "env": "development", "event": "server_starting", "level": "info", "timestamp": "2026-05-16T17:48:03.888728Z"}
+{"v7": true, "phase4": true, "phase5": true, "phase6": true, "phase7": true, "event": "database_indexes_created", "level": "info", "timestamp": "2026-05-16T17:48:25.393686Z"}
+{"db": "barise_auth_db", "event": "mongodb_connected", "level": "info", "timestamp": "2026-05-16T17:48:25.395200Z"}
+{"service": "presentation-service", "port": 8003, "event": "server_ready", "level": "info", "timestamp": "2026-05-16T17:48:25.987745Z"}

@@ -64,6 +64,7 @@ _INTENT_SECTIONS: dict[str, tuple[str, ...]] = {
     "team":           ("team", "company"),
     "financials":     ("financials", "traction"),
     "ask":            ("fundraising", "company"),
+    "thank_you":      ("company",),
     "vision":         ("company",),
     "go_to_market":   ("market", "company"),
     "technology":     ("company",),
@@ -142,7 +143,12 @@ def _fmt_market(m: dict[str, Any]) -> list[str]:
     ):
         v = m.get(key)
         if v:
-            lines.append(f"  {label}: {v}")
+            # Format currency values with proper currency formatting
+            if key in ("tam", "sam", "som"):
+                formatted = _fmt_currency(v)
+            else:
+                formatted = str(v)
+            lines.append(f"  {label}: {formatted}")
     sources = m.get("sources") or []
     if sources:
         lines.append(f"  sources: {', '.join(sources[:5])}")
@@ -192,6 +198,12 @@ def _fmt_team(team: list[dict[str, Any]]) -> list[str]:
         lines.append(f"  - {m.get('name', '')}{role}")
         if m.get("bio"):
             lines.append(f"      bio: {m['bio']}")
+        if m.get("linkedin_url"):
+            lines.append(f"      linkedin: {m['linkedin_url']}")
+        if m.get("x_url"):
+            lines.append(f"      x_url: {m['x_url']}")
+        if m.get("photo_url"):
+            lines.append(f"      photo: {m['photo_url']}")
         if m.get("notable_credentials"):
             lines.append(f"      credentials: {', '.join(m['notable_credentials'][:5])}")
     return lines
@@ -304,6 +316,7 @@ def team_user_answer(ctx: dict[str, Any]) -> Optional[dict[str, Any]]:
             "role": (m.get("role") or "").strip(),
             "bio": " — ".join(bio_parts) if bio_parts else None,
             "linkedin_url": m.get("linkedin_url"),
+            "x_url": m.get("x_url"),
             "photo_url": m.get("photo_url"),
         })
     if not members:

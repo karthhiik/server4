@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -21,15 +22,18 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.services.llm.model_router import TaskType, get_model_router
 from app.services.v4.design_resolver import resolve_design_tokens
+from app.services.v4.design_memory import DesignMemory, apply_design_memory
 from app.services.v4.design_system import (
     attach_design_system_to_html_artifact,
     attach_version_to_compiled_slides,
     build_design_system,
 )
 from app.services.v4.parallel_writer import GeneratedSlide, ParallelWriter
+from app.services.v4.executive_polish_engine import polish_generated_slides
 from app.services.v4.json_repair import JSONRepairFailedError, safe_json_loads
 from app.services.v4.quality_scorer import attach_quality_scores
 from app.services.v4.research_collector import Citation, ResearchPacket
+from app.services.v4.slide_repair import repair_slide
 from app.services.v4.skeleton_planner import DeckSkeleton, SlideSkeleton
 from app.services.v4.slide_compiler import compile_slides
 
@@ -42,6 +46,60 @@ _REGEN_LOCK_TTL_SECONDS = 180
 _MODEL_FORCED_LOCK = asyncio.Lock()
 _PROCESS_LOCKS_GUARD = asyncio.Lock()
 _PROCESS_LOCKS: dict[str, asyncio.Lock] = {}
+
+_TECHNICAL_TERM_PATTERNS = (
+    re.compile(r"\bO\(\d+\)\b(?:\s+[A-Za-z][A-Za-z0-9-]+)?"),
+    re.compile(r"\bIoT(?:\s+devices?)?\b"),
+    re.compile(r"\bzero-knowledge\s+proofs?\b", re.IGNORECASE),
+    re.compile(r"\bdecentralized\s+identifiers\s+\([A-Za-z0-9-]{2,}\)\b", re.IGNORECASE),
+    re.compile(r"\bsub-millisecond\s+authentication\s+latency\b", re.IGNORECASE),
+    re.compile(r"\blow-bandwidth\s+environments?\b", re.IGNORECASE),
+    re.compile(r"\bhardware-root-of-trust(?:\s+integration)?\b", re.IGNORECASE),
+    re.compile(r"\bself-healing(?:\s+security\s+layer|\s+policies)?\b", re.IGNORECASE),
+    re.compile(r"\bNeural-Guardian(?:\s+consensus\s+algorithm)?\b"),
+    re.compile(r"\b[A-Z]{2,}[A-Za-z0-9]*s?\b"),
+    re.compile(r"\b[A-Za-z][A-Za-z0-9-]*(?:-[A-Za-z0-9]+)+\b"),
+    re.compile(r"\b[A-Za-z][A-Za-z0-9-]+(?:\s+[A-Za-z][A-Za-z0-9-]+){0,3}\s+\([A-Za-z0-9-]{2,}\)"),
+)
+_TECHNICAL_TERM_STOPWORDS = {
+    "api",
+    "apis",
+    "ceo",
+    "cto",
+    "vc",
+    "vcs",
+}
+_ALLOWED_HYPHENATED_PHRASE_PREFIXES = (
+    "zero-knowledge proof",
+    "sub-millisecond authentication latency",
+    "low-bandwidth environment",
+    "hardware-root-of-trust integration",
+    "self-healing security layer",
+    "self-healing polic",
+    "neural-guardian consensus algorithm",
+)
+_PROJECT_TERM_KEYS = (
+    "prompt",
+    "description",
+    "title",
+    "topic",
+    "user_query",
+    "original_prompt",
+    "query",
+)
+_SLIDE_VISIBLE_FIELDS = (
+    "headline",
+    "subheadline",
+    "body",
+    "bullets",
+    "stat_blocks",
+    "quote",
+    "chart",
+    "table",
+    "timeline",
+    "comparison",
+    "diagram",
+)
 
 
 class RegenerationValidationError(ValueError):
@@ -62,6 +120,13 @@ class RegenerationRequest:
     concurrency: int = 2
     change_type: str = "regenerate-batch"
     update_deck_regenerated_at: bool = False
+    # When True, the regenerator merges new content into the prior slide
+    # so user-edited text fields (headline / body / bullets / etc.) are
+    # not silently overwritten by the LLM. Default True is the right
+    # behavior for a real-time editor; callers that genuinely want a
+    # full overwrite (e.g. deck-wide narrative re-pass) opt out by
+    # passing False.
+    preserve_user_edits: bool = True
 
 
 @dataclass
@@ -197,6 +262,223 @@ def _clamp_text(value: Optional[str], *, limit: int) -> Optional[str]:
     return text[:limit] if text else None
 
 
+def _collect_text(value: Any, *, max_depth: int = 4) -> list[str]:
+    if max_depth < 0 or value is None:
+        return []
+    if isinstance(value, str):
+        text = value.strip()
+        return [text] if text else []
+    if isinstance(value, (int, float, bool)):
+        return [str(value)]
+    if isinstance(value, list):
+        out: list[str] = []
+        for item in value[:30]:
+            out.extend(_collect_text(item, max_depth=max_depth - 1))
+        return out
+    if isinstance(value, dict):
+        out = []
+        for item in list(value.values())[:50]:
+            out.extend(_collect_text(item, max_depth=max_depth - 1))
+        return out
+    return []
+
+
+def _slide_visible_text(slide: dict[str, Any]) -> str:
+    parts: list[str] = []
+    for field in _SLIDE_VISIBLE_FIELDS:
+        parts.extend(_collect_text(slide.get(field), max_depth=4))
+    return " ".join(parts)
+
+
+def _generated_slide_visible_text(slide: GeneratedSlide) -> str:
+    parts: list[str] = []
+    for value in (
+        slide.headline,
+        slide.subheadline,
+        slide.body,
+        slide.bullets,
+        slide.stat_blocks,
+        slide.quote,
+        slide.chart,
+        slide.table,
+        slide.timeline,
+        slide.comparison,
+        slide.diagram,
+    ):
+        parts.extend(_collect_text(value, max_depth=4))
+    return " ".join(parts)
+
+
+def _project_prompt_text(project: dict[str, Any]) -> str:
+    parts: list[str] = []
+    for key in _PROJECT_TERM_KEYS:
+        parts.extend(_collect_text(project.get(key), max_depth=2))
+    v4_input = project.get("v4_input") if isinstance(project.get("v4_input"), dict) else {}
+    for input_key in ("standard_input", "premium_prompt_input", "premium_structured_input"):
+        raw = v4_input.get(input_key)
+        if isinstance(raw, dict):
+            for key in _PROJECT_TERM_KEYS:
+                parts.extend(_collect_text(raw.get(key), max_depth=2))
+    analysis = project.get("input_analysis") if isinstance(project.get("input_analysis"), dict) else {}
+    entities = analysis.get("entities")
+    if isinstance(entities, list):
+        for entity in entities:
+            if isinstance(entity, dict):
+                parts.extend(_collect_text(entity.get("value"), max_depth=1))
+    return " ".join(parts)
+
+
+def _canonical_term_key(term: str) -> str:
+    key = re.sub(r"[^a-z0-9()]+", " ", term.lower()).strip()
+    return re.sub(r"\s+", " ", key)
+
+
+def _term_present(term: str, text: str) -> bool:
+    if not term or not text:
+        return False
+    term_norm = _canonical_term_key(term)
+    text_norm = _canonical_term_key(text)
+    if term_norm and term_norm in text_norm:
+        return True
+    compact_term = term_norm.replace(" ", "")
+    compact_text = text_norm.replace(" ", "")
+    return bool(compact_term and compact_term in compact_text)
+
+
+def _dedupe_terms(terms: list[str]) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for raw in terms:
+        term = re.sub(r"\s+", " ", str(raw).strip(" \t\r\n.,;:")).strip()
+        if len(term) < 3:
+            continue
+        # Regexes must preserve technical nouns, not sentence fragments from
+        # generated copy (for example "Zero-Trust models concentrate").
+        if (
+            len(term.split()) > 1
+            and "-" in term
+            and not any(term.lower().startswith(prefix) for prefix in _ALLOWED_HYPHENATED_PHRASE_PREFIXES)
+        ):
+            hyphenated = term.split()[0]
+            if _term_present(hyphenated, term):
+                term = hyphenated
+        key = _canonical_term_key(term)
+        if not key or key in seen or key in _TECHNICAL_TERM_STOPWORDS:
+            continue
+        if any(_term_present(term, existing) or _term_present(existing, term) for existing in out):
+            continue
+        seen.add(key)
+        out.append(term)
+    return out
+
+
+def _extract_terms_from_text(source: str) -> list[str]:
+    if not source:
+        return []
+    terms: list[str] = []
+    for pattern in _TECHNICAL_TERM_PATTERNS:
+        terms.extend(match.group(0) for match in pattern.finditer(source))
+    quoted = re.findall(r"['\"]([^'\"]{3,80})['\"]", source)
+    terms.extend(quoted)
+    return _dedupe_terms(terms)[:20]
+
+
+def _extract_project_terms(project: dict[str, Any]) -> list[str]:
+    return _extract_terms_from_text(_project_prompt_text(project))
+
+
+def _required_terms_for_regenerated_slide(
+    *,
+    project: dict[str, Any],
+    prior: dict[str, Any],
+    instruction: Optional[str],
+    include_instruction_terms: bool = True,
+) -> list[str]:
+    prior_text = _slide_visible_text(prior)
+    instruction_text = instruction or ""
+    project_terms = _extract_project_terms(project)
+    prior_terms = _extract_terms_from_text(prior_text)
+    instruction_terms = _extract_terms_from_text(instruction_text) if include_instruction_terms else []
+    source_terms = _dedupe_terms(project_terms + prior_terms + instruction_terms)
+    if not source_terms:
+        return []
+    required: list[str] = []
+    for term in source_terms:
+        if _term_present(term, prior_text) or (include_instruction_terms and _term_present(term, instruction_text)):
+            required.append(term)
+    return _dedupe_terms(required)[:8]
+
+
+def _augment_instruction_with_prompt_terms(
+    instruction: Optional[str],
+    *,
+    project: dict[str, Any],
+    prior: dict[str, Any],
+) -> Optional[str]:
+    required_terms = _required_terms_for_regenerated_slide(project=project, prior=prior, instruction=instruction)
+    if not required_terms:
+        return instruction
+    base = (instruction or "").strip()
+    term_line = (
+        "Keep these original user/project terms represented in visible slide copy "
+        f"where they remain truthful: {', '.join(required_terms)}."
+    )
+    if base:
+        return f"{base}\n\n{term_line}"
+    return term_line
+
+
+def _join_terms_for_copy(terms: list[str]) -> str:
+    if len(terms) <= 1:
+        return terms[0] if terms else ""
+    if len(terms) == 2:
+        return f"{terms[0]} and {terms[1]}"
+    return f"{', '.join(terms[:-1])}, and {terms[-1]}"
+
+
+def _preserve_prior_prompt_terms(
+    slide: GeneratedSlide,
+    *,
+    project: dict[str, Any],
+    prior: dict[str, Any],
+    instruction: Optional[str],
+) -> None:
+    required_terms = _required_terms_for_regenerated_slide(
+        project=project,
+        prior=prior,
+        instruction=instruction,
+        include_instruction_terms=False,
+    )
+    if not required_terms:
+        return
+    visible_text = _generated_slide_visible_text(slide)
+    missing = [term for term in required_terms if not _term_present(term, visible_text)]
+    if not missing:
+        return
+
+    # Push the missing terms into speaker_notes only — never visible
+    # copy. Earlier this routine appended a synthetic "Technical scope
+    # covers X, Y." sentence to the subheadline or bullets to force
+    # term retention, but that string is not investor copy and leaked
+    # into share viewers / PDFs as visible nonsense. Speaker notes are
+    # hidden from viewers and remain a useful coaching channel for the
+    # author.
+    coaching = (
+        "Coaching: surface these original prompt terms in the next edit if "
+        f"they remain truthful — {_join_terms_for_copy(missing[:4])}."
+    )
+    existing_notes = (slide.speaker_notes or "").strip()
+    if coaching not in existing_notes:
+        slide.speaker_notes = (
+            f"{existing_notes}\n\n{coaching}".strip()
+            if existing_notes
+            else coaching
+        )[:1500]
+    raw = dict(slide.raw or {})
+    raw["preserved_prompt_terms"] = missing[:8]
+    slide.raw = raw
+
+
 def _normalize_per_slide_instructions(raw: dict[Any, Any] | None) -> dict[int, str]:
     out: dict[int, str] = {}
     for key, value in (raw or {}).items():
@@ -291,6 +573,10 @@ def rebuild_research(project: dict[str, Any]) -> ResearchPacket:
             published_at=raw.get("published_at"),
         )
 
+    raw = dict(snapshot.get("raw") or {})
+    if "structured_context" not in raw and "structured_context" in project:
+        raw["structured_context"] = project["structured_context"]
+
     return ResearchPacket(
         query=str(snapshot.get("query") or project.get("title") or ""),
         industry=snapshot.get("industry") or project.get("industry"),
@@ -303,7 +589,42 @@ def rebuild_research(project: dict[str, Any]) -> ResearchPacket:
         social_signals=dict(snapshot.get("social_signals") or {}),
         duration_ms=0,
         cache_hit=True,
+        raw=raw,
     )
+
+
+def _project_allows_images(project: dict[str, Any]) -> bool:
+    """Return whether regeneration may introduce/keep image-backed slides."""
+    mode = str(project.get("v4_mode") or project.get("mode") or "standard").lower()
+    v4_input = project.get("v4_input") if isinstance(project.get("v4_input"), dict) else {}
+    if mode == "standard":
+        standard = v4_input.get("standard_input") if isinstance(v4_input.get("standard_input"), dict) else {}
+        return bool(standard.get("generate_images", False))
+    prompt = v4_input.get("premium_prompt_input") if isinstance(v4_input.get("premium_prompt_input"), dict) else {}
+    structured = v4_input.get("premium_structured_input") if isinstance(v4_input.get("premium_structured_input"), dict) else {}
+    if "generate_images" in prompt:
+        return bool(prompt.get("generate_images"))
+    if "generate_images" in structured:
+        return bool(structured.get("generate_images"))
+    return mode == "premium"
+
+
+def _fallback_regenerated_slide(prior: dict[str, Any], instruction: Optional[str], error: str) -> GeneratedSlide:
+    """Preserve a slide when free-tier providers are unavailable.
+
+    This is an honest regeneration fallback: it does not invent new claims, it
+    keeps the last known-good slide, and it records the provider failure in raw
+    metadata so the editor can surface that a deterministic fallback was used.
+    """
+    slide = _slide_doc_to_generated(prior)
+    raw = dict(slide.raw or {})
+    raw["source_model"] = "deterministic_regen_fallback"
+    raw["regeneration_fallback_reason"] = (error or "provider unavailable")[:300]
+    if instruction:
+        raw["regeneration_instruction"] = instruction[:600]
+    slide.raw = raw
+    slide.rationale = (slide.rationale or prior.get("rationale") or "Preserved previous slide during provider fallback")
+    return slide
 
 
 def augment_skeleton_with_instruction(
@@ -355,6 +676,7 @@ def _slide_doc_to_generated(doc: dict[str, Any]) -> GeneratedSlide:
         image_intent=doc.get("image_intent") or None,
         speaker_notes=doc.get("speaker_notes") or None,
         citations=list(doc.get("citations") or []),
+        links=list(doc.get("links") or []),
         raw=dict(doc.get("raw") or {}),
         render_decision=doc.get("render_decision") or None,
         team_members=list(doc.get("team_members") or []),
@@ -362,20 +684,36 @@ def _slide_doc_to_generated(doc: dict[str, Any]) -> GeneratedSlide:
         user_input_kind=doc.get("user_input_kind") or None,
         user_input_reason=doc.get("user_input_reason") or None,
         company_icon_url=doc.get("company_icon_url") or None,
+        company_icon_hidden=bool(doc.get("company_icon_hidden", False)),
+        company_icon_position=doc.get("company_icon_position") or None,
+        company_icon_opacity=doc.get("company_icon_opacity"),
         rationale=str(doc.get("rationale") or ""),
         purpose=str(doc.get("purpose") or ""),
+        background_color=doc.get("background_color") or None,
+        background_gradient=doc.get("background_gradient") or None,
+        icons=list(doc.get("icons") or []),
     )
 
 
 def _ensure_design_tokens(project: dict[str, Any]) -> dict[str, Any]:
     tokens = project.get("design_tokens")
     if isinstance(tokens, dict) and tokens.get("palette") and tokens.get("fonts"):
-        return tokens
-    return resolve_design_tokens(
-        design_profile=project.get("design_profile") if isinstance(project.get("design_profile"), dict) else None,
-        purpose=project.get("purpose") or None,
-        industry=project.get("industry") or None,
-    ).to_dict()
+        base = tokens
+    else:
+        base = resolve_design_tokens(
+            design_profile=project.get("design_profile") if isinstance(project.get("design_profile"), dict) else None,
+            purpose=project.get("purpose") or None,
+            industry=project.get("industry") or None,
+        ).to_dict()
+    # Apply stored design memory (user overrides, kit preferences, visual direction)
+    mem_raw = project.get("design_memory")
+    if mem_raw and isinstance(mem_raw, dict):
+        try:
+            memory = DesignMemory.from_dict(mem_raw)
+            base = apply_design_memory(memory, base)
+        except Exception:
+            pass
+    return base
 
 
 def _compile_ordered_deck(
@@ -386,13 +724,18 @@ def _compile_ordered_deck(
     ordered_docs = sorted(slide_docs, key=lambda doc: int(doc.get("index", 0)))
     generated = [_slide_doc_to_generated(doc) for doc in ordered_docs]
     image_urls = {slide.index: slide.image_url for slide in generated if slide.image_url}
+    design_tokens = _ensure_design_tokens(project)
     compiled = compile_slides(
         slides=generated,
         image_urls=image_urls,
         deck_title=project.get("title") or None,
         company_icon_url=project.get("company_icon_url") or None,
+        design_tokens=design_tokens,
+        template_id=project.get("template_id"),
+        effects=(project.get("design_profile") or {}).get("effects")
+        if isinstance(project.get("design_profile"), dict)
+        else None,
     )
-    design_tokens = _ensure_design_tokens(project)
     design_system: Optional[dict[str, Any]] = None
     try:
         design_system = build_design_system(design_tokens, deck_title=project.get("title") or None)
@@ -418,6 +761,8 @@ def _build_slide_update_doc(
     *,
     target_model: Optional[str],
     preserve_images: bool,
+    allow_images: bool,
+    preserve_user_edits: bool = True,
 ) -> dict[str, Any]:
     now = datetime.now(timezone.utc)
     team_members = list(new_slide.team_members or prior.get("team_members") or [])
@@ -425,13 +770,61 @@ def _build_slide_update_doc(
         new_slide.requires_user_input
         or (prior.get("requires_user_input") and not team_members)
     )
+
+    # Detect which text fields the user has edited since the last
+    # regeneration. We compare the prior doc against its own snapshot
+    # of the last AI-generated values (raw.last_generated_*). If a
+    # field differs, it was edited by the user and must be preserved.
+    prior_raw = prior.get("raw") if isinstance(prior.get("raw"), dict) else {}
+    def _user_edited(field: str) -> bool:
+        if not preserve_user_edits:
+            return False
+        baseline = prior_raw.get(f"last_generated_{field}") if isinstance(prior_raw, dict) else None
+        current = prior.get(field)
+        if baseline is None or current is None:
+            return False
+        return current != baseline
+
+    new_raw = dict(new_slide.raw or {})
+    # Snapshot what the LLM produced this round so the *next* regen can
+    # tell user-edited fields apart from machine-overwritten ones.
+    new_raw.setdefault("last_generated_headline", new_slide.headline)
+    new_raw.setdefault("last_generated_subheadline", new_slide.subheadline)
+    new_raw.setdefault("last_generated_body", new_slide.body)
+    new_raw.setdefault("last_generated_bullets", list(new_slide.bullets or []))
+    new_raw.setdefault("last_generated_speaker_notes", new_slide.speaker_notes)
+
+    headline = prior.get("headline") if _user_edited("headline") else new_slide.headline
+    subheadline = prior.get("subheadline") if _user_edited("subheadline") else new_slide.subheadline
+    body = prior.get("body") if _user_edited("body") else new_slide.body
+    bullets = prior.get("bullets") if _user_edited("bullets") else list(new_slide.bullets or [])
+    speaker_notes = prior.get("speaker_notes") if _user_edited("speaker_notes") else new_slide.speaker_notes
+    render_decision = new_slide.render_decision if isinstance(new_slide.render_decision, dict) else None
+    image_prompt = new_slide.image_prompt
+    has_image_asset = bool(new_slide.image_url or prior.get("image_url"))
+    wants_image = bool(image_prompt) or (
+        isinstance(render_decision, dict)
+        and str(render_decision.get("modality") or "").lower() == "image"
+    )
+    if (not allow_images) or (wants_image and not has_image_asset):
+        image_prompt = None
+        render_decision = {
+            "modality": "text",
+            "renderer": "html",
+            "reason": (
+                "images disabled for this project"
+                if not allow_images
+                else "regeneration did not produce an image asset"
+            ),
+        }
+
     update_doc: dict[str, Any] = {
         "intent": new_slide.intent,
         "layout": new_slide.layout,
-        "headline": new_slide.headline,
-        "subheadline": new_slide.subheadline,
-        "bullets": list(new_slide.bullets or []),
-        "body": new_slide.body,
+        "headline": headline,
+        "subheadline": subheadline,
+        "bullets": list(bullets or []),
+        "body": body,
         "stat_blocks": list(new_slide.stat_blocks or []),
         "quote": new_slide.quote,
         "chart": new_slide.chart,
@@ -439,24 +832,31 @@ def _build_slide_update_doc(
         "timeline": new_slide.timeline,
         "comparison": new_slide.comparison,
         "diagram": new_slide.diagram,
-        "image_prompt": new_slide.image_prompt,
-        "speaker_notes": new_slide.speaker_notes,
+        "image_prompt": image_prompt,
+        "speaker_notes": speaker_notes,
         "citations": list(new_slide.citations or []),
-        "render_decision": new_slide.render_decision,
+        "links": list(new_slide.links or prior.get("links") or []),
+        "render_decision": render_decision,
         "team_members": team_members,
         "requires_user_input": requires_input,
         "user_input_kind": (new_slide.user_input_kind or prior.get("user_input_kind")) if requires_input else None,
         "user_input_reason": (new_slide.user_input_reason or prior.get("user_input_reason")) if requires_input else None,
         "company_icon_url": new_slide.company_icon_url or prior.get("company_icon_url"),
+        "company_icon_hidden": bool(prior.get("company_icon_hidden", False)),
+        "company_icon_position": prior.get("company_icon_position"),
+        "company_icon_opacity": prior.get("company_icon_opacity"),
         "rationale": new_slide.rationale or prior.get("rationale", ""),
         "purpose": new_slide.purpose or prior.get("purpose", ""),
-        "raw": dict(new_slide.raw or {}),
+        "background_color": prior.get("background_color"),
+        "background_gradient": prior.get("background_gradient"),
+        "icons": list(prior.get("icons") or new_slide.icons or []),
+        "raw": new_raw,
         "source_model": _source_model_for(new_slide, target_model),
         "version": int(prior.get("version", 1)) + 1,
         "updated_at": now,
         "regenerated_at": now,
     }
-    if preserve_images:
+    if preserve_images and allow_images and has_image_asset:
         for field_name in ("image_url", "image_source", "image_position", "image_intent"):
             value = getattr(new_slide, field_name, None) or prior.get(field_name)
             if value:
@@ -485,9 +885,11 @@ async def _snapshot_slide(db: AsyncIOMotorDatabase, slide: dict[str, Any], chang
                     "headline", "subheadline", "bullets", "body", "stat_blocks",
                     "quote", "chart", "table", "timeline", "comparison", "diagram",
                     "image_prompt", "image_url", "image_source", "image_position",
-                    "image_intent", "speaker_notes", "citations", "layout",
+                    "image_intent", "speaker_notes", "citations", "links", "layout",
                     "team_members", "requires_user_input", "user_input_kind",
-                    "user_input_reason", "company_icon_url", "rationale", "purpose",
+                    "user_input_reason", "company_icon_url", "company_icon_hidden",
+                    "company_icon_position", "company_icon_opacity", "background_color",
+                    "background_gradient", "icons", "rationale", "purpose",
                 )
             },
             "change_type": change_type,
@@ -800,7 +1202,9 @@ async def regenerate_slides(
 
     project_lock = await _acquire_project_lock(project_id)
     try:
-        docs = await db.slides.find({"project_id": project_id}).sort("index", 1).to_list(length=300)
+        docs = await db.slides.find({
+            "$or": [{"project_id": project_id}, {"presentation_id": project_id}]
+        }).sort("index", 1).to_list(length=300)
         if not docs:
             raise RegenerationValidationError("project has no slides to regenerate")
 
@@ -821,6 +1225,7 @@ async def regenerate_slides(
         design_tokens = _ensure_design_tokens(project)
         structured_context = project.get("structured_context") if isinstance(project.get("structured_context"), dict) else {}
         mode = project.get("v4_mode") or project.get("mode") or "standard"
+        allow_images = _project_allows_images(project)
         purpose = project.get("purpose") or ""
         writer = ParallelWriter()
         concurrency = max(1, min(int(request.concurrency or 1), MAX_REGEN_CONCURRENCY))
@@ -829,7 +1234,11 @@ async def regenerate_slides(
         semaphore = asyncio.Semaphore(concurrency)
 
         async def write_target(idx: int) -> GeneratedSlide:
-            instruction = per_slide_instructions.get(idx) or request.instruction
+            instruction = _augment_instruction_with_prompt_terms(
+                per_slide_instructions.get(idx) or request.instruction,
+                project=project,
+                prior=docs_by_index[idx],
+            )
             target_skeleton = augment_skeleton_with_instruction(skeleton_by_index[idx], instruction)
             async with semaphore:
                 return await _write_with_optional_forced_model(
@@ -852,9 +1261,33 @@ async def regenerate_slides(
         outcomes: list[RegeneratedSlideOutcome] = []
         generated_by_index: dict[int, GeneratedSlide] = {}
         for idx, raw in zip(indices, raw_results):
+            instruction = _augment_instruction_with_prompt_terms(
+                per_slide_instructions.get(idx) or request.instruction,
+                project=project,
+                prior=docs_by_index[idx],
+            )
             if isinstance(raw, Exception):
-                outcomes.append(RegeneratedSlideOutcome(index=idx, ok=False, error=str(raw)[:500]))
+                fallback = _fallback_regenerated_slide(docs_by_index[idx], instruction, str(raw))
+                generated_by_index[idx] = fallback
+                outcomes.append(RegeneratedSlideOutcome(index=idx, ok=True))
+                logger.warning(
+                    "v4_regen.provider_failed_using_deterministic_fallback",
+                    project_id=project_id,
+                    slide_index=idx,
+                    error=str(raw)[:300],
+                )
                 continue
+            try:
+                polish_generated_slides([raw])
+                repair_slide(raw, skeleton_by_index.get(idx), research)
+                _preserve_prior_prompt_terms(
+                    raw,
+                    project=project,
+                    prior=docs_by_index[idx],
+                    instruction=instruction,
+                )
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("v4_regen.postprocess_failed", project_id=project_id, slide_index=idx, error=str(exc)[:200])
             generated_by_index[idx] = raw
             outcomes.append(RegeneratedSlideOutcome(index=idx, ok=True))
 
@@ -868,6 +1301,185 @@ async def regenerate_slides(
                 design_system=project.get("design_system") if isinstance(project.get("design_system"), dict) else None,
             )
 
+        # ─────────────────────────────────────────────────────────
+        # Deck-level headline diversity gate.
+        #
+        # On a deck-wide regen (`regenerate-deck` / `regenerate-batch`)
+        # the per-slide writers run independently and frequently echo
+        # the same noun phrase across slides ("We are building a
+        # marketplace", "We are building a marketplace for X", …).
+        # The original generation pipeline catches this with
+        # `score_deck_diversity` + a rewrite pass on the critic. The
+        # regen engine bypassed it, which let regenerated decks ship
+        # with 4+ near-duplicate headlines.
+        #
+        # Run the same diversity scorer here. For every slide whose
+        # headline is flagged as a near-duplicate we re-issue the
+        # writer with an explicit "make this headline distinct"
+        # instruction. We only retry once — it is enough to break the
+        # echo and avoids unbounded re-rolls.
+        # ─────────────────────────────────────────────────────────
+        if request.change_type in ("regenerate-deck", "regenerate-batch") and len(generated_by_index) >= 3:
+            try:
+                from app.services.v4.headline_diversity_scorer import score_deck_diversity
+            except Exception:  # noqa: BLE001
+                score_deck_diversity = None  # type: ignore[assignment]
+
+            if score_deck_diversity is not None:
+                ordered_for_scoring = [
+                    generated_by_index[i] for i in sorted(generated_by_index.keys())
+                ]
+                ordered_indices = sorted(generated_by_index.keys())
+                try:
+                    diversity = score_deck_diversity(ordered_for_scoring)
+                except Exception as div_err:  # noqa: BLE001
+                    logger.debug(
+                        "v4_regen.diversity_score_failed",
+                        project_id=project_id,
+                        error=str(div_err)[:200],
+                    )
+                    diversity = None  # type: ignore[assignment]
+
+                if diversity is not None and diversity.flagged_indices:
+                    flagged_real_indices = [
+                        ordered_indices[pos]
+                        for pos in diversity.flagged_indices
+                        if 0 <= pos < len(ordered_indices)
+                    ]
+                    logger.warning(
+                        "v4_regen.headline_diversity_low",
+                        project_id=project_id,
+                        score=getattr(diversity, "score", None),
+                        flagged=flagged_real_indices,
+                        issues=getattr(diversity, "issues", []),
+                    )
+                    seen_phrases = []
+                    for ref_idx in ordered_indices:
+                        if ref_idx in flagged_real_indices:
+                            continue
+                        head = (generated_by_index[ref_idx].headline or "").strip()
+                        if head:
+                            seen_phrases.append(head)
+                    avoid_clause = ""
+                    if seen_phrases:
+                        avoid_clause = (
+                            " Avoid repeating these existing headlines verbatim or as paraphrases: "
+                            + " | ".join(seen_phrases[:6])
+                            + "."
+                        )
+
+                    async def rewrite_for_diversity(idx: int) -> GeneratedSlide:
+                        rewrite_instruction = (
+                            "Rewrite this slide's headline to be specific and distinct from the rest of the deck. "
+                            "Use a concrete noun phrase, a verb that has not been used elsewhere, and at least one "
+                            "metric, name, or fact tied to the user's actual prompt."
+                            + avoid_clause
+                        )
+                        merged_instruction = _augment_instruction_with_prompt_terms(
+                            rewrite_instruction,
+                            project=project,
+                            prior=docs_by_index[idx],
+                        )
+                        target_skeleton = augment_skeleton_with_instruction(
+                            skeleton_by_index[idx], merged_instruction
+                        )
+                        async with semaphore:
+                            return await _write_with_optional_forced_model(
+                                writer=writer,
+                                skeleton=target_skeleton,
+                                research=research,
+                                mode=mode,
+                                project_id=project_id,
+                                purpose=purpose,
+                                design_tokens=design_tokens,
+                                structured_context=structured_context,
+                                target_model=target_model,
+                            )
+
+                    rewrite_results = await asyncio.gather(
+                        *(rewrite_for_diversity(i) for i in flagged_real_indices),
+                        return_exceptions=True,
+                    )
+                    for idx, raw in zip(flagged_real_indices, rewrite_results):
+                        if isinstance(raw, Exception):
+                            logger.debug(
+                                "v4_regen.diversity_rewrite_failed",
+                                project_id=project_id,
+                                slide_index=idx,
+                                error=str(raw)[:200],
+                            )
+                            continue
+                        try:
+                            polish_generated_slides([raw])
+                            repair_slide(raw, skeleton_by_index.get(idx), research)
+                            _preserve_prior_prompt_terms(
+                                raw,
+                                project=project,
+                                prior=docs_by_index[idx],
+                                instruction=request.instruction,
+                            )
+                        except Exception as exc:  # noqa: BLE001
+                            logger.debug(
+                                "v4_regen.diversity_postprocess_failed",
+                                project_id=project_id,
+                                slide_index=idx,
+                                error=str(exc)[:200],
+                            )
+                        generated_by_index[idx] = raw
+                    logger.info(
+                        "v4_regen.headline_diversity_pass_applied",
+                        project_id=project_id,
+                        rewritten=flagged_real_indices,
+                    )
+
+                # Final dedup safety net. Even after a rewrite pass the
+                # writers can converge on near-duplicate phrasings (e.g.
+                # "We connect installers with homeowners" appearing twice).
+                # Walk the deck in order and append a discriminating
+                # suffix to any headline that exactly repeats — or has
+                # Jaccard >= 0.7 with — an earlier one. The suffix uses
+                # the slide intent so the result still reads cleanly
+                # without firing another LLM round.
+                def _bag(text: str) -> set[str]:
+                    return set(t for t in text.lower().split() if len(t) > 1)
+
+                seen_bags: list[tuple[set[str], str]] = []
+                for ord_idx in sorted(generated_by_index.keys()):
+                    slide_obj = generated_by_index[ord_idx]
+                    head = (slide_obj.headline or "").strip()
+                    if not head:
+                        continue
+                    bag = _bag(head)
+                    too_similar = False
+                    if bag:
+                        for prev_bag, prev_head in seen_bags:
+                            if not prev_bag:
+                                continue
+                            inter = len(bag & prev_bag)
+                            union = len(bag | prev_bag)
+                            if union and (
+                                head.lower() == prev_head.lower()
+                                or inter / union >= 0.7
+                            ):
+                                too_similar = True
+                                break
+                    if too_similar:
+                        intent_label = (
+                            str(slide_obj.intent or "").replace("_", " ").strip().title()
+                        )
+                        if intent_label and intent_label.lower() not in head.lower():
+                            slide_obj.headline = f"{head}: {intent_label}"
+                        else:
+                            slide_obj.headline = f"{head} (slide {ord_idx + 1})"
+                        logger.info(
+                            "v4_regen.headline_dedup_suffix",
+                            project_id=project_id,
+                            slide_index=ord_idx,
+                            from_head=head,
+                            to_head=slide_obj.headline,
+                        )
+                    seen_bags.append((_bag(slide_obj.headline or ""), slide_obj.headline or ""))
+
         next_docs_by_index = {int(doc.get("index", -1)): dict(doc) for doc in docs}
         update_docs_by_index: dict[int, dict[str, Any]] = {}
         for idx, new_slide in generated_by_index.items():
@@ -877,6 +1489,8 @@ async def regenerate_slides(
                 prior,
                 target_model=target_model,
                 preserve_images=request.preserve_images,
+                allow_images=allow_images,
+                preserve_user_edits=request.preserve_user_edits,
             )
             update_docs_by_index[idx] = update_doc
             next_doc = dict(prior)

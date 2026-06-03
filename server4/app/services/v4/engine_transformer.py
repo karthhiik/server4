@@ -517,7 +517,11 @@ def _engine_feature_grid(
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     headline = _str_or_none(props.get("headline"))
     subheadline = _str_or_none(props.get("subheadline"))
-    features = _list_of_mappings(props.get("features"))
+    features = (
+        _list_of_mappings(props.get("features"))
+        or _list_of_mappings(props.get("items"))
+        or _list_of_mappings(props.get("cards"))
+    )
     columns_in = props.get("columns")
     cols = int(columns_in) if isinstance(columns_in, (int, float)) and 1 <= int(columns_in) <= 4 else 3
     if not features:
@@ -880,6 +884,66 @@ def _engine_diagram_block(
 # ── Public API ───────────────────────────────────────────────────────
 
 
+def _engine_data_table(
+    props: Mapping[str, Any], ir: Mapping[str, Any]
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    headline = _str_or_none(props.get("headline"))
+    subheadline = _str_or_none(props.get("subheadline"))
+    headers = _coerce_str_list(props.get("headers"))
+    rows_raw = props.get("rows") or []
+    rows: list[list[str]] = []
+    if isinstance(rows_raw, Iterable) and not isinstance(rows_raw, (str, bytes)):
+        for row in rows_raw:
+            if isinstance(row, Iterable) and not isinstance(row, (str, bytes, Mapping)):
+                cells = [str(cell) for cell in row if cell is not None]
+                if cells:
+                    rows.append(cells)
+
+    background = {"kind": "solid", "color_token": "surface"}
+    layers: list[dict[str, Any]] = []
+    if headline:
+        layers.append(_text_layer(
+            layer_id="headline", text=headline, role="h1",
+            x=0.05, y=0.08, w=0.9, h=0.10, weight="heading",
+            anim_id=_ir_anim_id_for(ir, "headline"),
+        ))  # type: ignore[arg-type]
+    if subheadline:
+        layers.append(_text_layer(
+            layer_id="subheadline", text=subheadline, role="body",
+            color_token="text_secondary", x=0.05, y=0.20, w=0.9, h=0.06,
+        ))  # type: ignore[arg-type]
+
+    col_count = max(len(headers), max((len(row) for row in rows), default=0), 1)
+    col_w = 0.90 / col_count
+    start_y = 0.31
+    row_h = 0.07
+    for ci in range(col_count):
+        header = headers[ci] if ci < len(headers) else ""
+        if header:
+            layers.append(_text_layer(
+                layer_id=f"table-header-{ci}", text=header, role="caption",
+                color_token="primary", x=0.05 + ci * col_w, y=start_y,
+                w=col_w - 0.01, h=row_h, weight="heading",
+                anim_id=_ir_anim_id_for_indexed(ir, "headers", ci),
+            ))  # type: ignore[arg-type]
+    for ri, row in enumerate(rows[:6]):
+        y = start_y + row_h * (ri + 1)
+        for ci in range(col_count):
+            cell = row[ci] if ci < len(row) else ""
+            if not cell:
+                continue
+            layers.append(_text_layer(
+                layer_id=f"table-cell-{ri}-{ci}", text=cell, role="body",
+                color_token="text_primary" if ci == 0 else "text_secondary",
+                x=0.05 + ci * col_w, y=y, w=col_w - 0.01, h=row_h,
+                weight="heading" if ci == 0 else None,
+                anim_id=_ir_anim_id_for_indexed(ir, "rows", ri),
+            ))  # type: ignore[arg-type]
+
+    layers = [layer for layer in layers if layer is not None]
+    return background, layers
+
+
 _KIT_TRANSLATORS = {
     "TitleHero":       _engine_title_hero,
     "StatHero":        _engine_stat_hero,
@@ -887,10 +951,17 @@ _KIT_TRANSLATORS = {
     "TimelineBlock":   _engine_timeline_block,
     "ComparisonBlock": _engine_comparison_block,
     "FeatureGrid":     _engine_feature_grid,
+    "GlassCard":       _engine_feature_grid,
+    "BentoGrid":       _engine_feature_grid,
+    "ValuePropGrid":   _engine_feature_grid,
+    "ProblemSolution": _engine_feature_grid,
     "TeamGrid":        _engine_team_grid,
     "QuoteBlock":      _engine_quote_block,
     "FullBleedImage":  _engine_full_bleed_image,
     "DiagramBlock":    _engine_diagram_block,
+    "DataTable":       _engine_data_table,
+    "ProcessFlow":     _engine_timeline_block,
+    "Roadmap":         _engine_timeline_block,
 }
 
 

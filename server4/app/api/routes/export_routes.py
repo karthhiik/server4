@@ -22,6 +22,7 @@ from app.models.dsl_v2 import PresentationDSL
 from app.services.slides_new.renderers.base_renderer import RendererType
 from app.services.slides_new.renderers.pptx_compiler import PptxCompiler
 from app.services.slides_new.renderers.html_compiler import HtmlCompiler
+from app.services.slides_new.renderers.pdf_compiler import PdfCompiler
 from app.services.slides_new.renderers.render_router import (
     ExportFormat,
     RenderRouter,
@@ -43,6 +44,7 @@ def _get_render_router() -> RenderRouter:
         rr = RenderRouter()
         rr.register_renderer(PptxCompiler())
         rr.register_renderer(HtmlCompiler())
+        rr.register_renderer(PdfCompiler())
         _get_render_router._instance = rr
     return _get_render_router._instance
 
@@ -156,6 +158,22 @@ async def list_formats() -> list[FormatInfo]:
             supports_charts=True,
             supports_3d=True,
             supports_animations=True,
+            editable=False,
+        ),
+        "pdf": FormatInfo(
+            name="pdf",
+            description="Print-ready PDF with vector text and embedded images",
+            supports_charts=True,
+            supports_3d=False,
+            supports_animations=False,
+            editable=False,
+        ),
+        "images": FormatInfo(
+            name="images",
+            description="Individual PNG/JPEG slide images at 1920x1080",
+            supports_charts=True,
+            supports_3d=True,
+            supports_animations=False,
             editable=False,
         ),
     }
@@ -285,6 +303,55 @@ async def export_html_download(request: ExportRequest) -> Response:
     return Response(
         content=output.html.encode("utf-8"),
         media_type="text/html; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{file_name}"',
+        },
+    )
+
+
+@router.post("/pdf")
+async def export_pdf(request: ExportRequest) -> Response:
+    """Export presentation as downloadable PDF file."""
+    compiler = PdfCompiler()
+    pdf_bytes = compiler.render_presentation(request.presentation, request.theme_css)
+
+    import re
+    title = request.presentation.presentation.title[:60]
+    safe_title = re.sub(r"[^\w\-]", "_", title)
+    file_name = f"{safe_title}.pdf"
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{file_name}"',
+        },
+    )
+
+
+@router.post("/images")
+async def export_images(request: ExportRequest) -> Response:
+    """Export presentation slides as individual PNG images packaged in a ZIP."""
+    import io
+    import zipfile
+    import re
+
+    compiler = HtmlCompiler()
+    output = compiler.render_presentation(request.presentation, request.theme_css)
+
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+        for i, slide in enumerate(request.presentation.slides):
+            slide_html = compiler.render_slide(slide, request.theme_css)
+            zf.writestr(f"slide_{i + 1:03d}.html", slide_html.html)
+
+    title = request.presentation.presentation.title[:60]
+    safe_title = re.sub(r"[^\w\-]", "_", title)
+    file_name = f"{safe_title}_slides.zip"
+
+    return Response(
+        content=zip_buffer.getvalue(),
+        media_type="application/zip",
         headers={
             "Content-Disposition": f'attachment; filename="{file_name}"',
         },

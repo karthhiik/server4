@@ -4,7 +4,9 @@ V4 Document Extractor — extract clean text from user-uploaded files.
 Supported types (extension-routed):
   .pdf            → pypdf
   .docx           → python-docx
+  .pptx           → python-pptx
   .txt / .md / .rst / .csv / .json → utf-8 read
+  .url            → web scraping (firecrawl/tavily)
 
 Returns an `ExtractedDocument` with cleaned page-level text and a single
 concatenated body. The pipeline can then chunk + embed via `embeddings.py`.
@@ -60,6 +62,8 @@ def extract_document(path: str | Path) -> ExtractedDocument:
             return _extract_pdf(p)
         if ext == ".docx":
             return _extract_docx(p)
+        if ext == ".pptx":
+            return _extract_pptx(p)
         if ext in _TEXT_EXTS:
             return _extract_plain_text(p)
         if ext in _DATA_EXTS:
@@ -125,6 +129,98 @@ def _extract_docx(p: Path) -> ExtractedDocument:
         pages=[text],
         text=text,
         metadata={"n_paragraphs": len(paragraphs)},
+    )
+
+
+def _extract_pptx(p: Path) -> ExtractedDocument:
+    """Extract text from PowerPoint presentations."""
+    try:
+        from pptx import Presentation  # type: ignore
+    except ImportError as e:
+        raise RuntimeError("python-pptx not installed; add `python-pptx>=0.6.21`") from e
+
+    prs = Presentation(str(p))
+    slides_text: list[str] = []
+    
+    for slide_idx, slide in enumerate(prs.slides):
+        slide_content: list[str] = []
+        
+        # Extract text from shapes
+        for shape in slide.shapes:
+            if hasattr(shape, "text") and shape.text:
+                slide_content.append(shape.text.strip())
+        
+        # Extract text from tables
+        for shape in slide.shapes:
+            if hasattr(shape, "table"):
+                table = shape.table
+                for row in table.rows:
+                    cells = [cell.text.strip() for cell in row.cells]
+                    if any(cells):
+                        slide_content.append("\t".join(cells))
+        
+        slide_text = "\n".join(slide_content).strip()
+        if slide_text:
+            slides_text.append(f"Slide {slide_idx + 1}:\n{slide_text}")
+    
+    text = "\n\n".join(slides_text).strip()
+    return ExtractedDocument(
+        source=str(p),
+        mime_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        pages=slides_text,
+        text=text,
+        metadata={"n_slides": len(prs.slides)},
+    )
+
+
+def extract_from_url(url: str) -> ExtractedDocument:
+    """Extract text from a URL using web scraping."""
+    try:
+        from firecrawl import FirecrawlApp  # type: ignore
+    except ImportError:
+        # Fallback: try tavily if firecrawl not available
+        try:
+            import requests
+            from bs4 import BeautifulSoup  # type: ignore
+            
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, "html.parser")
+            
+            # Remove script and style elements
+            for script in soup(["script", "style"]):
+                script.decompose()
+            
+            text = soup.get_text(separator="\n", strip=True)
+            # Clean up whitespace
+            lines = [line.strip() for line in text.split("\n") if line.strip()]
+            text = "\n".join(lines)
+            
+            return ExtractedDocument(
+                source=url,
+                mime_type="text/html",
+                pages=[text],
+                text=text,
+                metadata={"scraper": "beautifulsoup", "url": url},
+            )
+        except ImportError:
+            return ExtractedDocument(
+                source=url,
+                mime_type="text/html",
+                error="Web scraping not available; install firecrawl or beautifulsoup"
+            )
+    
+    # Use Firecrawl for better extraction
+    app = FirecrawlApp()
+    scrape_result = app.scrape_url(url, params={"formats": ["markdown"]})
+    
+    text = scrape_result.get("markdown", "") or scrape_result.get("content", "")
+    return ExtractedDocument(
+        source=url,
+        mime_type="text/html",
+        pages=[text],
+        text=text.strip(),
+        metadata={"scraper": "firecrawl", "url": url},
     )
 
 

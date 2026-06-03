@@ -17,8 +17,10 @@ def plan_layout_rhythm(
     slides: list[Any],
     deck_purpose: str = "",
     image_urls: Optional[Mapping[int, str]] = None,
+    creative_directions: Optional[Mapping[int, Mapping[str, Any]]] = None,
 ) -> dict[int, LayoutCandidate]:
     image_urls = image_urls or {}
+    creative_directions = creative_directions or {}
     selected: dict[int, LayoutCandidate] = {}
     previous_layouts: list[str] = []
     density_streak = 0
@@ -34,8 +36,16 @@ def plan_layout_rhythm(
             image_available=bool(image_urls.get(getattr(slide, "index", deck_index))),
             limit=4,
         )
-        chosen = _choose_candidate(candidates, previous_layouts, density_streak, last_density)
-        selected[int(getattr(slide, "index", deck_index) or deck_index)] = chosen
+        slide_index = int(getattr(slide, "index", deck_index) or deck_index)
+        direction = creative_directions.get(slide_index) or {}
+        chosen = _choose_candidate(
+            candidates,
+            previous_layouts,
+            density_streak,
+            last_density,
+            direction,
+        )
+        selected[slide_index] = chosen
         previous_layouts.append(chosen.key)
         density = chosen.features.density
         density_streak = density_streak + 1 if density == last_density else 1
@@ -48,6 +58,7 @@ def _choose_candidate(
     previous_layouts: list[str],
     density_streak: int,
     last_density: str,
+    creative_direction: Optional[Mapping[str, Any]] = None,
 ) -> LayoutCandidate:
     if not candidates:
         raise ValueError("rhythm planner requires at least one candidate")
@@ -55,6 +66,23 @@ def _choose_candidate(
         return candidates[0]
     last_key = previous_layouts[-1]
     last_kit = last_key.split(":", 1)[0]
+    preferred_kits = tuple(
+        str(k)
+        for k in (creative_direction or {}).get("preferred_kits", ())
+        if str(k).strip()
+    )
+
+    if preferred_kits:
+        for candidate in candidates:
+            if candidate.kit_id not in preferred_kits:
+                continue
+            if candidate.key == last_key:
+                continue
+            if candidate.kit_id == last_kit and len(candidates) > 1:
+                continue
+            if density_streak >= 2 and candidate.features.density == last_density:
+                continue
+            return candidate
 
     for candidate in candidates:
         if candidate.key == last_key:

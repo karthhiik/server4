@@ -82,7 +82,7 @@ export function MarketSlide({ data, onUpdate }: MarketSlideProps) {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .slide-container {
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;

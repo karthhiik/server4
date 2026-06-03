@@ -50,7 +50,7 @@ DEPTH_PROFILES: dict[str, DepthProfile] = {
     "fast": DepthProfile(
         label="fast",
         web_providers=("tavily", "serper"),
-        news_providers=("newsapi",),
+        news_providers=(),
         max_results_per_provider=5,
         per_provider_timeout_s=4.0,
         enable_social=False,
@@ -60,10 +60,17 @@ DEPTH_PROFILES: dict[str, DepthProfile] = {
     # "standard" is what every non-premium request uses. Strict
     # subset of "deep" — drops You.com / Jina / NewsData / Guardian /
     # social / financial / follow-up loop. 6s per provider.
+    # Current free-tier path: Tavily + Serper + Linkup + SearchAPI as
+    # AI-search fallbacks. Linkup and SearchAPI sit AFTER the proven
+    # Tavily/Serper pair so they only fire when those return sparse
+    # data — but the parallel fan-out means a healthy day still hits
+    # all four for richer evidence. ScrapingBog/ScrapingBee/Apify are
+    # content-extraction providers, not search engines, so they don't
+    # appear here.
     "standard": DepthProfile(
         label="standard",
-        web_providers=("tavily", "serper", "exa"),
-        news_providers=("newsapi",),
+        web_providers=("tavily", "serper", "linkup", "searchapi"),
+        news_providers=("newsdata",),
         max_results_per_provider=6,
         per_provider_timeout_s=6.0,
         enable_social=False,
@@ -72,14 +79,25 @@ DEPTH_PROFILES: dict[str, DepthProfile] = {
     ),
     # "deep" matches the previous behaviour — full provider suite,
     # follow-up expansion enabled, generous 10s per provider.
+    # Premium keeps optional providers in the chain; key-pool guards skip
+    # providers that are not configured in the local .env.
+    # 2026-05-25: extended with Linkup, SearchAPI, Zenserp, ValueSerp
+    # for richer SERP coverage. The fan-out is parallel so adding
+    # providers raises evidence breadth without adding wall-clock time.
     "deep": DepthProfile(
         label="deep",
-        web_providers=("tavily", "serper", "exa", "you_com", "jina"),
-        news_providers=("newsapi", "newsdata", "guardian"),
+        web_providers=(
+            "tavily", "serper", "you_com", "jina", "exa",
+            "linkup", "searchapi", "zenserp", "valueserp",
+        ),
+        news_providers=("newsdata", "newsapi", "guardian"),
         max_results_per_provider=8,
         per_provider_timeout_s=10.0,
-        enable_social=True,
-        enable_financial=True,
+        enable_social=False,
+        enable_financial=False,
+        # Deep profile is the only tier that runs the gap-driven
+        # follow-up loop. Fast and standard return the seed packet
+        # as-is to keep their wall-clock budgets honest.
         enable_followup_loop=True,
     ),
 }

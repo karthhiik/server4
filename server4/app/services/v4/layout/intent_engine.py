@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from typing import Any, Mapping, Sequence
 
 from app.services.v4.layout.library import LAYOUT_LIBRARY, LayoutSpec
+from app.services.v4.composition_engine import score_composition
 
 
 _INTENT_ALIASES = {
@@ -50,6 +51,44 @@ _COMPARISON_WORDS = ("compar", " vs ", "versus", "matrix", "side-by-side", "side
 _DIAGRAM_WORDS = ("diagram", "architecture", "system map", "network", "flywheel", "loop")
 _TIMELINE_WORDS = ("timeline", "roadmap", "milestone", "phase", "step", "process", "journey")
 
+_TEMPLATE_KIT_TO_LAYOUT_KITS: dict[str, tuple[str, ...]] = {
+    "TitleHero": ("TitleHero", "CinematicHero", "DuotoneHero"),
+    "CoverSlide": ("TitleHero", "CinematicHero", "DuotoneHero"),
+    "CinematicHero": ("CinematicHero", "TitleHero"),
+    "DuotoneHero": ("DuotoneHero", "TitleHero"),
+    "FullBleedImage": ("FullBleedImage",),
+    "EditorialImage": ("EditorialImage", "SplitOverlap", "FullBleedImage"),
+    "SplitContent": ("FeatureGrid", "EditorialImage", "SplitOverlap"),
+    "SplitOverlap": ("SplitOverlap", "EditorialImage"),
+    "ValuePropGrid": ("FeatureGrid", "BentoGrid", "GlassCard"),
+    "FeatureGrid": ("FeatureGrid", "BentoGrid", "GlassCard"),
+    "BentoGrid": ("BentoGrid", "FeatureGrid"),
+    "GlassCard": ("GlassCard", "FeatureGrid"),
+    "ProblemSolution": ("ComparisonBlock", "FeatureGrid"),
+    "BeforeAfter": ("ComparisonBlock",),
+    "ComparisonBlock": ("ComparisonBlock",),
+    "MetricsDashboard": ("StatHero", "ChartBlock", "FloatingStat"),
+    "StatHero": ("StatHero", "FloatingStat"),
+    "FloatingStat": ("FloatingStat", "StatHero"),
+    "StatHighlight": ("StatHero", "FloatingStat"),
+    "ChartBlock": ("ChartBlock", "StatHero"),
+    "AnimatedChartBlock": ("ChartBlock",),
+    "DataTable": ("ChartBlock", "ComparisonBlock"),
+    "Roadmap": ("TimelineBlock",),
+    "TimelineBlock": ("TimelineBlock",),
+    "ProcessFlow": ("TimelineBlock", "DiagramBlock"),
+    "DiagramBlock": ("DiagramBlock",),
+    "TeamGrid": ("TeamGrid",),
+    "TeamMemberStrip": ("TeamGrid",),
+    "QuoteBlock": ("QuoteBlock",),
+    "QuoteHighlight": ("QuoteBlock",),
+    "TestimonialCard": ("QuoteBlock",),
+    "SocialProof": ("BentoGrid", "FeatureGrid", "QuoteBlock"),
+    "LogoMarquee": ("FeatureGrid",),
+    "PricingTable": ("ComparisonBlock", "FeatureGrid"),
+    "AppMockup": ("FullBleedImage", "EditorialImage", "SplitOverlap"),
+}
+
 
 @dataclass(frozen=True)
 class LayoutFeatures:
@@ -70,6 +109,7 @@ class LayoutFeatures:
     has_image: bool
     wants_image: bool
     has_features: bool
+    template_kit_component: str
     density: str
     position: str
     signals: tuple[str, ...] = field(default_factory=tuple)
@@ -83,6 +123,7 @@ class LayoutFeatures:
             "word_count": self.word_count,
             "bullet_count": self.bullet_count,
             "avg_bullet_words": round(self.avg_bullet_words, 2),
+            "template_kit_component": self.template_kit_component,
             "density": self.density,
             "position": self.position,
             "signals": list(self.signals),
@@ -199,6 +240,12 @@ def _density(word_count: int, bullet_count: int, avg_bullet_words: float) -> str
     return "balanced"
 
 
+def _density_float(word_count: int, bullet_count: int, avg_bullet_words: float) -> float:
+    """Return 0..1 content density for composition engine."""
+    d = _density(word_count, bullet_count, avg_bullet_words)
+    return {"sparse": 0.25, "balanced": 0.55, "dense": 0.85}.get(d, 0.5)
+
+
 def extract_features(
     slide: Any,
     *,
@@ -234,6 +281,7 @@ def extract_features(
     )
     has_image = bool(image_available) or bool(getattr(slide, "image_url", None)) or wants_image
     has_features = len(bullets) >= 2 and avg_bullet_words <= 18
+    template_kit_component = str(getattr(slide, "template_kit_component", None) or "")
     signals: list[str] = []
     for name, active in (
         ("chart", has_chart),
@@ -266,6 +314,7 @@ def extract_features(
         has_image=has_image,
         wants_image=wants_image,
         has_features=has_features,
+        template_kit_component=template_kit_component,
         density=_density(word_count, len(bullets), avg_bullet_words),
         position=_position(deck_index, deck_total),
         signals=tuple(signals),
@@ -324,9 +373,22 @@ def _repeat_penalty(spec: LayoutSpec, previous_layouts: Sequence[str]) -> float:
     return penalty
 
 
-def _score_spec(spec: LayoutSpec, features: LayoutFeatures, previous_layouts: Sequence[str]) -> tuple[float, list[str]]:
+def _score_spec(spec: LayoutSpec, features: LayoutFeatures, previous_layouts: Sequence[str], template_id: str | None = None) -> tuple[float, list[str]]:
     score = 42.0
     reasons: list[str] = []
+    template_kit = features.template_kit_component
+    if template_kit:
+        preferred_kits = _TEMPLATE_KIT_TO_LAYOUT_KITS.get(template_kit, (template_kit,))
+        if spec.kit_id in preferred_kits:
+            score += 22.0
+            reasons.append(f"template-kit:{template_kit}")
+    if template_id and getattr(spec, 'template_ids', None):
+        if template_id in spec.template_ids:
+            score += 16.0
+            reasons.append(f"template:{template_id}")
+        else:
+            score -= 4.0
+            reasons.append("template-mismatch")
     if features.intent and features.intent in spec.intents:
         score += 26.0
         reasons.append(f"intent:{features.intent}")
@@ -351,6 +413,18 @@ def _score_spec(spec: LayoutSpec, features: LayoutFeatures, previous_layouts: Se
             score += 5.0
             reasons.append(f"prefers:{pref}")
     score += _density_score(spec, features)
+    # v2: composition quality bonus for premium kits
+    if spec.kit_id in {"CinematicHero", "GlassCard", "EditorialImage", "BentoGrid"}:
+        comp = score_composition(
+            kit_id=spec.kit_id,
+            variant=spec.variant,
+            content_density=_density_float(features.word_count, features.bullet_count, features.avg_bullet_words),
+            has_image=features.has_image,
+            element_count=features.bullet_count + (1 if features.has_chart else 0) + (1 if features.has_stats else 0),
+        )
+        comp_bonus = comp.overall * 6.0  # up to +6 points for excellent composition
+        score += comp_bonus
+        reasons.append(f"composition:+{comp_bonus:.1f}")
     penalty = _repeat_penalty(spec, previous_layouts)
     if penalty:
         score -= penalty
@@ -384,6 +458,7 @@ def select_layout(
     deck_total: int = 1,
     previous_layouts: Sequence[str] = (),
     image_available: bool | None = None,
+    template_id: str | None = None,
 ) -> LayoutCandidate:
     candidates = select_layout_candidates(
         slide=slide,
@@ -392,6 +467,7 @@ def select_layout(
         deck_total=deck_total,
         previous_layouts=previous_layouts,
         image_available=image_available,
+        template_id=template_id,
         limit=1,
     )
     return candidates[0]
@@ -405,6 +481,7 @@ def select_layout_candidates(
     deck_total: int = 1,
     previous_layouts: Sequence[str] = (),
     image_available: bool | None = None,
+    template_id: str | None = None,
     limit: int = 3,
 ) -> list[LayoutCandidate]:
     features = extract_features(
@@ -418,7 +495,7 @@ def select_layout_candidates(
     for index, spec in enumerate(LAYOUT_LIBRARY):
         if not _eligible(spec, features):
             continue
-        score, reasons = _score_spec(spec, features, previous_layouts)
+        score, reasons = _score_spec(spec, features, previous_layouts, template_id=template_id)
         scored.append((score, index, spec, reasons))
     if not scored:
         return [_fallback_candidate(features)]

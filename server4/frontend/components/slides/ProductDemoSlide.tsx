@@ -68,7 +68,7 @@ export function ProductDemoSlide({ data, onUpdate }: ProductDemoSlideProps) {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .slide-container {
           background: linear-gradient(to right, #f5f7fa 0%, #c3cfe2 100%);
           padding: 60px;

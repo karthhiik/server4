@@ -226,6 +226,46 @@ def _build_css(tokens: dict[str, Any]) -> str:
     if isinstance(density, str) and density.strip():
         lines.append(f'  --density: "{density}";')
 
+    # ── Shape tokens ───────────────────────────────────────────────
+    shape = tokens.get("shape") or {}
+    shape_map = {
+        "radius_sm": "radius-sm", "radius_md": "radius-md",
+        "radius_lg": "radius-lg", "radius_xl": "radius-xl",
+        "shadow_sm": "shadow-sm", "shadow_md": "shadow-md",
+        "shadow_lg": "shadow-lg", "shadow_glow": "shadow-glow",
+        "border_width": "border-width", "border_subtle": "border-subtle",
+        "glass_blur": "glass-blur",
+    }
+    for src, css_name in shape_map.items():
+        v = shape.get(src)
+        if v is not None:
+            lines.append(f'  --shape-{css_name}: {v};')
+
+    # ── Animation tokens ───────────────────────────────────────────
+    animation = tokens.get("animation") or {}
+    anim_map = {
+        "entry_duration_ms": "entry-duration", "stagger_ms": "stagger",
+        "hover_scale": "hover-scale", "hover_duration_ms": "hover-duration",
+        "easing": "easing", "page_transition_ms": "page-transition",
+        "micro_duration_ms": "micro-duration",
+    }
+    for src, css_name in anim_map.items():
+        v = animation.get(src)
+        if v is not None:
+            lines.append(f'  --anim-{css_name}: {v};')
+
+    # ── Grid tokens ──────────────────────────────────────────────
+    grid = tokens.get("grid") or {}
+    grid_map = {
+        "columns": "columns", "gutter_px": "gutter",
+        "baseline_px": "baseline", "max_content_width": "max-content-width",
+        "slide_margin_px": "slide-margin", "safe_area_inset": "safe-area",
+    }
+    for src, css_name in grid_map.items():
+        v = grid.get(src)
+        if v is not None:
+            lines.append(f'  --grid-{css_name}: {v};')
+
     lines.append("}")
     return "\n".join(lines) + "\n"
 

@@ -77,6 +77,104 @@ class OutlineGenerator:
         logger.info("outline_generated", slides=len(outline.slides), model=response.model, style=writing_style)
         return outline
 
+    async def detect_company_stage(
+        self,
+        company_data: dict,
+        research_context: str = "",
+        presentation_id: Optional[str] = None,
+    ) -> str:
+        """
+        Detect funding stage from company data and research.
+        Extends existing outline_generator.py (NOT a new file).
+
+        Returns one of: pre_seed, seed, series_a, series_b, series_c_plus, bootstrapped, public, n/a
+        """
+        # Build company context from available data
+        company_name = company_data.get("name", "")
+        company_description = company_data.get("description", "")
+        funding_amount = company_data.get("funding_amount", "")
+        funding_round = company_data.get("funding_round", "")
+        employee_count = company_data.get("employee_count", "")
+        revenue = company_data.get("revenue", "")
+
+        # Compose system prompt for stage classification
+        system_prompt = self.prompt_engine.compose_outline_prompt(
+            style="yc_pitch",
+            purpose="pitch",
+        )
+
+        user_prompt = f"""Analyze the following company information and determine the funding stage.
+
+Company Name: {company_name}
+Description: {company_description}
+Funding Amount: {funding_amount}
+Funding Round: {funding_round}
+Employee Count: {employee_count}
+Revenue: {revenue}
+
+Research Context:
+{research_context[:2000] if research_context else "No additional research context provided."}
+
+Return ONLY one of these exact values:
+- pre_seed
+- seed
+- series_a
+- series_b
+- series_c_plus
+- bootstrapped
+- public
+- n/a
+
+Use these criteria:
+- pre_seed: $0-$500K raised, idea/prototype stage, <5 employees, no revenue
+- seed: $500K-$5M raised, product launched, 5-20 employees, early revenue or strong traction
+- series_a: $5M-$20M raised, product-market fit, 20-50 employees, $1M-$10M ARR
+- series_b: $20M-$50M raised, scaling, 50-100 employees, $10M-$50M ARR
+- series_c_plus: $50M+ raised, mature business, 100+ employees, $50M+ ARR
+- bootstrapped: No external funding, revenue-funded growth
+- public: Publicly traded company
+- n/a: Insufficient information to determine stage
+
+Return ONLY the stage value, nothing else."""
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+
+        response = await self.router.complete(
+            task_type=TaskType.INTENT_CLASSIFICATION,
+            messages=messages,
+            temperature=0.3,
+            max_tokens=50,
+            presentation_id=presentation_id,
+            phase="stage_detection",
+        )
+
+        # Parse and validate the stage
+        stage = response.content.strip().lower()
+        valid_stages = {
+            "pre_seed", "seed", "series_a", "series_b", "series_c_plus",
+            "bootstrapped", "public", "n/a"
+        }
+
+        if stage not in valid_stages:
+            logger.warning(
+                "invalid_stage_detected",
+                stage=stage,
+                model=response.model,
+                fallback="n/a"
+            )
+            return "n/a"
+
+        logger.info(
+            "stage_detected",
+            stage=stage,
+            company=company_name[:50],
+            model=response.model
+        )
+        return stage
+
     def _parse_outline(self, raw: str, expected_count: int) -> PresentationOutline:
         """Parse LLM response into structured outline."""
         # Strip markdown fences if present

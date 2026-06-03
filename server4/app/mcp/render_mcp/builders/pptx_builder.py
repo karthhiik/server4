@@ -43,6 +43,13 @@ class PptxBuilder:
 
     def build(self, slides: list[dict], theme: dict, metadata: dict = None) -> bytes:
         """Build a complete PPTX file. Returns bytes."""
+        if not slides:
+            # Slice 4 (Export Parity): refuse to emit a corrupt 0-slide
+            # artifact. Routers translate this into a structured 409
+            # envelope.
+            from app.services.v4.errors import ExportContentEmpty
+
+            raise ExportContentEmpty("PptxBuilder.build: slides is empty")
         prs = Presentation()
         prs.slide_width = Emu(PPTX_SLIDE_WIDTH_EMU)
         prs.slide_height = Emu(PPTX_SLIDE_HEIGHT_EMU)

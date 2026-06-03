@@ -63,7 +63,7 @@ export function TractionSlide({ data, onUpdate }: TractionSlideProps) {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .slide-container {
           background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
           color: white;

@@ -297,6 +297,39 @@ def _reveal_comparison_block(props: Mapping[str, Any], frag: _FragmentTracker) -
     return "".join(parts)
 
 
+def _reveal_data_table(props: Mapping[str, Any], frag: _FragmentTracker) -> str:
+    headline = _str_or_none(props.get("headline"))
+    subheadline = _str_or_none(props.get("subheadline"))
+    headers = _coerce_str_list(props.get("headers"))
+    rows_raw = props.get("rows") or []
+    rows: list[list[str]] = []
+    if isinstance(rows_raw, list):
+        for row in rows_raw:
+            if isinstance(row, (list, tuple)):
+                cells = [str(cell) for cell in row]
+                if any(cell.strip() for cell in cells):
+                    rows.append(cells)
+
+    parts: list[str] = []
+    if headline:
+        parts.append(f'<h1{frag.fragment_attrs("headline")} class="rs-h1">{_esc(headline)}</h1>')
+    if subheadline:
+        parts.append(f'<p class="rs-sub">{_esc(subheadline)}</p>')
+    if headers and rows:
+        parts.append(f'<table{frag.fragment_attrs("table")} class="rs-chart-data"><thead><tr>')
+        for header in headers:
+            parts.append(f"<th>{_esc(header)}</th>")
+        parts.append("</tr></thead><tbody>")
+        for row in rows[:7]:
+            parts.append("<tr>")
+            for ci, _header in enumerate(headers):
+                cell = row[ci] if ci < len(row) else ""
+                parts.append(f"<td>{_esc(cell)}</td>")
+            parts.append("</tr>")
+        parts.append("</tbody></table>")
+    return "".join(parts)
+
+
 def _reveal_feature_grid(props: Mapping[str, Any], frag: _FragmentTracker) -> str:
     headline = _str_or_none(props.get("headline"))
     subheadline = _str_or_none(props.get("subheadline"))
@@ -674,6 +707,11 @@ _KIT_TRANSLATORS = {
     "TimelineBlock":   _reveal_timeline_block,
     "ComparisonBlock": _reveal_comparison_block,
     "FeatureGrid":     _reveal_feature_grid,
+    "GlassCard":       _reveal_feature_grid,
+    "BentoGrid":       _reveal_feature_grid,
+    "ValuePropGrid":   _reveal_feature_grid,
+    "ProblemSolution": _reveal_feature_grid,
+    "DataTable":       _reveal_data_table,
     "TeamGrid":        _reveal_team_grid,
     "QuoteBlock":      _reveal_quote_block,
     "FullBleedImage":  _reveal_full_bleed_image,

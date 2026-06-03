@@ -3,6 +3,7 @@ T4: Groq — 8-key round-robin for ultra-fast inference.
 Used for translations, summaries, quick edits.
 """
 
+import asyncio
 import time
 import threading
 from typing import Optional
@@ -38,6 +39,7 @@ class GroqRoundRobinClient(BaseLLMClient):
         self._keys = settings.groq_keys
         self._index = 0
         self._lock = threading.Lock()
+        self._skip_until = 0.0
 
     def _next_key(self) -> str:
         with self._lock:
@@ -57,6 +59,12 @@ class GroqRoundRobinClient(BaseLLMClient):
     ) -> LLMResponse:
         if not self._keys:
             raise ConnectionError("No Groq API keys configured")
+        with self._lock:
+            skip_until = self._skip_until
+        if time.monotonic() < skip_until:
+            raise ProviderPoolExhaustedError(
+                "Groq temporarily skipped after 429 pool exhaustion"
+            )
 
         errors = []
         for _attempt in range(len(self._keys)):
@@ -73,6 +81,8 @@ class GroqRoundRobinClient(BaseLLMClient):
                 errors.append(str(e))
                 continue
 
+        with self._lock:
+            self._skip_until = max(self._skip_until, time.monotonic() + 30.0)
         raise ProviderPoolExhaustedError(
             f"All {len(self._keys)} Groq keys exhausted: {errors}"
         )
@@ -96,17 +106,20 @@ class GroqRoundRobinClient(BaseLLMClient):
         if response_format:
             payload["response_format"] = response_format
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.post(
-                GROQ_API_URL,
-                json=payload,
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json",
-                },
-            )
-            resp.raise_for_status()
-            data = resp.json()
+        def _post() -> dict:
+            with httpx.Client(timeout=12.0) as client:
+                resp = client.post(
+                    GROQ_API_URL,
+                    json=payload,
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                )
+                resp.raise_for_status()
+                return resp.json()
+
+        data = await asyncio.to_thread(_post)
 
         elapsed = int((time.monotonic() - start) * 1000)
         usage = data.get("usage", {})

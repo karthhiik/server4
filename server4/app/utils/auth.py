@@ -43,6 +43,8 @@ async def get_current_user(
     return {
         "user_id": str(user_id),
         "email": payload.get("email"),
+        "name": payload.get("name") or payload.get("full_name") or payload.get("display_name"),
+        "username": payload.get("username"),
         "role": payload.get("role", "guest"),
         "setuserrole": payload.get("setuserrole", "guest"),
     }

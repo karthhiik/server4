@@ -175,6 +175,79 @@ def _detect_headline_duplicates(slides: list[Any]) -> list[LoopFinding]:
     return findings
 
 
+# Intent families — semantically equivalent intents that should NEVER
+# produce the same headline (e.g., unique_advantage + usp).
+_INTENT_FAMILIES = [
+    {"unique_advantage", "usp", "differentiation", "moat"},
+    {"market", "market_size", "opportunity", "demand"},
+    {"solution", "product", "how_it_works", "platform"},
+    {"team", "founders", "leadership", "advisors"},
+    {"traction", "milestones", "growth", "progress"},
+    {"problem", "pain", "challenge", "gap"},
+    {"business_model", "pricing", "revenue", "monetization"},
+    {"competition", "competitors", "landscape", "alternatives"},
+]
+
+
+def _intent_family(intent: str) -> frozenset[str]:
+    """Return the intent family this intent belongs to, or a singleton."""
+    intent_lower = (intent or "").lower()
+    for family in _INTENT_FAMILIES:
+        if intent_lower in family:
+            return frozenset(family)
+    return frozenset({intent_lower})
+
+
+def _detect_intent_family_duplicates(slides: list[Any]) -> list[LoopFinding]:
+    """Detect slides in the same intent family with duplicate headlines.
+
+    The planner sometimes creates both 'unique_advantage' and 'usp' slides.
+    If the writer produces the same headline for both, the deck looks broken.
+    This detector catches intent-level duplication even when the raw headline
+    text differs slightly (Jaccard >= 0.70 within a family).
+    """
+    findings: list[LoopFinding] = []
+    flagged: set[frozenset[int]] = set()
+
+    # Group slides by intent family
+    family_to_slides: dict[frozenset[str], list[Any]] = defaultdict(list)
+    for s in slides:
+        family_to_slides[_intent_family(getattr(s, "intent", ""))].append(s)
+
+    for family, family_slides in family_to_slides.items():
+        if len(family_slides) < 2:
+            continue
+        # Pairwise Jaccard within the family
+        token_bags = [
+            (s.index, _content_tokens(getattr(s, "headline", "")))
+            for s in family_slides
+        ]
+        for i, (idx_i, toks_i) in enumerate(token_bags):
+            if not toks_i:
+                continue
+            for idx_j, toks_j in token_bags[i + 1 :]:
+                if not toks_j:
+                    continue
+                key = frozenset({idx_i, idx_j})
+                if key in flagged:
+                    continue
+                j = _jaccard(toks_i, toks_j)
+                # Lower threshold (0.70) for intent-family duplicates because
+                # semantically similar intents are more likely to drift.
+                if j >= 0.70:
+                    flagged.add(key)
+                    findings.append(LoopFinding(
+                        kind="intent_family_dup",
+                        slide_indices=[idx_i, idx_j],
+                        detail=(
+                            f"Slides {idx_i} and {idx_j} share ~{int(j * 100)}% "
+                            f"headline tokens within intent family {sorted(family)[:3]}"
+                        ),
+                        severity=min(1.0, j + 0.15),  # Higher penalty for intent dups
+                    ))
+    return findings
+
+
 def _detect_bullet_loops(slides: list[Any]) -> list[LoopFinding]:
     """A 4-gram bullet prefix that recurs across ≥3 slides is a writer
     loop (classic symptom: "We will leverage AI to..." x 6).
@@ -185,6 +258,10 @@ def _detect_bullet_loops(slides: list[Any]) -> list[LoopFinding]:
         seen_in_slide: set[tuple[str, ...]] = set()
         for b in bullets:
             toks = _content_tokens(b)
+            # Need at least the 4-gram window we're going to compare.
+            # Five-token bullets ("will leverage AI automate workflows")
+            # still indicate a writer loop when repeated across slides;
+            # demanding 7+ tokens missed real loops in short bullets.
             if len(toks) < 4:
                 continue
             key = tuple(toks[:4])
@@ -217,7 +294,7 @@ def _detect_stutter(slides: list[Any]) -> list[LoopFinding]:
             getattr(s, "headline", "") or "",
             getattr(s, "subheadline", "") or "",
             getattr(s, "body", "") or "",
-            " ".join(getattr(s, "bullets", []) or []),
+            " ".join(str(bullet or "") for bullet in (getattr(s, "bullets", []) or [])),
         ]
         text = " ".join(f for f in fields if f)
         matches = _STUTTER_RE.findall(text)
@@ -300,6 +377,7 @@ def detect_loops(slides: list[Any]) -> LoopGuardReport:
     all_findings: list[LoopFinding] = []
     try:
         all_findings.extend(_detect_headline_duplicates(slides))
+        all_findings.extend(_detect_intent_family_duplicates(slides))
         all_findings.extend(_detect_bullet_loops(slides))
         all_findings.extend(_detect_stutter(slides))
         all_findings.extend(_detect_template_stamp(slides))

@@ -35,6 +35,8 @@ class ExportFormat(str, Enum):
     HTML = "html"
     REVEAL_JS = "reveal.js"
     REACT_3D = "react"
+    PDF = "pdf"
+    IMAGES = "images"
     ALL = "all"
 
 

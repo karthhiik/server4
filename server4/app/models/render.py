@@ -25,6 +25,14 @@ class ExportRequest(BaseModel):
     format: ExportFormat
     include_notes: bool = False
     quality: str = "standard"  # standard | print (PDF only)
+    # Slice 1 (Trust Honesty): premium owners may force an export when the
+    # production quality gate has flagged blocker issues. The export router
+    # is responsible for verifying premium + ownership and audit-logging
+    # the override; this flag merely records the user's explicit intent.
+    force: bool = False
+    # Optional, audit-only — UI can pass a short reason string. Truncated
+    # server-side. Standard users are forbidden from setting force=true.
+    force_reason: Optional[str] = None
 
 
 class ExportJobInDB(BaseModel):

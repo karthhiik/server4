@@ -45,6 +45,7 @@ class SlideContent(BaseModel):
     metrics: Optional[list[dict[str, Any]]] = None  # For KPI dashboard
     speaker_notes: Optional[str] = None
     background_style: Optional[str] = None
+    citation_map: Optional[dict[str, str]] = None  # Citation markers [1], [2] mapped to sources
 
 
 class SlideInDB(BaseModel):

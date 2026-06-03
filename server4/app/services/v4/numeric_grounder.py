@@ -30,7 +30,7 @@ logger = structlog.get_logger(__name__)
 
 
 # Token patterns
-_CURRENCY_RE = re.compile(r"\$\s?\d[\d,]*\.?\d*\s?[KMBTkmbt]?")
+_CURRENCY_RE = re.compile(r"\$\s?\d[\d,]*\.?\d*\s?[KMBTkmbt]?(?![a-zA-Z])")
 _PERCENT_RE = re.compile(r"\d[\d,]*\.?\d*\s?%")
 _MAGNITUDE_RE = re.compile(r"\b\d[\d,]*\.?\d*\s?[KMBTkmbt](?![a-zA-Z])")  # 2.4B, 10K, 1.2T
 _PLAIN_NUM_RE = re.compile(r"\b\d[\d,]*\.?\d*\b")
@@ -65,6 +65,8 @@ def _normalise(token: str) -> str:
 
 def _is_whitelisted(normalised: str) -> bool:
     """Tiny integers (0-9) and 4-digit years are not worth grounding."""
+    if "%" in normalised or normalised.endswith(("k", "m", "b", "t")):
+        return False
     bare = normalised.rstrip("%kmbt").rstrip(".")
     try:
         f = float(bare)

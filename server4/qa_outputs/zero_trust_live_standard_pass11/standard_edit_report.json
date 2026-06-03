@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "results": {
+    "patch_slide": {
+      "ok": true,
+      "slide": {
+        "id": "6a0d4133181a925997597672",
+        "project_id": "6a0d40f3181a925997597671",
+        "index": 0,
+        "intent": "problem_statement",
+        "layout": "title-only",
+        "headline": "Central Authority Fails IoT Trust for Cybersecurity",
+        "subheadline": "Vulnerable devices and increasing attack surfaces necessitate autonomous zero-trust identity orchestration for edge computing",
+        "bullets": [
+          "Billions of vulnerable devices",
+          "Increasing attack surface"
+        ],
+        "body": "Billions of vulnerable devices.",
+        "stat_blocks": [],
+        "quote": null,
+        "chart": null,
+        "table": null,
+        "timeline": null,
+        "comparison": null,
+        "diagram": null,
+        "image_prompt": "",
+        "image_url": null,
+        "image_source": null,
+        "image_position": null,
+        "image_intent": null,
+        "speaker_notes": "The current IoT security landscape is plagued by vulnerabilities and inefficiencies, with billions of devices at risk. Our company is addressing this issue with autonomous zero-trust identity orchestration for edge computing, providing a secure solution for the increasing attack surface.",
+        "citations": [],
+        "links": [],
+        "render_decision": {
+          "modality": "image",
+          "reason": "body slide — atmospheric background image",
+          "code_block": null,
+          "renderer": "phoenix"
+        },
+        "team_members": [],
+        "requires_user_input": false,
+        "user_input_kind": null,
+        "user_input_reason": null,
+        "company_icon_url": null,
+        "company_icon_hidden": false,
+        "company_icon_position": null,
+        "company_icon_opacity": null,
+        "rationale": "Cover problem statement for this pitch",
+        "purpose": "pitch_deck",
+        "source_model": null,
+        "score": null,
+        "version": 2,
+        "updated_at": "2026-05-20T05:06:10.963000",
+        "background_color": null,
+        "background_gradient": null,
+        "icons": []
+      }
+    },
+    "slice_patch": {
+      "ok": true,
+      "slide_id": "slide-000",
+      "slide_index": 0,
+      "fields_changed": [],
+      "artifact_version": 2,
+      "quality_score": 8.5,
+      "noop": true,
+      "operation_id": "qa-slice-6a0d40f3181a925997597671"
+    },
+    "recompile": {
+      "ok": true,
+      "slide_id": "slide-000",
+      "slide_index": 0,
+      "artifact_version": 3
+    },
+    "company_icon_upload": {
+      "status_code": 403,
+      "ok": false,
+      "body": {
+        "detail": "company icon is a premium-only feature"
+      }
+    }
+  }
+}

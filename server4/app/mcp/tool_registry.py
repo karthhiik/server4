@@ -1259,7 +1259,6 @@ async def get_deck_run_status(deck_id: str) -> dict[str, Any]:
         return {"status": "not_found", "deck_id": deck_id}
     run.pop("_id", None)
     return run
-    return {"recommended_layout": layout, "slide_type": slide_type}
 
 
 async def optimize_grid(

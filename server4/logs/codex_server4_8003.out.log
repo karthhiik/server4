@@ -1,0 +1,173 @@
+
+============================================================
+  Barise Presentation Service (Server4)
+  URL: http://0.0.0.0:8003
+  Docs: http://0.0.0.0:8003/docs
+  Health: http://0.0.0.0:8003/health
+  Mode: development
+============================================================
+
+{"port": 8003, "env": "development", "event": "server_starting", "level": "info", "timestamp": "2026-05-29T18:27:43.330961Z"}
+{"service": "presentation-service", "port": 8003, "event": "server_ready", "level": "info", "timestamp": "2026-05-29T18:27:43.331537Z"}
+INFO:     127.0.0.1:50348 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55202 - "GET /health HTTP/1.1" 200 OK
+{"v7": true, "phase4": true, "phase5": true, "phase6": true, "phase7": true, "event": "database_indexes_created", "level": "info", "timestamp": "2026-05-29T18:28:03.914282Z"}
+{"db": "barise_auth_db", "event": "mongodb_connected", "level": "info", "timestamp": "2026-05-29T18:28:03.914844Z"}
+{"db": "barise_auth_db", "event": "database_ready", "level": "info", "timestamp": "2026-05-29T18:28:04.393708Z"}
+INFO:     127.0.0.1:60327 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61344 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53557 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53001 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62670 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51994 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53548 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55616 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58032 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63608 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54471 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52623 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61987 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65485 - "POST /api/v4/share/ycrfSs5EDbL10Fx9/revoke HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56666 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56881 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61987 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60467 - "GET /api/v4/share/FHn44TMqtFEGiiUG?viewer_email=adepuvishal18%40gmail.com&viewer_name=VISHAL+adepu&viewer_username=adepuvishal18 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62810 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62811 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63664 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63665 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65299 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65300 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60100 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60101 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50487 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50488 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52870 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52871 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60304 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60303 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63115 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63118 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63384 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63383 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59982 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50946 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59981 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53491 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60550 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54335 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65328 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57398 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52596 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51238 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50342 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64334 - "POST /api/v4/share/FHn44TMqtFEGiiUG/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51018 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58828 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60894 - "GET /api/v4/share/ycrfSs5EDbL10Fx9 HTTP/1.1" 410 Gone
+INFO:     127.0.0.1:60895 - "POST /api/v4/share/ycrfSs5EDbL10Fx9/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64570 - "POST /api/v4/share/ycrfSs5EDbL10Fx9/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51766 - "POST /api/v4/share/ycrfSs5EDbL10Fx9/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56826 - "POST /api/v4/share/ycrfSs5EDbL10Fx9/track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50943 - "GET /api/v4/modes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50944 - "GET /api/v4/projects?limit=60 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53287 - "GET /api/themes/v2/templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63788 - "GET /api/themes/v2/themes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63789 - "GET /api/themes/visual-directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57106 - "GET /api/v4/projects/6a0f146f7ed9266d07b942b6/slides HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55594 - "GET /api/v4/modes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55595 - "GET /api/v4/projects?limit=60 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53359 - "GET /api/v4/modes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53360 - "GET /api/v4/projects?limit=60 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51816 - "GET /api/v4/modes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51817 - "GET /api/v4/projects?limit=60 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53616 - "GET /api/themes/v2/templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63808 - "GET /api/themes/v2/themes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63809 - "GET /api/themes/visual-directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51637 - "GET /api/v4/images/template-previews/yc_pitch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54470 - "GET /api/v4/images/template-previews/modern_pitch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54474 - "GET /api/v4/images/template-previews/saas_onboarding_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54471 - "GET /api/v4/images/template-previews/enterprise_sales_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54472 - "GET /api/v4/images/template-previews/product_launch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54473 - "GET /api/v4/images/template-previews/keynote_cinematic_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50227 - "GET /api/v4/images/template-previews/data_report_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53766 - "GET /api/v4/images/template-previews/company_overview_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58870 - "GET /api/v4/images/template-previews/training_workshop_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57991 - "GET /api/v4/images/template-previews/security_whitepaper_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51439 - "GET /api/v4/images/template-previews/healthcare_clinical_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59992 - "GET /api/v4/images/template-previews/fintech_investor_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62409 - "GET /api/v4/images/template-previews/ai_demo_day_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49673 - "GET /api/v4/images/template-previews/board_meeting_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49677 - "GET /api/v4/images/template-previews/deep_tech_architecture_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58896 - "GET /api/v4/images/template-previews/vc_pitch_deck_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58897 - "GET /api/v4/images/template-previews/executive_briefing_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64534 - "GET /api/v4/images/template-previews/trust_compliance_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64535 - "GET /api/v4/images/template-previews/cinematic_story_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64536 - "GET /api/v4/images/template-previews/seed_round_pitch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64537 - "GET /api/v4/images/template-previews/series_a_pitch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62412 - "GET /api/v4/images/template-previews/partnership_proposal_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55938 - "GET /api/v4/images/template-previews/customer_success_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53626 - "GET /api/v4/images/template-previews/startup_story_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50159 - "GET /api/v4/images/template-previews/minimal_agency_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51907 - "GET /api/v4/images/template-previews/edtech_course_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52094 - "GET /api/v4/images/template-previews/gamer_esports_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59076 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51784 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64697 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 0, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 4, "artifact_version": 5, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:53:27.053137Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:53:27.486408Z"}
+INFO:     127.0.0.1:61552 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62002 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/batch HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:65434 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/batch HTTP/1.1" 422 Unprocessable Entity
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 0, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 5, "artifact_version": 6, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:54:46.261541Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:54:46.721371Z"}
+INFO:     127.0.0.1:52141 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/0 HTTP/1.1" 200 OK
+{"size_kb": 58, "latency_ms": 3671, "seed": 42716898, "finish_reason": "SUCCESS", "width": 1344, "height": 768, "event": "nvidia_flux_schnell_generated", "level": "info", "timestamp": "2026-06-01T03:54:51.887424Z"}
+{"tier": "nvidia-sd3", "latency_ms": 3671, "size_kb": 58, "fallback_count": 0, "event": "image_generated", "level": "info", "timestamp": "2026-06-01T03:54:51.888713Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:54:53.661128Z"}
+INFO:     127.0.0.1:62803 - "POST /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/0/image-generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53172 - "GET /uploads/slide_uploads/6a1666acf3683c32fb3cb1b7-000-d2dacd8f7af91b6a.jpg HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 4, "from_layout": "DataTable:domain-evidence", "to_layout": "table", "rationale": "user_set_layout", "added": [], "removed": [], "event": "v4_edit_intelligence_layout_swap", "level": "info", "timestamp": "2026-06-01T03:55:08.753000Z"}
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 5, "from_layout": "DataTable:domain-evidence", "to_layout": "table", "rationale": "user_set_layout", "added": [], "removed": [], "event": "v4_edit_intelligence_layout_swap", "level": "info", "timestamp": "2026-06-01T03:55:09.235484Z"}
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 1, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:13.559346Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:13.973163Z"}
+INFO:     127.0.0.1:50930 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/1 HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 3, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:14.867317Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:15.278383Z"}
+INFO:     127.0.0.1:53260 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/3 HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 4, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:15.908192Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:16.315119Z"}
+INFO:     127.0.0.1:53261 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/4 HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 6, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:17.101970Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:17.498118Z"}
+INFO:     127.0.0.1:58170 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/6 HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 0, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 7, "artifact_version": 8, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:17.776251Z"}
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 2, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:17.934221Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:18.171276Z"}
+INFO:     127.0.0.1:59010 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/0 HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 5, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:18.225687Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:18.346555Z"}
+INFO:     127.0.0.1:55202 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/2 HTTP/1.1" 200 OK
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:18.644823Z"}
+INFO:     127.0.0.1:53263 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/5 HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 7, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:19.184121Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:19.576596Z"}
+INFO:     127.0.0.1:54704 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/7 HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 8, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:20.965845Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:21.364248Z"}
+INFO:     127.0.0.1:62491 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/8 HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 9, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 2, "artifact_version": 3, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:21.439595Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:21.846324Z"}
+INFO:     127.0.0.1:51762 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59330 - "POST /api/v4/projects/6a1666acf3683c32fb3cb1b7/visual-qa HTTP/1.1" 404 Not Found
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 2, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 3, "artifact_version": 4, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-06-01T03:55:30.472112Z"}
+INFO:     127.0.0.1:51730 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/batch HTTP/1.1" 422 Unprocessable Entity
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-06-01T03:55:30.957721Z"}
+INFO:     127.0.0.1:65343 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63591 - "GET /api/v4/modes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60351 - "GET /api/themes/v2/templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60352 - "GET /api/themes/v2/themes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60353 - "GET /api/themes/visual-directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49406 - "GET /api/v4/projects?limit=60 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52380 - "GET /uploads/slide_uploads/6a1666acf3683c32fb3cb1b7-000-d2dacd8f7af91b6a.jpg HTTP/1.1" 304 Not Modified

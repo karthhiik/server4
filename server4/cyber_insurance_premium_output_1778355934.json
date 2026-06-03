@@ -1,0 +1,14 @@
+{
+  "input": {
+    "query": "Cyber-Insurance for the Private Space Exploration Sector",
+    "description": "A fintech platform providing real-time risk assessment and automated insurance payouts for commercial satellite operators facing cyber-kinetic threats (anti-satellite hacking). We use a proprietary 'Orbital-Threat-Index.' Key points: Space-as-a-Service growth, the lack of current coverage for signal jamming/spoofing, and our partnership with major aerospace manufacturers.",
+    "target_audience": "FinTech Investors and Lloyd's of London Underwriters",
+    "purpose": "Partnership Proposal",
+    "slide_count": 12
+  },
+  "success": false,
+  "error": "'GeneratedSlide' object has no attribute 'visual_concept'",
+  "duration_ms": 0,
+  "slide_count": 0,
+  "slides": []
+}

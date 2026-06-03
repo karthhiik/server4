@@ -61,14 +61,17 @@ _SCHEMA_VERSION = 1
 
 _DENSITY_TARGETS: dict[str, tuple[int, int]] = {
     "TitleHero":       (10, 250),
+    "CinematicHero":   (10, 320),
     "StatHero":        (20, 400),
     "ChartBlock":      (30, 500),
     "TimelineBlock":   (50, 800),
     "ComparisonBlock": (100, 1200),
     "FeatureGrid":     (80, 800),
+    "GlassCard":       (80, 800),
+    "DataTable":       (120, 1100),
     "TeamGrid":        (50, 600),
     "QuoteBlock":      (20, 400),
-    "FullBleedImage":  (10, 200),
+    "FullBleedImage":  (10, 260),
     "DiagramBlock":    (30, 500),
 }
 
@@ -135,6 +138,11 @@ def _collect_visible_text(value: Any) -> list[str]:
         "xKey", "yKeys", "nameKey", "valueKey", "icon",
         "id", "from", "to", "style", "trend", "highlight", "done",
         "x", "y", "columns", "seriesLabels", "yKey",
+        # Renderer/control metadata, not visible copy. Counting these made
+        # density scores collapse because designTokens contains palette names,
+        # font names, and animation labels.
+        "designTokens", "layoutParams", "animationPlan", "intent",
+        "sources", "links", "metadata", "raw", "watermark",
     }
     out: list[str] = []
 
@@ -305,6 +313,11 @@ def _score_alignment(kit: str, props: Mapping[str, Any]) -> dict[str, Any]:
             issues.append("missing headline")
         if (p.get("variant") or "").lower() == "image" and not _nonempty_str(p.get("imageUrl")):
             issues.append("variant=image but no imageUrl")
+    elif kit == "CinematicHero":
+        if not _nonempty_str(p.get("headline")):
+            issues.append("missing headline")
+        if (p.get("variant") or "").lower() == "image" and not _nonempty_str(p.get("imageUrl")):
+            issues.append("variant=image but no imageUrl")
     elif kit == "StatHero":
         stats = [s for s in (p.get("stats") or []) if isinstance(s, Mapping) and _nonempty_str(s.get("value"))]
         if not stats:
@@ -367,6 +380,26 @@ def _score_alignment(kit: str, props: Mapping[str, Any]) -> dict[str, Any]:
         if feats and cols_int and len(feats) % cols_int != 0 and len(feats) > cols_int:
             # Trailing row will be ragged.
             issues.append(f"{len(feats)} features in {cols_int} columns leaves ragged row")
+    elif kit == "GlassCard":
+        items = [item for item in (p.get("items") or p.get("features") or []) if isinstance(item, Mapping)]
+        if not items:
+            issues.append("glass card grid has no cards")
+        if not _nonempty_str(p.get("headline")):
+            issues.append("missing headline")
+    elif kit == "DataTable":
+        headers = [h for h in (p.get("headers") or []) if _nonempty_str(h)]
+        rows = [r for r in (p.get("rows") or []) if isinstance(r, (list, tuple)) and any(str(cell).strip() for cell in r)]
+        if len(headers) < 2:
+            issues.append("data table needs >=2 headers")
+        if not rows:
+            issues.append("data table has no rows")
+        if rows and headers:
+            for ri, row in enumerate(rows):
+                if len(row) < min(2, len(headers)):
+                    issues.append(f"row {ri} has too few cells")
+                    break
+        if not _nonempty_str(p.get("headline")):
+            issues.append("missing headline")
     elif kit == "TeamGrid":
         members = [m for m in (p.get("members") or []) if isinstance(m, Mapping) and _nonempty_str(m.get("name"))]
         if not members:

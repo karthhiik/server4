@@ -30,7 +30,13 @@ from app.services.llm.cloudflare_client import (
     create_cf_gemma_client,
     create_cf_glm_client,
 )
-from app.services.llm.openrouter_client import OpenRouterClient
+from app.services.llm.openrouter_client import (
+    OpenRouterClient,
+    OpenRouterGLM45Client,
+    OpenRouterGemmaClient,
+    OpenRouterNvidiaClient,
+    OpenRouterMiniMaxClient,
+)
 from app.services.llm.nvidia_client import all_nvidia_clients, NVIDIA_MODEL_REGISTRY
 from app.services.llm import token_bucket
 from app.services.llm.error_classifier import (
@@ -101,38 +107,43 @@ class TaskType(str, Enum):
 # ──────────────────────────────────────────────────────────────────────
 
 # ─── Family tiers ─────────────────────────────────────────────────────
+# Updated 2026-05-17: All available free-tier models included.
+# Premium mode gets reasoning-heavy chains; standard mode gets fast chains.
 _MAIN_REASONING = [
-    "kimi-k2-thinking", "deepseek-v3", "gpt-oss-120b",
+    "kimi-k2-thinking", "kimi-2.6", "deepseek-v3", "gpt-oss-120b",
     "nv-glm-5.1", "nv-glm-4.7", "phi-4-reasoning",
-    "mistral-medium",
+    "nv-devstral-2-123b", "openrouter-nvidia",
 ]
 _MAIN_NARRATIVE = [
-    "deepseek-v3", "kimi-k2-thinking", "mistral-medium",
+    "deepseek-v3", "kimi-k2-thinking", "kimi-2.6",
     "nv-glm-4.7", "nv-minimax-m2.7", "gpt-oss-120b",
-    "gpt-4o-mini",
+    "nv-gemma-4-31b", "openrouter-minimax",
 ]
 _MAIN_DESIGN = [
-    "kimi-k2-thinking", "nv-glm-4.7", "cf-glm", "cf-gemma",
-    "deepseek-v3", "mistral-medium",
+    "kimi-2.6", "kimi-k2-thinking", "deepseek-v3", "nv-glm-4.7", "cf-glm", "cf-gemma",
+    "nv-gemma-4-31b", "openrouter-gemma",
 ]
 _EDITOR_FILL = [
-    "gpt-4o-mini", "cf-qwen", "cf-gemma", "nv-gemma-4-31b",
-    "nv-step-3.5-flash", "groq",
+    "gpt-4o-mini", "deepseek-v3", "cf-qwen", "cf-gemma",
+    "nv-step-3.5-flash", "nv-glm-4.7", "groq", "kimi-k2-thinking",
+    "openrouter-glm45",
 ]
 _EDITOR_REFINE = [
-    "gpt-4o-mini", "mistral-medium", "nv-glm-4.7",
-    "nv-gemma-4-31b", "cf-glm",
+    "gpt-4o-mini", "deepseek-v3", "kimi-k2-thinking", "nv-glm-4.7",
+    "cf-qwen", "cf-gemma", "nv-step-3.5-flash", "phi-4-reasoning",
+    "openrouter-glm45",
 ]
 _CODING = [
     "nv-devstral-2-123b", "deepseek-v3", "cf-qwen",
-    "gpt-oss-120b",
+    "gpt-oss-120b", "openrouter-nvidia",
 ]
 _FAST_JSON = [
     "nv-step-3.5-flash", "cf-qwen", "groq",
-    "gpt-4o-mini",
+    "gpt-4o-mini", "openrouter-glm45",
 ]
 _WEAK_CLASSIFY = [
     "groq", "nv-step-3.5-flash", "cf-qwen",
+    "openrouter-glm45",
 ]
 
 # Legacy aliases preserved for any external code still importing them.
@@ -154,6 +165,44 @@ def _with_openrouter_tail(chain: list[str]) -> list[str]:
     if "openrouter" not in seen:
         out.append("openrouter")
     return out
+
+
+# ── Empirically-dead model exclusion list ────────────────────────────
+# Verified failures from a live smoke test (`_llm_smoke.py`) against the
+# user-supplied keys in server4/.env. These models were registered in the
+# router but did not return usable content:
+#
+#   nv-glm-5.1            → 403 Forbidden (auth failure on user's key)
+#   nv-glm-4.7            → 410 Gone (model retired by NVIDIA on 2026-05-14)
+#   nv-devstral-2-123b    → 404 Not Found (model removed from NVIDIA inventory)
+#   openrouter (qwen3.6+) → 404 "free model has been deprecated"
+#
+# Filtering at chain-build time removes ~3-6 wasted attempts per writer call,
+# which previously caused every writer in standard mode to time out before
+# reaching a working provider. The chain still walks the same length — dead
+# entries just never enter it.
+#
+# This list MUST stay narrow. A model that occasionally rate-limits or
+# returns empty does NOT belong here — those failures are handled by the
+# token-bucket and the chain walk. Only put a model here when it returns a
+# permanent error (404/410 for the model, or 403 for the key) on every call.
+_DEAD_MODELS: frozenset[str] = frozenset({
+    "nv-glm-5.1",
+    "nv-glm-4.7",
+    "nv-devstral-2-123b",
+    "openrouter",  # the legacy free-tier qwen3.6 endpoint, now deprecated
+})
+
+
+def _filter_dead(chain: list[str]) -> list[str]:
+    """Strip empirically-dead models without altering chain length contracts.
+
+    Used at lookup time inside ``_chain_for`` so dead entries can be removed
+    from a single source of truth (``_DEAD_MODELS``) without touching each
+    chain definition. The filter is intentionally idempotent and preserves
+    the relative order of remaining entries.
+    """
+    return [m for m in chain if m not in _DEAD_MODELS]
 
 
 # Plan 02 (Slide Count Bug v2) — the *absolute* final safety tail for the
@@ -197,9 +246,9 @@ def is_final_safety_tail(model_id: str) -> bool:
 ROUTING_TABLE: dict[TaskType, list[str]] = {
     # Planner / reasoning
     # Plan 02 v2: OUTLINE_PLANNING ends with the GPT-4o-mini safety tail
-    # so the slide-count contract has a strict-json_schema-capable model
+    # so the slide-count contract has a strict-json-schema-capable model
     # to fall through to.
-    TaskType.OUTLINE_PLANNING:       _with_safety_tail(_MAIN_REASONING),
+    TaskType.OUTLINE_PLANNING:       _with_safety_tail(["gpt-4o-mini", "groq", "cf-qwen", "nv-step-3.5-flash", "cf-gemma", "nv-gemma-4-31b", "cf-glm", "nv-glm-4.7"]),
     TaskType.DEEP_RESEARCH_PLAN:     _with_openrouter_tail(_MAIN_REASONING),
     # Narrative / storytelling / debate
     TaskType.NARRATIVE_STORYTELLING: _with_openrouter_tail(_MAIN_NARRATIVE),
@@ -255,22 +304,26 @@ ROUTING_TABLE: dict[TaskType, list[str]] = {
 # Groq delivers <10s pitch deck content generation. GPT-4o-mini (Azure)
 # and free CF/NV models serve as fallbacks for rate-limit bursts.
 STANDARD_MODE_ROUTING_TABLE: dict[TaskType, list[str]] = {
-    # Plan 06: Groq is PRIMARY (pos 1) for all standard tasks.
-    # GPT-4o-mini, CF, NV models are fallbacks (pos 4+), not in first 3.
+    # Standard mode chains, reordered 2026-05-25 to lead with verified-working
+    # providers. Live smoke test against the user-supplied keys showed
+    # gpt-4o-mini (Azure), deepseek-v3 (Azure), groq, cf-qwen, cf-glm, cf-gemma,
+    # openrouter-nvidia respond reliably; the rest of the original chain entries
+    # either return empty content, time out, or are filtered by ``_DEAD_MODELS``.
+    # Dead entries are still listed for audit clarity but skipped at lookup time.
     TaskType.INTENT_CLASSIFICATION:
-        _with_openrouter_tail(["groq", "cf-qwen", "nv-step-3.5-flash", "gpt-4o-mini"]),
+        _with_openrouter_tail(["groq", "gpt-4o-mini", "cf-qwen", "cf-gemma", "cf-glm", "deepseek-v3", "nv-step-3.5-flash", "nv-gemma-4-31b", "openrouter-glm45"]),
     TaskType.ENTITY_EXTRACTION:
-        _with_openrouter_tail(["groq", "cf-qwen", "nv-step-3.5-flash", "gpt-4o-mini"]),
+        _with_openrouter_tail(["groq", "gpt-4o-mini", "cf-qwen", "cf-gemma", "cf-glm", "deepseek-v3", "nv-step-3.5-flash", "nv-gemma-4-31b", "openrouter-glm45"]),
     TaskType.OUTLINE_PLANNING:
-        _with_openrouter_tail(["groq", "cf-qwen", "nv-step-3.5-flash", "gpt-4o-mini"]),
+        _with_openrouter_tail(["gpt-4o-mini", "deepseek-v3", "groq", "cf-glm", "cf-qwen", "cf-gemma", "nv-gemma-4-31b", "nv-step-3.5-flash", "openrouter-glm45"]),
     TaskType.NARRATIVE_STORYTELLING:
-        _with_openrouter_tail(["groq", "cf-qwen", "cf-gemma", "nv-gemma-4-31b", "nv-step-3.5-flash", "gpt-4o-mini"]),
+        _with_openrouter_tail(["gpt-4o-mini", "deepseek-v3", "cf-qwen", "cf-glm", "cf-gemma", "groq", "openrouter-nvidia", "nv-gemma-4-31b", "openrouter-gemma", "openrouter-glm45"]),
     TaskType.TEMPLATE_FILL:
-        _with_openrouter_tail(["groq", "cf-qwen", "cf-gemma", "nv-gemma-4-31b", "nv-step-3.5-flash", "gpt-4o-mini"]),
+        _with_openrouter_tail(["gpt-4o-mini", "deepseek-v3", "cf-qwen", "cf-glm", "cf-gemma", "groq", "nv-gemma-4-31b", "nv-step-3.5-flash", "openrouter-glm45"]),
     TaskType.STRUCTURED_JSON:
-        _with_openrouter_tail(["groq", "nv-step-3.5-flash", "cf-qwen", "gpt-4o-mini"]),
+        _with_openrouter_tail(["gpt-4o-mini", "groq", "cf-qwen", "cf-gemma", "cf-glm", "nv-step-3.5-flash", "nv-gemma-4-31b", "openrouter-glm45"]),
     TaskType.REFINEMENT:
-        _with_openrouter_tail(["groq", "cf-glm", "cf-qwen", "nv-gemma-4-31b", "gpt-4o-mini"]),
+        _with_openrouter_tail(["gpt-4o-mini", "deepseek-v3", "groq", "cf-glm", "cf-qwen", "cf-gemma", "nv-gemma-4-31b", "nv-step-3.5-flash", "openrouter-glm45"]),
 }
 
 # Max retries per model before moving to next in chain
@@ -295,8 +348,8 @@ V4_TASK_WALL_CLOCK_BUDGET: dict[TaskType, float] = {
 # V4 is a real-time pipeline. Bound each provider attempt so the router can
 # move across the fallback chain before the outer safe_complete timeout fires.
 V4_TASK_ATTEMPT_TIMEOUTS: dict[TaskType, float] = {
-    TaskType.OUTLINE_PLANNING: 40.0,
-    TaskType.NARRATIVE_STORYTELLING: 14.0,
+    TaskType.OUTLINE_PLANNING: 14.0,
+    TaskType.NARRATIVE_STORYTELLING: 18.0,
     TaskType.TEMPLATE_FILL: 12.0,
     TaskType.INTENT_CLASSIFICATION: 8.0,
     TaskType.REFINEMENT: 15.0,
@@ -309,7 +362,11 @@ V4_TASK_ATTEMPT_TIMEOUTS: dict[TaskType, float] = {
 V4_MODEL_ATTEMPT_TIMEOUTS: dict[str, float] = {
     # Groq: avg 2-4s per call, 15s allows for cold starts and retries
     "groq":               15.0,
-    "openrouter":        15.0,   # NEW - qwen3.6 free can be slow first hit
+    "openrouter":        15.0,   # qwen3.6 free can be slow first hit
+    "openrouter-glm45":  12.0,   # GLM 4.5 Air — fast structured JSON
+    "openrouter-gemma":  12.0,   # Gemma-4-31b — narrative content
+    "openrouter-nvidia": 15.0,   # Nemotron — reasoning
+    "openrouter-minimax": 14.0,  # MiniMax M2.5 — long-form
     "gpt-4o-mini":       12.0,
     "gpt-oss-120b":      18.0,
     "deepseek-v3":       14.0,
@@ -317,7 +374,7 @@ V4_MODEL_ATTEMPT_TIMEOUTS: dict[str, float] = {
     "phi-4-reasoning":   20.0,
     "kimi-k2-thinking":  25.0,   # down from 40 - keep chain walkable
     "kimi-2.6":          25.0,   # same budget as 2.0 - bounded + narrow use
-    "cf-qwen":            8.0,   # up 2s for real-world
+    "cf-qwen":            8.0,
     "cf-gemma":           8.0,
     "cf-glm":            10.0,
     "nv-glm-5.1":        12.0,   # up from 8 - cold-start reality
@@ -421,8 +478,12 @@ class ModelRouter:
         self._clients["cf-qwen"] = create_cf_qwen_client()
         self._clients["cf-gemma"] = create_cf_gemma_client()
         self._clients["cf-glm"] = create_cf_glm_client()
-        # T7: OpenRouter (Free tier)
+        # T7: OpenRouter (Free tier — multi-model)
         self._clients["openrouter"] = OpenRouterClient()
+        self._clients["openrouter-glm45"] = OpenRouterGLM45Client()
+        self._clients["openrouter-gemma"] = OpenRouterGemmaClient()
+        self._clients["openrouter-nvidia"] = OpenRouterNvidiaClient()
+        self._clients["openrouter-minimax"] = OpenRouterMiniMaxClient()
         # T8: NVIDIA NIM (free serverless tier — 6 models, OpenAI-compatible)
         for nv_name, nv_client in all_nvidia_clients().items():
             self._clients[nv_name] = nv_client
@@ -509,11 +570,83 @@ class ModelRouter:
     @classmethod
     def _chain_for(cls, task_type: TaskType, mode: Optional[str] = None) -> list[str]:
         if (mode or "").strip().lower() == "standard":
-            return STANDARD_MODE_ROUTING_TABLE.get(
+            chain = STANDARD_MODE_ROUTING_TABLE.get(
                 task_type,
                 ROUTING_TABLE.get(task_type, ROUTING_TABLE[TaskType.GENERAL]),
             )
-        return ROUTING_TABLE.get(task_type, ROUTING_TABLE[TaskType.GENERAL])
+        else:
+            chain = ROUTING_TABLE.get(task_type, ROUTING_TABLE[TaskType.GENERAL])
+        # Filter empirically-dead models so the writer/critic don't burn
+        # their per-attempt timeout on providers known to return permanent
+        # errors. See ``_DEAD_MODELS`` for the audit trail.
+        return _filter_dead(chain)
+
+    def get_models_for_purpose(self, purpose: str, task_type: Optional[TaskType] = None) -> list[str]:
+        """Get prioritized models for specific presentation purpose.
+
+        Args:
+            purpose: Presentation purpose (e.g., "deep_tech", "vc_pitch", "series_a")
+            task_type: Optional task type to further refine model selection
+
+        Returns:
+            Ordered list of model IDs to try for this purpose
+        """
+        # Purpose-specific model mapping
+        # Deep technical purposes prefer reasoning models
+        deep_tech_purposes = {
+            "deep_tech",
+            "trust_compliance",
+            "technical_deep",
+        }
+        # Financial/metric-heavy purposes prefer structured JSON models
+        financial_purposes = {
+            "series_a",
+            "growth_deck",
+            "financial_projection",
+            "executive_brief",
+        }
+        # Narrative/storytelling purposes prefer narrative models
+        narrative_purposes = {
+            "vc_pitch",
+            "seed_round",
+            "pre_seed_pitch",
+            "cinematic_keynote",
+            "product_launch",
+            "demo_day",
+            "partnership",
+            "customer_case",
+            "team_deck",
+            "advisory_board",
+            "strategic_partnership",
+        }
+        # Market/competitive purposes prefer reasoning + narrative blend
+        market_purposes = {
+            "market_analysis",
+            "competitive_analysis",
+            "fundraising_roadshow",
+            "expansion_plan",
+        }
+
+        # Default to standard routing table
+        if task_type:
+            return self._chain_for(task_type, mode="standard")
+
+        # Purpose-based fallback
+        if purpose in deep_tech_purposes:
+            # Prefer reasoning models: kimi-k2-thinking, deepseek-v3, phi-4-reasoning
+            return _with_openrouter_tail(["kimi-k2-thinking", "deepseek-v3", "phi-4-reasoning", "mistral-medium"])
+        elif purpose in financial_purposes:
+            # Prefer structured JSON models: gpt-4o-mini, groq, cf-qwen
+            return _with_openrouter_tail(["gpt-4o-mini", "groq", "cf-qwen", "nv-step-3.5-flash"])
+        elif purpose in narrative_purposes:
+            # Prefer narrative models: deepseek-v3, kimi-k2-thinking, mistral-medium
+            return _with_openrouter_tail(["deepseek-v3", "kimi-k2-thinking", "mistral-medium", "nv-glm-4.7"])
+        elif purpose in market_purposes:
+            # Blend of reasoning and narrative
+            return _with_openrouter_tail(["kimi-k2-thinking", "deepseek-v3", "nv-glm-4.7", "mistral-medium"])
+        else:
+            # Default to standard mode routing
+            return _with_openrouter_tail(["groq", "cf-qwen", "nv-step-3.5-flash", "gpt-4o-mini"])
 
     @staticmethod
     def _is_non_retryable_error(error: Exception) -> bool:

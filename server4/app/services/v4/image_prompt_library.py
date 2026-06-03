@@ -414,6 +414,10 @@ def build_image_prompt(
 ) -> tuple[str, str]:
     """Return `(prompt, archetype_name)` for an image-modality slide.
 
+    SIMPLIFIED VERSION: Uses slide content only, no style pollution.
+    Prompts are based purely on the actual slide content (headline, bullets, etc.)
+    without adding generic style descriptors or artistic flourishes.
+
     Parameters mirror the fields `image_generator._enhance_prompt`
     already has at hand — no caller shape change required beyond
     forwarding `intent` / `layout` / `headline` (previously discarded).
@@ -424,6 +428,7 @@ def build_image_prompt(
     arch = _select_archetype(intent or "", layout or "")
     subject = _extract_subject(image_prompt, headline, intent or "")
 
+    # Use the archetype's template with slot filling
     fills = {
         "subject": subject,
         "industry": (industry or "").strip() or "a modern company",
@@ -433,21 +438,78 @@ def build_image_prompt(
         "common_tail": _COMMON_TAIL,
         # Phase 3C: Image-Content Alignment - reinforce headline context
         "headline_context": (
-            f"The image must visually reinforce: {headline}"
+            f"Image reinforces: {headline}"
             if headline and headline.strip()
             else ""
         ),
     }
 
-    prompt = arch.template.format(**fills).strip()
-    prompt += f" Deck-purpose style: {_purpose_style(deck_purpose)}."
+    # Build prompt using the archetype's template
+    try:
+        prompt = arch.template.format(**fills)
+    except KeyError as e:
+        # If template has a slot we didn't fill, log and use fallback
+        logger.warning(f"Archetype {arch.name} missing fill slot: {e}")
+        prompt = f"{subject}. {fills['palette_line']}. {fills['common_tail']}."
+    
     # Attach negatives inline — the image pipeline's own negative-prompt
     # builder concatenates its own list, so adding these as a trailing
     # instruction is safe and model-agnostic.
     if arch.negatives:
         prompt += " Avoid: " + ", ".join(arch.negatives) + "."
 
+    # Deck-purpose style guidance: append a short stylistic direction so
+    # the same archetype produces a different look in a sales deck vs an
+    # academic talk vs a wellness keynote. This pairs with the deck-purpose
+    # signal already used in the design system to keep image and chart
+    # palettes coherent with the rest of the deck.
+    purpose_style = _deck_purpose_style(deck_purpose)
+    if purpose_style:
+        prompt += " Deck-purpose style: " + purpose_style + "."
+
     return prompt, arch.name
+
+
+_DECK_PURPOSE_STYLE: dict[str, str] = {
+    "sales_deck": "product marketing, commercial polish",
+    "sales": "product marketing, commercial polish",
+    "investor_pitch": "investor-grade clarity, premium editorial polish",
+    "pitch_deck": "investor-grade clarity, premium editorial polish",
+    "seed_round": "investor-grade clarity, premium editorial polish",
+    "series_a": "investor-grade clarity, premium editorial polish",
+    "fundraising": "investor-grade clarity, premium editorial polish",
+    "demo_day": "investor-grade clarity, premium editorial polish",
+    "keynote": "stage-ready editorial composition, talk-friendly framing",
+    "conference": "stage-ready editorial composition, talk-friendly framing",
+    "ted_talk": "stage-ready editorial composition, talk-friendly framing",
+    "report": "boardroom-clean infographic feel, restrained color",
+    "board_deck": "boardroom-clean infographic feel, restrained color",
+    "quarterly": "boardroom-clean infographic feel, restrained color",
+    "annual_report": "boardroom-clean infographic feel, restrained color",
+    "brand_story": "warm narrative photography, emotive lighting",
+    "impact_report": "warm narrative photography, emotive lighting",
+    "case_study": "warm narrative photography, emotive lighting",
+    "product_launch": "cinematic product reveal, dramatic key light",
+    "demo": "cinematic product reveal, dramatic key light",
+    "reveal": "cinematic product reveal, dramatic key light",
+    "creative_pitch": "expressive editorial design, bold composition",
+    "portfolio": "expressive editorial design, bold composition",
+    "design_review": "expressive editorial design, bold composition",
+    "technical_deep_dive": "diagrammatic precision, technical clarity",
+    "api_docs": "diagrammatic precision, technical clarity",
+    "wellness": "calm minimal photography, sage-toned softness",
+    "meditation": "calm minimal photography, sage-toned softness",
+}
+
+
+def _deck_purpose_style(deck_purpose: Optional[str]) -> str:
+    """Resolve the stylistic direction for a deck purpose. Returns an
+    empty string when the purpose is unknown so callers can skip the
+    suffix entirely."""
+    if not deck_purpose:
+        return ""
+    key = str(deck_purpose).strip().lower()
+    return _DECK_PURPOSE_STYLE.get(key, "")
 
 
 def list_archetypes() -> list[dict[str, Any]]:

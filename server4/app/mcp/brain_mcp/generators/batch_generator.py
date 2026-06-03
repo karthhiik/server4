@@ -1,9 +1,13 @@
 """
 Batch slide generator — generates multiple slides in parallel with concurrency control.
+
+Updated 2026-05-08 (Premium Mode):
+- Added council_mode parameter for multi-model LLM council voting
+- Added council_models parameter for custom model selection
 """
 
 import asyncio
-from typing import Optional
+from typing import Optional, List
 
 import structlog
 
@@ -29,6 +33,8 @@ class BatchGenerator:
         presentation_purpose: str = "pitch",
         presentation_id: Optional[str] = None,
         progress_callback=None,
+        council_mode: bool = False,
+        council_models: Optional[List[str]] = None,
     ) -> list[SlideContent]:
         """Generate content for all slides with bounded parallelism."""
         semaphore = asyncio.Semaphore(MAX_PARALLEL_SLIDES)
@@ -54,9 +60,16 @@ class BatchGenerator:
                         writing_style=writing_style,
                         presentation_purpose=presentation_purpose,
                         presentation_id=presentation_id,
+                        council_mode=council_mode,
+                        council_models=council_models,
                     )
                     results[index] = content
-                    logger.info("slide_generated", index=index, title=slide_def.title[:30])
+                    logger.info(
+                        "slide_generated",
+                        index=index,
+                        title=slide_def.title[:30],
+                        council_mode=council_mode,
+                    )
 
                     if progress_callback:
                         await progress_callback(index, len(outline.slides))

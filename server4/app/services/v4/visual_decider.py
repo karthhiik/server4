@@ -24,6 +24,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Optional
 
+from app.services.v4.visual_element_validator import ensure_valid_visual_element
+
 
 CODE_BLOCK_FIELDS = ("chart", "table", "timeline", "comparison", "diagram", "stat_blocks", "quote")
 
@@ -71,6 +73,31 @@ def _renderer_for(block: str) -> str:
     }.get(block, "code")
 
 
+def _renderable_block(block: str, value: Any) -> bool:
+    """Return True only when a structured block can actually render."""
+    if block in {"chart", "table", "timeline", "comparison", "diagram"}:
+        return ensure_valid_visual_element(block, value) is not None
+    if block == "stat_blocks":
+        if not isinstance(value, list):
+            return False
+        for item in value:
+            if not isinstance(item, dict):
+                continue
+            val = str(item.get("value", "")).strip().lower()
+            label = str(item.get("label", "")).strip().lower()
+            raw = f"{val} {label}".strip()
+            if (
+                raw
+                and val not in {"~", "tbd", "n/a", "$x", "y%", "z"}
+                and label not in {"~", "tbd", "n/a"}
+            ):
+                return True
+        return False
+    if block == "quote":
+        return isinstance(value, dict) and bool(value.get("text") or value.get("quote"))
+    return _has(value)
+
+
 def decide_visual(slide: dict) -> VisualDecision:
     """Decide the visual modality for a single slide dict.
 
@@ -83,7 +110,7 @@ def decide_visual(slide: dict) -> VisualDecision:
 
     # Rule 1 — any structured block wins
     for block in CODE_BLOCK_FIELDS:
-        if _has(slide.get(block)):
+        if _renderable_block(block, slide.get(block)):
             return VisualDecision(
                 modality="code",
                 reason=f"slide has structured `{block}` block",

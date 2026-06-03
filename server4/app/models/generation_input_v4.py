@@ -17,9 +17,28 @@ Innovation:
 
 from datetime import datetime
 from enum import Enum
+import re
 from typing import Any, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
+
+
+def _topic_from_prompt(prompt: str) -> str:
+    text = (prompt or "").replace("\r", "\n")
+    match = re.search(
+        r"(?:^|\n|\.)\s*(?:presentation\s+topic|topic|title)\s*:\s*"
+        r"(.+?)"
+        r"(?=(?:\s*[\.\n]\s*)?"
+        r"(?:description|target\s+audience|audience|purpose|slide\s+count|key\s+points)\s*:|$)",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if match:
+        topic = re.sub(r"\s+", " ", match.group(1)).strip(" .,:;-")
+        if topic:
+            return topic[:200]
+    first_line = next((line.strip() for line in text.splitlines() if line.strip()), "")
+    return (first_line or text.strip() or "Untitled Presentation")[:200]
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -28,6 +47,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 class PresentationPurpose(str, Enum):
     """Exhaustive purpose taxonomy — each maps to a narrative framework."""
+    # Existing purposes (keep for Premium Mode)
     PITCH_DECK = "pitch_deck"
     INVESTOR_UPDATE = "investor_update"
     SALES_DECK = "sales_deck"
@@ -43,6 +63,29 @@ class PresentationPurpose(str, Enum):
     EDUCATIONAL = "educational"
     INTERNAL_MEMO = "internal_memo"
     CUSTOM = "custom"
+    # NEW: Pitch deck-specific purposes for Standard Mode
+    DEEP_TECH = "deep_tech"
+    VC_PITCH = "vc_pitch"
+    EXECUTIVE_BRIEF = "executive_brief"
+    TRUST_COMPLIANCE = "trust_compliance"
+    CINEMATIC_KEYNOTE = "cinematic_keynote"
+    SEED_ROUND = "seed_round"
+    SERIES_A = "series_a"
+    PARTNERSHIP = "partnership"
+    CUSTOMER_CASE = "customer_case"
+    FUNDRAISING_ROADSHOW = "fundraising_roadshow"
+    GROWTH_DECK = "growth_deck"
+    MARKET_ANALYSIS = "market_analysis"
+    COMPETITIVE_ANALYSIS = "competitive_analysis"
+    TEAM_DECK = "team_deck"
+    FINANCIAL_PROJECTION = "financial_projection"
+    PRODUCT_ROADMAP = "product_roadmap"
+    MILESTONE_DECK = "milestone_deck"
+    CRISIS_MANAGEMENT = "crisis_management"
+    EXPANSION_PLAN = "expansion_plan"
+    ADVISORY_BOARD = "advisory_board"
+    STRATEGIC_PARTNERSHIP = "strategic_partnership"
+    PRE_SEED_PITCH = "pre_seed_pitch"
 
 
 class WritingStyle(str, Enum):
@@ -148,6 +191,7 @@ class TeamMember(BaseModel):
     bio: Optional[str] = Field(default=None, max_length=500)
     photo_url: Optional[str] = Field(default=None, max_length=500)
     linkedin_url: Optional[str] = Field(default=None, max_length=500)
+    x_url: Optional[str] = Field(default=None, max_length=500, description="Twitter/X profile URL")
     notable_credentials: Optional[list[str]] = Field(default=None, max_length=5, description="e.g. 'Ex-Google', 'YC W21'")
 
 
@@ -249,17 +293,38 @@ class ContentDirective(BaseModel):
 # MAIN INPUT MODELS
 # ═══════════════════════════════════════════════════════════════════
 
+class MotionEffectsInput(BaseModel):
+    """User-selected motion contract for preview, slideshow, and export."""
+    style: str = Field(
+        default="minimal",
+        pattern="^(minimal|editorial|cinematic|technical|data-reveal|diagram-draw)$",
+    )
+    transition: str = Field(default="fade", pattern="^(fade|slide|zoom|wipe|morph)$")
+    reveal: str = Field(
+        default="stagger",
+        pattern="^(none|stagger|bullet-by-bullet|section-by-section)$",
+    )
+    chartMotion: str = Field(default="none", pattern="^(none|draw|count-up|bar-grow)$")
+    imageMotion: str = Field(default="none", pattern="^(none|ken-burns|parallax|soft-zoom)$")
+    intensity: str = Field(default="low", pattern="^(low|medium|high)$")
+    autoplay: bool = False
+    reducedMotionSafe: bool = True
+    pdfPosterFrame: str = Field(default="final", pattern="^(start|middle|final)$")
+
+
 class StandardGenerationInput(BaseModel):
     """
-    Standard Mode Input — Pitch Deck Only, Prompt-first.
+    Standard Mode Input — Purpose-Aware, Prompt-first.
 
-    The user provides ONLY a prompt describing their startup and optionally
-    a slide count. The AI handles everything else: purpose is always
-    PITCH_DECK, audience is always Investors, style is always YC_CRISP.
+    The user provides a prompt describing their startup and optionally
+    a slide count and purpose. The AI auto-selects purpose if not provided,
+    audience is always Investors, style is always YC_CRISP.
 
     A conversational Q&A flow (≤8 questions) may fire if the prompt is
     too thin (input_richness_score < 0.7), powered by the
     ConversationalQuestionGenerator service.
+
+    NEW: Supports 15+ pitch deck purposes for Standard Mode.
     """
     # ── Core (required) ──
     prompt: str = Field(
@@ -274,14 +339,60 @@ class StandardGenerationInput(BaseModel):
         description="Number of slides to generate. If None, auto-determined (typically 10-12 for pitch decks)."
     )
 
+    # ── Purpose (optional — auto-selected if not provided) ──
+    purpose: Optional[PresentationPurpose] = Field(
+        default=None,
+        description="Presentation purpose. If None, auto-selected from prompt using AutoPurposeSelector."
+    )
+
+    # ── Purpose override (for manual selection via WebSocket) ──
+    purpose_override: Optional[str] = Field(
+        default=None,
+        description="Purpose override. If None, auto-detected from prompt."
+    )
+
+    # ── Team data (for team slides) ──
+    team_data: Optional[list[dict]] = Field(
+        default=None,
+        description="Team member data for team slide generation."
+    )
+
     # ── Language (optional — defaults to English) ──
     language: str = Field(default="English", max_length=50)
 
+    # ── Optional template choice (Standard mode picker on the input page) ──
+    template_id: Optional[str] = Field(
+        default=None,
+        max_length=120,
+        description="ID of a template from the v2 template engine. When provided, "
+                    "the V4 pipeline uses the template's layout zones to seed the "
+                    "skeleton instead of free-form auto layout.",
+    )
+
     # ── Hardcoded pitch-deck defaults (not exposed to the user) ──
-    @property
-    def purpose(self) -> "PresentationPurpose":
-        """Standard mode is ALWAYS pitch_deck."""
-        return PresentationPurpose.PITCH_DECK
+    # Design selections are available in Standard mode too. These are still
+    # lightweight controls, not the full premium brand-kit workflow.
+    brand: Optional[BrandAssets] = None
+    theme_id: Optional[str] = Field(
+        default=None,
+        max_length=120,
+        description="Selected theme id from the expanded theme engine.",
+    )
+    visual_direction: Optional[str] = Field(
+        default=None,
+        max_length=50,
+        description="Selected visual direction id from curated design presets.",
+    )
+    effects: Optional[MotionEffectsInput] = None
+    # Standard mode now includes images + notes by default. Earlier
+    # versions kept these off to constrain budget, but real-time users
+    # expect a complete deck out of the box (matching premium parity)
+    # — image generation makes the slide canvas feel intentional rather
+    # than empty, and notes give the founder presenter coaching they
+    # can edit. Both can still be turned off explicitly via the
+    # request payload when the user wants a faster, lighter run.
+    generate_images: bool = Field(default=True)
+    generate_notes: bool = Field(default=True)
 
     @property
     def audience(self) -> str:
@@ -292,26 +403,6 @@ class StandardGenerationInput(BaseModel):
     def writing_style(self) -> "WritingStyle":
         """Standard mode always uses YC-crisp style."""
         return WritingStyle.YC_CRISP
-
-    @property
-    def theme_id(self) -> None:
-        """Standard mode auto-selects theme."""
-        return None
-
-    @property
-    def brand(self) -> None:
-        """Standard mode does not accept brand assets."""
-        return None
-
-    @property
-    def generate_images(self) -> bool:
-        """Standard mode skips image generation for speed."""
-        return False
-
-    @property
-    def generate_notes(self) -> bool:
-        """Standard mode skips speaker notes for speed."""
-        return False
 
     @field_validator("prompt")
     @classmethod
@@ -339,6 +430,9 @@ class PremiumPromptInput(BaseModel):
     content_directives: Optional[ContentDirective] = None
     brand: Optional[BrandAssets] = None
     theme_id: Optional[str] = None
+    visual_direction: Optional[str] = Field(default=None, max_length=50, description="Visual direction ID from Open Design curated presets")
+    template_id: Optional[str] = Field(default=None, max_length=120, description="Template id from the v2 template engine.")
+    effects: Optional[MotionEffectsInput] = None
     generate_images: bool = Field(default=True)
     generate_notes: bool = Field(default=True)
 
@@ -381,6 +475,9 @@ class PremiumStructuredInput(BaseModel):
     generate_images: bool = Field(default=True)
     generate_notes: bool = Field(default=True)
     theme_id: Optional[str] = None
+    visual_direction: Optional[str] = Field(default=None, max_length=50, description="Visual direction ID from Open Design curated presets")
+    template_id: Optional[str] = Field(default=None, max_length=120, description="Template id from the v2 template engine.")
+    effects: Optional[MotionEffectsInput] = None
 
 
 class GenerationInputV4(BaseModel):
@@ -410,12 +507,21 @@ class GenerationInputV4(BaseModel):
 
     @model_validator(mode="after")
     def validate_input_variant(self) -> "GenerationInputV4":
-        """Ensure exactly one input variant matches the mode."""
+        """Ensure exactly one input variant matches the mode and input method.
+
+        The new frontend exposes mode as a first-class stage, then either a
+        prompt or structured brief. Treat that pair as a contract instead of a
+        loose hint: accepting mismatched payloads makes server4 silently run
+        the wrong branch and confuses users about which generation lane they
+        actually selected.
+        """
         if self.mode == "standard":
             if not self.standard_input:
                 raise ValueError("standard_input is required when mode is 'standard'")
             if self.premium_prompt_input or self.premium_structured_input:
                 raise ValueError("Premium inputs must be None in standard mode")
+            if self.input_method != InputMethod.PROMPT:
+                raise ValueError("standard mode only supports input_method='prompt'")
         elif self.mode == "premium":
             has_prompt = self.premium_prompt_input is not None
             has_structured = self.premium_structured_input is not None
@@ -423,18 +529,21 @@ class GenerationInputV4(BaseModel):
                 raise ValueError("Either premium_prompt_input or premium_structured_input is required for premium mode")
             if has_prompt and has_structured:
                 raise ValueError("Provide only one of premium_prompt_input or premium_structured_input")
+            if has_prompt and self.input_method != InputMethod.PROMPT:
+                raise ValueError("premium_prompt_input requires input_method='prompt'")
+            if has_structured and self.input_method != InputMethod.STRUCTURED:
+                raise ValueError("premium_structured_input requires input_method='structured'")
         return self
 
     @property
     def effective_topic(self) -> str:
         """Extract the topic from whichever input variant is active."""
         if self.standard_input:
-            # For standard, first 100 chars of prompt or parsed topic
-            return self.standard_input.prompt[:100]
+            return _topic_from_prompt(self.standard_input.prompt)
         if self.premium_structured_input:
             return self.premium_structured_input.topic
         if self.premium_prompt_input:
-            return self.premium_prompt_input.prompt[:100]
+            return _topic_from_prompt(self.premium_prompt_input.prompt)
         return "Untitled Presentation"
 
     @property

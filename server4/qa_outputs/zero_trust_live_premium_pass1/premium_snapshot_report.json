@@ -1,0 +1,112 @@
+{
+  "ok": true,
+  "page_count": 15,
+  "all_nonblank": true,
+  "snapshots": [
+    {
+      "slide": 0,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_01.png",
+      "mean_luma": 251.42,
+      "variance": 786.66,
+      "nonblank": true
+    },
+    {
+      "slide": 1,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_02.png",
+      "mean_luma": 22.89,
+      "variance": 2103.69,
+      "nonblank": true
+    },
+    {
+      "slide": 2,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_03.png",
+      "mean_luma": 14.16,
+      "variance": 1099.45,
+      "nonblank": true
+    },
+    {
+      "slide": 3,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_04.png",
+      "mean_luma": 152.63,
+      "variance": 694.82,
+      "nonblank": true
+    },
+    {
+      "slide": 4,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_05.png",
+      "mean_luma": 19.19,
+      "variance": 1434.19,
+      "nonblank": true
+    },
+    {
+      "slide": 5,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_06.png",
+      "mean_luma": 152.19,
+      "variance": 656.8,
+      "nonblank": true
+    },
+    {
+      "slide": 6,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_07.png",
+      "mean_luma": 155.22,
+      "variance": 911.37,
+      "nonblank": true
+    },
+    {
+      "slide": 7,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_08.png",
+      "mean_luma": 13.98,
+      "variance": 1074.38,
+      "nonblank": true
+    },
+    {
+      "slide": 8,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_09.png",
+      "mean_luma": 152.7,
+      "variance": 699.41,
+      "nonblank": true
+    },
+    {
+      "slide": 9,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_10.png",
+      "mean_luma": 13.38,
+      "variance": 938.73,
+      "nonblank": true
+    },
+    {
+      "slide": 10,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_11.png",
+      "mean_luma": 14.04,
+      "variance": 1071.73,
+      "nonblank": true
+    },
+    {
+      "slide": 11,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_12.png",
+      "mean_luma": 13.43,
+      "variance": 941.98,
+      "nonblank": true
+    },
+    {
+      "slide": 12,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_13.png",
+      "mean_luma": 153.07,
+      "variance": 718.22,
+      "nonblank": true
+    },
+    {
+      "slide": 13,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_14.png",
+      "mean_luma": 12.84,
+      "variance": 836.88,
+      "nonblank": true
+    },
+    {
+      "slide": 14,
+      "path": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots\\slide_15.png",
+      "mean_luma": 13.89,
+      "variance": 1042.35,
+      "nonblank": true
+    }
+  ]
+}

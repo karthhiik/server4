@@ -25,16 +25,15 @@ Available Tool Categories:
 
 # Lazy imports to avoid circular dependencies
 def get_mcp_server():
-    from app.mcp.core.server import create_mcp_server
-    return create_mcp_server()
+    from app.mcp.mcp_server import get_mcp_v7_server
+    return get_mcp_v7_server()
 
 def get_context_board():
-    from app.mcp.core.context_board import ContextBoard
-    return ContextBoard.get_instance()
+    raise NotImplementedError("ContextBoard has not been implemented in this version.")
 
 def get_tools_registry():
-    from app.mcp.core.tools_registry import ToolsRegistry
-    return ToolsRegistry.get_instance()
+    from app.mcp.tool_registry import TOOL_REGISTRY
+    return TOOL_REGISTRY
 
 __all__ = [
     "get_mcp_server",

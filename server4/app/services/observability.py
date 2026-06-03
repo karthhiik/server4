@@ -3,7 +3,7 @@ Observability — tracks LLM/API call metrics for monitoring.
 Feeds into generation_logs collection.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -13,6 +13,58 @@ from app.config import settings
 from app.services.v4.quality_metrics import evaluate_quality_alerts
 
 logger = structlog.get_logger()
+
+COUNTER_HASH_KEY = "v4:metrics:counters"
+
+
+def _today_suffix(now: datetime | None = None) -> str:
+    return (now or datetime.now(timezone.utc)).strftime("%Y%m%d")
+
+
+def _counter_field(name: str, tags: Optional[dict] = None) -> str:
+    clean_tags = tags or {}
+    tag_part = ",".join(
+        f"{str(k)}={str(clean_tags[k])}"
+        for k in sorted(clean_tags)
+        if clean_tags[k] is not None
+    )
+    return f"{_today_suffix()}:{name}" + (f"|{tag_part}" if tag_part else "")
+
+
+async def counter(name: str, tags: Optional[dict] = None, value: int = 1) -> None:
+    """Best-effort Redis counter for operational metrics."""
+    try:
+        from app.utils.rate_limiter import get_redis
+
+        redis = await get_redis()
+        if redis is None:
+            return
+        await redis.hincrby(COUNTER_HASH_KEY, _counter_field(name, tags), int(value))
+    except Exception as exc:  # pragma: no cover - metrics must never break prod flow
+        logger.debug("observability_counter_failed", name=name, error=str(exc)[:160])
+
+
+async def counter_snapshot() -> dict:
+    """Return all Redis metric counters as JSON-safe values."""
+    try:
+        from app.utils.rate_limiter import get_redis
+
+        redis = await get_redis()
+        if redis is None:
+            return {"ok": False, "counters": {}, "reason": "redis_unavailable"}
+        raw = await redis.hgetall(COUNTER_HASH_KEY)
+    except Exception as exc:
+        return {"ok": False, "counters": {}, "reason": str(exc)[:160]}
+
+    counters: dict[str, int] = {}
+    for key, val in dict(raw or {}).items():
+        k = key.decode("utf-8", errors="ignore") if isinstance(key, bytes) else str(key)
+        v_raw = val.decode("utf-8", errors="ignore") if isinstance(val, bytes) else str(val)
+        try:
+            counters[k] = int(v_raw)
+        except ValueError:
+            counters[k] = 0
+    return {"ok": True, "hash": COUNTER_HASH_KEY, "counters": counters}
 
 
 class ObservabilityService:

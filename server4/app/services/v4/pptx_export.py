@@ -218,7 +218,13 @@ class V4PptxBuilder:
     ) -> bytes:
         slides_list = [s for s in slides if isinstance(s, dict)]
         if not slides_list:
-            raise ValueError("V4PptxBuilder.build: slides is empty")
+            # Slice 4 (Export Parity): refuse to emit a corrupt 0-slide
+            # artifact. Routers translate this into a structured 409
+            # envelope. Kept compatible with prior callers by inheriting
+            # from ``ValueError``.
+            from app.services.v4.errors import ExportContentEmpty
+
+            raise ExportContentEmpty("V4PptxBuilder.build: slides is empty")
 
         # Reset per-build state.
         self._image_cache = {}
@@ -363,6 +369,8 @@ class V4PptxBuilder:
             self._render_bullets_slide(pptx_slide, slide, palette, fonts)
 
         # Speaker notes — every layout gets these.
+        self._render_link_cta(pptx_slide, slide, palette, fonts)
+
         notes = slide.get("speaker_notes") or ""
         if isinstance(notes, str) and notes.strip():
             try:
@@ -471,17 +479,20 @@ class V4PptxBuilder:
         top_emu: int,
         width_emu: int,
         height_emu: int,
+        link_url: str = "",
     ) -> bool:
         """Try to embed `url` at the given rect. Return True iff embedded."""
         body = self._fetch_image_bytes(url)
         if not body:
             return False
         try:
-            pptx_slide.shapes.add_picture(
+            shape = pptx_slide.shapes.add_picture(
                 io.BytesIO(body),
                 Emu(left_emu), Emu(top_emu),
                 width=Emu(width_emu), height=Emu(height_emu),
             )
+            if link_url:
+                self._set_shape_hyperlink(shape, link_url)
             return True
         except Exception as exc:  # noqa: BLE001
             logger.debug(
@@ -535,6 +546,52 @@ class V4PptxBuilder:
             run.hyperlink.address = url.strip()
         except Exception:  # noqa: BLE001
             pass
+
+    @staticmethod
+    def _set_shape_hyperlink(shape, url: str) -> None:
+        if not isinstance(url, str) or not url.strip():
+            return
+        try:
+            shape.click_action.hyperlink.address = url.strip()
+        except Exception:  # noqa: BLE001
+            pass
+
+    @staticmethod
+    def _slide_links(slide: dict[str, Any], max_n: int = 6) -> list[dict[str, str]]:
+        links: list[dict[str, str]] = []
+        seen: set[str] = set()
+
+        def add(label: str, url: str, target: str = "text") -> None:
+            clean = str(url or "").strip()
+            if not clean.lower().startswith(("http://", "https://")):
+                return
+            if clean in seen:
+                return
+            seen.add(clean)
+            links.append({
+                "label": (str(label or clean).strip() or clean)[:120],
+                "url": clean[:500],
+                "target": target if target in {"text", "button", "image", "source"} else "text",
+            })
+
+        for item in slide.get("links") or []:
+            if isinstance(item, dict):
+                add(
+                    str(item.get("label") or item.get("title") or "Open link"),
+                    str(item.get("url") or item.get("href") or ""),
+                    str(item.get("target") or "text").strip().lower(),
+                )
+        for item in slide.get("citations") or []:
+            if isinstance(item, dict):
+                add(str(item.get("title") or "Source"), str(item.get("url") or ""), "source")
+        return links[:max_n]
+
+    @staticmethod
+    def _first_link_url(slide: dict[str, Any], targets: set[str]) -> str:
+        for link in V4PptxBuilder._slide_links(slide):
+            if link.get("target") in targets:
+                return link.get("url", "")
+        return ""
 
     def _render_page_number(
         self, pptx_slide, idx: int, total: int, palette, fonts,
@@ -1468,6 +1525,7 @@ class V4PptxBuilder:
                 pptx_slide, url,
                 left_emu=_MARGIN_EMU, top_emu=band_top,
                 width_emu=_W_EMU - 2 * _MARGIN_EMU, height_emu=band_h,
+                link_url=self._first_link_url(slide, {"image"}),
             )
         if not embedded and (url or prompt):
             self._add_text_block(
@@ -1540,6 +1598,46 @@ class V4PptxBuilder:
         except Exception:  # noqa: BLE001
             pass  # last-resort safety; never raise out of build()
 
+    def _render_link_cta(self, pptx_slide, slide, palette, fonts) -> None:
+        links = self._slide_links(slide)
+        if not links:
+            return
+        intent = str(slide.get("intent") or "").lower()
+        preferred = next((l for l in links if l.get("target") == "button"), None)
+        if preferred is None and intent not in {"ask", "closing", "thanks", "thank_you"}:
+            return
+        link = preferred or links[0]
+        url = link.get("url", "")
+        if not url:
+            return
+        label = (link.get("label") or "Open link")[:42]
+        left = _MARGIN_EMU
+        top = _H_EMU - Inches(0.85).emu
+        width = Inches(2.5).emu
+        height = Inches(0.38).emu
+        shape = pptx_slide.shapes.add_shape(
+            MSO_SHAPE.ROUNDED_RECTANGLE,
+            Emu(left), Emu(top), Emu(width), Emu(height),
+        )
+        shape.fill.solid()
+        shape.fill.fore_color.rgb = _hex_to_rgb(palette["accent"])
+        shape.line.fill.background()
+        self._set_shape_hyperlink(shape, url)
+        if shape.has_text_frame:
+            tf = shape.text_frame
+            tf.clear()
+            tf.margin_left = Inches(0.08).emu
+            tf.margin_right = Inches(0.08).emu
+            p = tf.paragraphs[0]
+            p.alignment = PP_ALIGN.CENTER
+            run = p.add_run()
+            run.text = label
+            run.font.size = Pt(9)
+            run.font.bold = True
+            run.font.name = fonts["body"]
+            run.font.color.rgb = _hex_to_rgb("#FFFFFF")
+            self._set_run_hyperlink(run, url)
+
     def _render_citation_footer(self, pptx_slide, slide, palette, fonts) -> None:
         # Collect (title, url) pairs from citations[] and enrichment.sources[].
         # We never invent a citation URL; the run.hyperlink is set only when a
@@ -1554,6 +1652,11 @@ class V4PptxBuilder:
                 pairs.append((title, url))
             if len(pairs) >= 3:
                 break
+        for link in self._slide_links(slide)[: max(0, 3 - len(pairs))]:
+            url = str(link.get("url", "")).strip()
+            title = str(link.get("label", "")).strip()
+            if url and (title, url) not in pairs:
+                pairs.append((title, url))
         enrichment = slide.get("enrichment") or {}
         for src in (enrichment.get("sources") or [])[: max(0, 3 - len(pairs))]:
             if not isinstance(src, dict):

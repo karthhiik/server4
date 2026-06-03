@@ -1,0 +1,69 @@
+{
+  "generated_at": "2026-05-20T06:19:55.563919+00:00",
+  "prompt": "Presentation Topic: Autonomous Zero-Trust Identity Orchestration for Edge Computing.\nDescription: We are building a self-healing security layer for IoT devices that uses decentralized identifiers (DIDs) and zero-knowledge proofs. It must explain how we eliminate the need for a central authority while maintaining sub-millisecond authentication latency in low-bandwidth environments. Key points: $O(1)$ scalability, hardware-root-of-trust integration, and our \"Neural-Guardian\" consensus algorithm.\nTarget Audience: Technical VCs and Senior Security Architects.\nPurpose: Investor Pitch.\nSlide Count: 15.",
+  "target_slide_count": 15,
+  "modes": {
+    "premium": {
+      "project_id": "6a0d50e34d4743fb6f2d8e9b",
+      "duration_seconds": 434.12,
+      "content_score": 100.0,
+      "design_score": 57.3,
+      "slide_count": 15,
+      "missing_concepts": [],
+      "missing_narrative_beats": [],
+      "bad_copy_findings": [],
+      "design_findings": {
+        "missing_props": [],
+        "l1_errors": [],
+        "pending_images": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          12,
+          14
+        ],
+        "low_quality_slides": [
+          {
+            "slide": 0,
+            "quality_score": 85.0
+          },
+          {
+            "slide": 3,
+            "quality_score": 60.0
+          },
+          {
+            "slide": 4,
+            "quality_score": 60.0
+          },
+          {
+            "slide": 7,
+            "quality_score": 45.0
+          },
+          {
+            "slide": 12,
+            "quality_score": 60.0
+          },
+          {
+            "slide": 13,
+            "quality_score": 60.0
+          }
+        ]
+      },
+      "exports": {
+        "slide_content_json": "qa_outputs\\zero_trust_live_premium_pass1\\premium_slide_content.json",
+        "compiled_slides_json": "qa_outputs\\zero_trust_live_premium_pass1\\premium_compiled_slides.json",
+        "pdf": "qa_outputs\\zero_trust_live_premium_pass1\\premium_deck.pdf",
+        "pptx": "qa_outputs\\zero_trust_live_premium_pass1\\premium_deck.pptx",
+        "snapshots_dir": "qa_outputs\\zero_trust_live_premium_pass1\\premium_snapshots"
+      },
+      "snapshots_ok": true
+    }
+  }
+}

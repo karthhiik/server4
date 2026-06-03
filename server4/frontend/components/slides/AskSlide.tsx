@@ -73,7 +73,7 @@ export function AskSlide({ data, onUpdate }: AskSlideProps) {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .slide-container {
           background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
           color: white;

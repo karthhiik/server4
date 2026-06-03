@@ -35,3 +35,20 @@ class WriterTimeoutError(V4PipelineError):
 
 class CriticRejectedError(V4PipelineError):
     """Raised when a slide failed the critic on every retry attempt."""
+
+
+class ExportContentEmpty(V4PipelineError, ValueError):
+    """Raised by export builders when the input slides list is empty.
+
+    Slice 4 (Export Parity): export builders must refuse to emit a corrupt
+    artifact (e.g. a 0-slide ``.pptx`` that crashes PowerPoint). Routers
+    catch this and translate it into a structured 409 error envelope with
+    code ``no_slides_yet`` (v4-direct routes) or ``deck_not_compiled``
+    (legacy job route).
+
+    Multi-inherits from ``ValueError`` for backwards compatibility with
+    existing callers that catch ``ValueError`` from the public builders.
+    """
+
+    def __init__(self, message: str = "no_slides") -> None:
+        super().__init__(message)

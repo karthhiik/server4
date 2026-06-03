@@ -13,6 +13,8 @@ router = APIRouter(prefix="/api/templates", tags=["Templates"])
 @router.get("")
 async def list_templates(
     category: str = Query(default=None),
+    limit: int = Query(default=200, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
     db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
 ) -> list[TemplateResponse]:
     """List available templates. No auth required for browsing."""
@@ -20,8 +22,8 @@ async def list_templates(
     if category:
         query["category"] = category
 
-    cursor = db.templates.find(query).sort("usage_count", -1)
-    docs = await cursor.to_list(50)
+    cursor = db.templates.find(query).sort("usage_count", -1).skip(offset)
+    docs = await cursor.to_list(limit)
 
     return [
         TemplateResponse(

@@ -93,7 +93,7 @@ export function FinancialsSlide({ data, onUpdate }: FinancialsSlideProps) {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .slide-container {
           background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
           color: white;

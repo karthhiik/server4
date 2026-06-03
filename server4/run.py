@@ -22,6 +22,9 @@ def main():
         "--prod", action="store_true", help="Production mode (no auto-reload)"
     )
     parser.add_argument(
+        "--no-reload", action="store_true", help="Development mode without auto-reload"
+    )
+    parser.add_argument(
         "--host", type=str, default="0.0.0.0", help="Host to bind (default: 0.0.0.0)"
     )
     args = parser.parse_args()
@@ -36,18 +39,31 @@ def main():
     print(f"  URL: http://{args.host}:{args.port}")
     print(f"  Docs: http://{args.host}:{args.port}/docs")
     print(f"  Health: http://{args.host}:{args.port}/health")
-    print(f"  Mode: {'production' if args.prod else 'development (auto-reload)'}")
+    reload_enabled = not args.prod and not args.no_reload
+    mode = "production" if args.prod else ("development (auto-reload)" if reload_enabled else "development")
+    print(f"  Mode: {mode}")
     print(f"{'=' * 60}\n")
 
-    # Reload only server4 files, not the entire workspace
-    reload_dirs = [str(server4_root / "app"), str(server4_root)]
+    # Watch source only. Watching the server4 root also watches tests,
+    # generated files, uploads, and export artifacts, which creates noisy
+    # reload cascades and KeyboardInterrupt tracebacks during active editing.
+    reload_dirs = [str(server4_root / "app")]
 
     uvicorn.run(
         "main:app",
         host=args.host,
         port=args.port,
-        reload=not args.prod,
+        reload=reload_enabled,
         reload_dirs=reload_dirs,
+        reload_includes=["*.py"],
+        reload_excludes=[
+            "tests/*",
+            "uploads/*",
+            "docs/*",
+            ".pytest_cache/*",
+            "__pycache__/*",
+            "*.pyc",
+        ],
         log_level="info",
         access_log=True,
     )

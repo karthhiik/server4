@@ -24,6 +24,7 @@ from typing import Optional
 
 import structlog
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
+from app.services.observability import counter
 
 logger = structlog.get_logger(__name__)
 
@@ -35,6 +36,11 @@ _IDLE_CHECK_INTERVAL_S = 2.0
 _GRACE_PERIOD_S = 1.0
 # Hard ceiling on total connection lifetime (server-side guard).
 _MAX_CONN_SECONDS = 60 * 30  # 30 minutes
+
+
+async def _count_ws_disconnect(project_id: str, reason: str) -> None:
+    await counter("v4.websocket.disconnect", {"reason": reason})
+    logger.info("v4_ws_disconnect_counted", project_id=project_id, reason=reason)
 
 
 @router.websocket("/ws/v4/progress/{project_id}")
@@ -85,6 +91,7 @@ async def v4_progress_ws(
         await pubsub.subscribe(channel)
     except WebSocketDisconnect:
         logger.info("v4_ws_disconnect_during_redis_setup", project_id=project_id)
+        await _count_ws_disconnect(project_id, "redis_setup")
         return
     except Exception as e:
         logger.warning(
@@ -95,6 +102,7 @@ async def v4_progress_ws(
         try:
             await _stream_mongo_fallback(websocket, project_id)
         except WebSocketDisconnect:
+            await _count_ws_disconnect(project_id, "mongo_fallback")
             pass
         return
 
@@ -103,6 +111,7 @@ async def v4_progress_ws(
         await _stream_redis(websocket, pubsub, project_id)
     except WebSocketDisconnect:
         logger.info("v4_ws_disconnect", project_id=project_id)
+        await _count_ws_disconnect(project_id, "client_disconnect")
     except Exception as e:
         logger.error("v4_ws_stream_error", project_id=project_id, error=str(e))
         try:
@@ -152,6 +161,7 @@ async def _stream_redis(
             try:
                 await websocket.send_text(data)
             except Exception:
+                await _count_ws_disconnect(project_id, "send_failed")
                 return
 
             # Only `persisted` / `pipeline_complete` / `pipeline_failed` /
@@ -254,6 +264,9 @@ async def _read_terminal_state(project_id: str) -> Optional[dict]:
                 "slide_count": 1,
                 "overall_score": 1,
                 "duration_ms": 1,
+                "request_id": 1,
+                "cost_estimate": 1,
+                "stage_timings": 1,
                 "llm_trace_summary": 1,
                 "llm_trace_count": 1,
             },
@@ -279,6 +292,9 @@ async def _read_terminal_state(project_id: str) -> Optional[dict]:
         "slide_count": doc.get("slide_count", 0),
         "overall_score": doc.get("overall_score"),
         "duration_ms": doc.get("duration_ms"),
+        "request_id": doc.get("request_id"),
+        "cost_estimate": doc.get("cost_estimate"),
+        "stage_timings": doc.get("stage_timings") or [],
         "llm_trace_summary": doc.get("llm_trace_summary") or [],
         "llm_trace_count": doc.get("llm_trace_count", 0),
     }

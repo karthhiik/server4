@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "test_run": "CEO Verification Test",
+    "timestamp": "2026-05-09T23:27:37.527877",
+    "mode": "standard",
+    "pipeline_version": "V4"
+  },
+  "input": {
+    "user_query": "Build a pitch deck for Barise, an AI-powered real-time presentation generation platform for startups",
+    "company_name": "Barise",
+    "industry": "AI Presentation Tools",
+    "mode": "standard",
+    "purpose": "Series A fundraising",
+    "design_tokens": {
+      "density": "high",
+      "palette": "modern",
+      "typography": "professional"
+    },
+    "structured_context": {
+      "financials": {
+        "mrr": "$150,000",
+        "growth_rate": "18% MoM",
+        "churn_rate": "2.5%"
+      },
+      "traction": {
+        "active_users": "12,000",
+        "enterprise_customers": "45"
+      },
+      "market": {
+        "tam": "$4.2B",
+        "sam": "$850M",
+        "som": "$120M"
+      },
+      "team": [
+        {
+          "name": "Founder CEO",
+          "role": "CEO",
+          "background": "Ex-Google AI"
+        },
+        {
+          "name": "CTO",
+          "role": "CTO",
+          "background": "Ex-Meta ML"
+        }
+      ]
+    }
+  },
+  "output": {
+    "slides": [
+      "GeneratedSlide(index=0, intent='title', layout='title-only', headline='Barise: AI-Powered Pitch Deck Creation', subheadline='Rapidly build compelling investor decks, accelerating fundraising cycles.', bullets=['Pitchdeck - AI-Powered Presentation Creation Your new idea, product, or business depends on communicating complex data in a limited time.', 'AI Startup Pitch Deck: 15 Must-Have Slides for Investors Copyright \u00a9 2026 Qubit Capital.', '30 Startup Investment Pitch Deck Examples (+Templates) - Venngage Explore investor pitch deck examples from successful startups.'], body='', stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes='Start by establishing Barise as the solution to a common founder pain point: creating investor-grade pitch decks. Highlight the speed and efficiency gains our AI-powered platform provides, and mention that we\u2019re designed for funded startups.', citations=[], raw={'headline': 'Barise: AI-Powered Pitch Deck Creation', 'subheadline': 'Rapidly build compelling investor decks, accelerating fundraising cycles.', 'body': 'We empower startups to communicate their vision effectively, eliminating the time-consuming design and content creation hurdles. Our platform leverages AI to guide users through crafting a narrative and automating design, ensuring investor-ready presentations.', 'speaker_notes': 'Start by establishing Barise as the solution to a common founder pain point: creating investor-grade pitch decks. Highlight the speed and efficiency gains our AI-powered platform provides, and mention that we\u2019re designed for funded startups.', 'citations': []}, render_decision={'modality': 'image', 'reason': 'intent/layout demands hero image (intent=title, layout=title-only)', 'code_block': None, 'renderer': 'flux'}, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover title for this pitch', purpose='Series A fundraising')",
+      "GeneratedSlide(index=1, intent='problem', layout='two-column', headline='Pitch Deck Pain Points', subheadline='Startups struggle to craft compelling stories and designs', bullets=['Manual pitch deck creation is time-consuming', 'Design and storytelling skills are often lacking', 'Existing solutions fall short of investor expectations'], body='Creating a pitch deck is a crucial step in fundraising, but many startups find it challenging to create a compelling story and design. This pain point is felt most acutely by founders who are not experienced in designing pitch decks', stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes=\"The pain of creating a pitch deck is real, and it's not just about the time it takes. Founders need to craft a compelling story and design that resonates with investors, but often lack the skills and expertise to do so.\", citations=[], raw={'headline': 'Pitch Deck Pain Points', 'subheadline': 'Startups struggle to craft compelling stories and designs', 'bullets': ['Manual pitch deck creation is time-consuming', 'Design and storytelling skills are often lacking', 'Existing solutions fall short of investor expectations'], 'body': 'Creating a pitch deck is a crucial step in fundraising, but many startups find it challenging to create a compelling story and design. This pain point is felt most acutely by founders who are not experienced in designing pitch decks.', 'speaker_notes': \"The pain of creating a pitch deck is real, and it's not just about the time it takes. Founders need to craft a compelling story and design that resonates with investors, but often lack the skills and expertise to do so.\", 'stat_blocks': [{'value': '$4.2B', 'label': 'TAM'}, {'value': '$850M', 'label': 'SAM'}, {'value': '$120M', 'label': 'SOM'}], 'table': None, 'timeline': None, 'comparison': None, 'diagram': None, 'chart': None, 'quote': None, 'image_prompt': None, 'citations': []}, render_decision={'modality': 'image', 'reason': 'body slide \u2014 atmospheric background image', 'code_block': None, 'renderer': 'phoenix'}, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover problem for this pitch', purpose='Series A fundraising')",
+      "GeneratedSlide(index=2, intent='solution', layout='two-column', headline='How We Solve It at Barise', subheadline=None, bullets=['Pitchdeck - AI-Powered Presentation Creation Your new idea, product, or business depends on communicating complex data in a limited time.', 'AI Startup Pitch Deck: 15 Must-Have Slides for Investors Copyright \u00a9 2026 Qubit Capital.'], body=None, stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes='Cover solution for this pitch', citations=[], raw={}, render_decision=None, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover solution for this pitch', purpose='')",
+      "GeneratedSlide(index=3, intent='unique_advantage', layout='two-column', headline='Our Barise Advantage Today', subheadline='Crafting unique presentations with precision and speed', bullets=['Reflecting your unique voice and design', 'Built for professionals to win business', 'Precision and speed in every slide'], body='At Barise, we understand the importance of effective communication in a limited time. Our platform helps teams build presentations that stand out, with a focus on precision, speed, and unique design.', stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes='Our platform is designed to help teams create high-quality, on-brand presentations that reflect their unique voice and design system. With a focus on precision and speed, we enable professionals to win business and communicate effectively. By leveraging our technology, users can craft unique presentations that leave a lasting impression.', citations=[], raw={'headline': 'Barise Advantage', 'subheadline': 'Crafting unique presentations with precision and speed', 'bullets': ['High-quality, on-brand presentations', 'Reflecting your unique voice and design', 'Built for professionals to win business', 'Precision and speed in every slide'], 'body': 'At Barise, we understand the importance of effective communication in a limited time. Our platform helps teams build presentations that stand out, with a focus on precision, speed, and unique design.', 'stat_blocks': [], 'table': None, 'timeline': None, 'comparison': None, 'diagram': None, 'chart': None, 'quote': None, 'image_prompt': None, 'speaker_notes': 'Our platform is designed to help teams create high-quality, on-brand presentations that reflect their unique voice and design system. With a focus on precision and speed, we enable professionals to win business and communicate effectively. By leveraging our technology, users can craft unique presentations that leave a lasting impression.', 'citations': []}, render_decision={'modality': 'image', 'reason': 'body slide \u2014 atmospheric background image', 'code_block': None, 'renderer': 'phoenix'}, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover unique advantage for this pitch', purpose='Series A fundraising')",
+      "GeneratedSlide(index=4, intent='usp', layout='two-column', headline='Unique Pitch Deck Creation', subheadline='Expertly crafted presentations that drive investor results', bullets=['Streamlined pitch deck design process', 'Data-driven storytelling for investors', 'Personalized deck creation for each founder'], body='At Barise, we understand the importance of a well-crafted pitch deck in securing funding. Our platform is designed to simplify the pitching process, providing founders with the tools they need to create compelling presentations that drive results.', stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes=\"As the founder of Barise, I've seen firsthand the impact a well-designed pitch deck can have on securing funding. Our platform is dedicated to helping founders create presentations that tell their story and drive investor results. With our expertise, you can focus on what matters most - growing your business.\", citations=[], raw={'headline': 'Unique Pitch Deck Creation', 'subheadline': 'Expertly crafted presentations that drive investor results', 'bullets': ['Streamlined pitch deck design process', 'Data-driven storytelling for investors', 'Personalized deck creation for each founder'], 'body': 'At Barise, we understand the importance of a well-crafted pitch deck in securing funding. Our platform is designed to simplify the pitching process, providing founders with the tools they need to create compelling presentations that drive results.', 'stat_blocks': [], 'table': None, 'timeline': None, 'comparison': None, 'diagram': None, 'chart': None, 'quote': None, 'image_prompt': None, 'speaker_notes': \"As the founder of Barise, I've seen firsthand the impact a well-designed pitch deck can have on securing funding. Our platform is dedicated to helping founders create presentations that tell their story and drive investor results. With our expertise, you can focus on what matters most - growing your business.\", 'citations': []}, render_decision={'modality': 'image', 'reason': 'body slide \u2014 atmospheric background image', 'code_block': None, 'renderer': 'phoenix'}, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover usp for this pitch', purpose='Series A fundraising')",
+      "GeneratedSlide(index=5, intent='how_it_works', layout='diagram', headline='Crafting Investor-Ready Content', subheadline='Transforming pitch decks with AI-driven guidance and design', bullets=[], body='30 Best Startup Pitch Deck Examples to Win Investors - Cirrus Insight Explore 30 proven startup pitch deck examples for', stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram={'nodes': [{'id': 'a', 'label': 'Founder Coaching'}, {'id': 'b', 'label': 'AI Pitch Deck Generation'}, {'id': 'c', 'label': 'Investor Outreach'}], 'edges': [{'from': 'a', 'to': 'b'}, {'from': 'b', 'to': 'c'}]}, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes='At Barise, we focus on streamlining the pitch deck creation process. Our platform utilizes AI to guide users in crafting compelling stories, automates design, and provides in-depth feedback to refine outputs into investor-ready content.', citations=[], raw={'headline': 'Crafting Investor-Ready Content', 'subheadline': 'Transforming pitch decks with AI-driven guidance and design', 'diagram': {'nodes': [{'id': 'a', 'label': 'Founder Coaching'}, {'id': 'b', 'label': 'AI Pitch Deck Generation'}, {'id': 'c', 'label': 'Investor Outreach'}], 'edges': [{'from': 'a', 'to': 'b'}, {'from': 'b', 'to': 'c'}]}, 'speaker_notes': 'At Barise, we focus on streamlining the pitch deck creation process. Our platform utilizes AI to guide users in crafting compelling stories, automates design, and provides in-depth feedback to refine outputs into investor-ready content.', 'citations': []}, render_decision={'modality': 'code', 'reason': 'slide has structured `diagram` block', 'code_block': 'diagram', 'renderer': 'react-flow'}, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover how it works for this pitch', purpose='Series A fundraising')",
+      "GeneratedSlide(index=6, intent='market', layout='two-column', headline='Unlocking a Market Potential', subheadline='Cover market for this pitch', bullets=['Demand for clear data presentation is rising', 'Businesses need concise communication tools', 'Visual storytelling is essential for engagement'], body='Barise operates in a market where buyers increasingly seek specialized solutions. Build a pitch deck for Barise, an AI-powered real-time presentation generation platform for startups.', stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes='We are tapping into a significant market opportunity with a total addressable market of $4.2 billion. The demand for clear communication of complex data is growing, and our platform is uniquely positioned to meet this need. We focus on delivering concise and engaging narratives that resonate with audiences.', citations=[], raw={'headline': 'Unlocking a $4.2B Market Potential', 'subheadline': 'Our platform addresses a rapidly growing demand for clarity.', 'stat_blocks': [{'value': '$4.2B', 'label': 'Total Addressable Market (TAM)'}, {'value': '$850M', 'label': 'Serviceable Available Market (SAM)'}, {'value': '$120M', 'label': 'Serviceable Obtainable Market (SOM)'}], 'bullets': ['Demand for clear data presentation is rising', 'Businesses need concise communication tools', 'Visual storytelling is essential for engagement'], 'speaker_notes': 'We are tapping into a significant market opportunity with a total addressable market of $4.2 billion. The demand for clear communication of complex data is growing, and our platform is uniquely positioned to meet this need. We focus on delivering concise and engaging narratives that resonate with audiences.', 'citations': [], 'body': ''}, render_decision={'modality': 'image', 'reason': 'body slide \u2014 atmospheric background image', 'code_block': None, 'renderer': 'phoenix'}, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover market for this pitch', purpose='Series A fundraising')",
+      "GeneratedSlide(index=7, intent='business_model', layout='two-column', headline='How We Make Money', subheadline=None, bullets=[], body=None, stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes='Cover business model for this pitch', citations=[], raw={}, render_decision=None, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover business model for this pitch', purpose='')",
+      "GeneratedSlide(index=8, intent='competition', layout='comparison', headline='Our Competitive Advantage', subheadline=None, bullets=['Our durable differentiation'], body=None, stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes='Cover competition for this pitch', citations=[], raw={}, render_decision=None, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover competition for this pitch', purpose='')",
+      "GeneratedSlide(index=9, intent='go_to_market', layout='two-column', headline='Go-To-Market Strategy', subheadline=None, bullets=[], body=None, stat_blocks=[], quote=None, chart=None, table=None, timeline=None, comparison=None, diagram=None, image_prompt=None, image_url=None, image_source=None, image_position=None, image_intent=None, speaker_notes='Cover go to market for this pitch', citations=[], raw={}, render_decision=None, team_members=[], requires_user_input=False, user_input_kind=None, user_input_reason=None, company_icon_url=None, rationale='Cover go to market for this pitch', purpose='')"
+    ],
+    "deck_title": "Barise Investor Pitch",
+    "narrative_arc": "Series A fundraising",
+    "duration_ms": 236093,
+    "generation_id": "9c27b4ab-faf",
+    "design_tokens": {
+      "palette": {
+        "primary": "#7c3aed",
+        "secondary": "#9d00ae",
+        "accent": "#22d3ee",
+        "background": "#0b0d12",
+        "surface": "#14161b",
+        "text_primary": "#f8fafc",
+        "text_secondary": "#c7c9cb",
+        "text_muted": "#9ea0a2",
+        "success": "#10b981",
+        "warning": "#f59e0b",
+        "danger": "#ef4444",
+        "chart": [
+          "#7c3aed",
+          "#22d3ee",
+          "#c8117c",
+          "#348900",
+          "#008bbc",
+          "#6f0098",
+          "#ed7b1a"
+        ]
+      },
+      "fonts": {
+        "heading": "Inter",
+        "body": "Inter",
+        "mono": "ui-monospace, SFMono-Regular, Menlo, monospace"
+      },
+      "scale": {
+        "display": 57,
+        "h1": 43,
+        "h2": 32,
+        "h3": 24,
+        "body": 18,
+        "caption": 13
+      },
+      "spacing": {
+        "slide_margin_in": 0.55,
+        "gap_in": 0.22,
+        "section_gap_in": 0.5
+      },
+      "weights": {
+        "heading": 700,
+        "body": 400
+      },
+      "density": "comfortable",
+      "line_height": 1.4,
+      "letter_spacing_em": 0.0,
+      "provided_by": "auto"
+    },
+    "critic_score": 7.775
+  }
+}

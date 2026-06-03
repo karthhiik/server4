@@ -26,7 +26,12 @@ _chroma_service = None
 
 async def connect_db() -> None:
     global _client, _db
-    _client = AsyncIOMotorClient(settings.MONGODB_URI)
+    _client = AsyncIOMotorClient(
+        settings.MONGODB_URI,
+        serverSelectionTimeoutMS=settings.MONGODB_SERVER_SELECTION_TIMEOUT_MS,
+        connectTimeoutMS=settings.MONGODB_CONNECT_TIMEOUT_MS,
+        socketTimeoutMS=settings.MONGODB_SOCKET_TIMEOUT_MS,
+    )
     _db = _client[settings.MONGODB_DB_NAME]
     await _client.admin.command("ping")
     await _create_indexes()

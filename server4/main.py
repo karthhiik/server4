@@ -1,4 +1,4 @@
-﻿"""
+"""
 Server 4 â€” Presentation/Pitch Deck Backend
 FastAPI service for AI-powered presentation generation, content creation, and export.
 
@@ -10,9 +10,13 @@ Architecture:
 - Azure Blob Storage for exports
 """
 
+import asyncio
 from contextlib import asynccontextmanager
+from pathlib import Path
+from urllib.parse import urlparse
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import connect_db, close_db
@@ -32,6 +36,8 @@ from app.routers import (
     pitch_decks,
     intelligence_enrichment,
     slides_new,
+    verification,
+    onboarding,
 )
 from app.api.routes import content_generation as content_generation_v2
 from app.api.routes import renderer_routes as renderer_v2
@@ -48,6 +54,7 @@ from app.routers.generation_v4 import router as generation_v4_router
 # /projects/{id}/company-icon endpoints on the v4 router above.
 from app.routers import generation_v4_interactive  # noqa: F401
 from app.routers.v4_editor import router as v4_editor_router
+from app.routers.v4_dev_fixture import router as v4_dev_fixture_router
 from app.routers.ai_edit import router as ai_edit_router
 from app.routers.v4_images import router as v4_images_router
 from app.api.websockets import content_progress as content_progress_ws
@@ -57,37 +64,102 @@ from app.utils.rate_limiter import close_redis
 
 import structlog
 
-structlog.configure(
-    processors=[
-        structlog.stdlib.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.JSONRenderer(),
-    ],
-)
+if hasattr(structlog, "configure"):
+    structlog.configure(
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.stdlib.add_log_level,
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.JSONRenderer(),
+        ],
+    )
 
 logger = structlog.get_logger()
+
+_db_startup_task: asyncio.Task | None = None
+_weak_secret_warning_task: asyncio.Task | None = None
+
+
+def _production_security_failures() -> list[str]:
+    if str(settings.ENVIRONMENT or "").lower() != "production":
+        return []
+
+    failures: list[str] = []
+    secret = str(settings.SECRET_KEY or "")
+    if secret == "local-dev-secret-change-me":
+        failures.append("SECRET_KEY_DEFAULT")
+        failures.append("JWT_SECRET_DEFAULT")
+    if len(secret) < 32:
+        failures.append("SECRET_KEY_TOO_SHORT")
+
+    parsed_mongo = urlparse(str(settings.MONGODB_URI or ""))
+    if (parsed_mongo.hostname or "").lower() in {"localhost", "127.0.0.1", "::1"}:
+        failures.append("MONGODB_LOCALHOST")
+
+    if bool(settings.ENABLE_DEV_ROUTES):
+        failures.append("ENABLE_DEV_ROUTES_TRUE")
+
+    return sorted(set(failures))
+
+
+async def _log_weak_secret_override_periodically(failures: list[str]) -> None:
+    while True:
+        logger.warning("production_weak_secret_override", failures=failures)
+        await asyncio.sleep(60)
+
+
+async def _initialize_database() -> None:
+    try:
+        await connect_db()
+        logger.info("mongodb_connected", db=settings.MONGODB_DB_NAME)
+        await _seed_builtin_data()
+        logger.info("database_ready", db=settings.MONGODB_DB_NAME)
+    except Exception as e:
+        logger.error("database_startup_failed", error=str(e))
+        if settings.REQUIRE_DB_ON_STARTUP:
+            raise
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # â”€â”€ Startup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     logger.info("server_starting", port=settings.API_PORT, env=settings.ENVIRONMENT)
+    failures = _production_security_failures()
+    global _weak_secret_warning_task
+    if failures:
+        if bool(settings.BARISE_REQUIRE_STRONG_SECRETS):
+            logger.error("production_security_baseline_failed", failures=failures)
+            raise RuntimeError(
+                "Refusing to boot production Server4 with weak security settings: "
+                + ", ".join(failures)
+            )
+        logger.warning("production_weak_secret_override", failures=failures)
+        _weak_secret_warning_task = asyncio.create_task(
+            _log_weak_secret_override_periodically(failures)
+        )
 
-    # Connect to MongoDB
-    try:
-        await connect_db()
-        logger.info("mongodb_connected", db=settings.MONGODB_DB_NAME)
-    except Exception as e:
-        logger.error("mongodb_connection_failed", error=str(e))
-        raise
-
-    # Seed built-in themes and templates
-    await _seed_builtin_data()
+    global _db_startup_task
+    if settings.REQUIRE_DB_ON_STARTUP:
+        await _initialize_database()
+    else:
+        _db_startup_task = asyncio.create_task(_initialize_database())
 
     logger.info("server_ready", service="presentation-service", port=settings.API_PORT)
     yield
 
     # â”€â”€ Shutdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    if _db_startup_task and not _db_startup_task.done():
+        _db_startup_task.cancel()
+        try:
+            await _db_startup_task
+        except asyncio.CancelledError:
+            pass
+    if _weak_secret_warning_task and not _weak_secret_warning_task.done():
+        _weak_secret_warning_task.cancel()
+        try:
+            await _weak_secret_warning_task
+        except asyncio.CancelledError:
+            pass
     await close_db()
     await close_redis()
     logger.info("server_stopped")
@@ -131,9 +203,17 @@ app.include_router(content_progress_ws.router)
 app.include_router(v3_generation.router)
 app.include_router(generation_v4_router)
 app.include_router(v4_editor_router)
+app.include_router(v4_dev_fixture_router)
 app.include_router(v4_images_router)
+app.include_router(v4_images_router, prefix="/api/presentation")
 app.include_router(v3_progress_ws.router)
 app.include_router(v4_progress_ws.router)
+app.include_router(verification.router)
+app.include_router(onboarding.router)
+
+uploads_dir = Path(__file__).resolve().parent / "uploads"
+uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
 
 
 @app.get("/health")

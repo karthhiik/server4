@@ -122,7 +122,7 @@ def store_image(*, project_id: str, slide_id: str, image_bytes: bytes) -> str:
         )
         raise
 
-    url = f"{_public_base_url()}/api/v4/images/{project_id}/{safe_slide}.png"
+    url = f"/api/presentation/api/v4/images/{project_id}/{safe_slide}.png"
     logger.info(
         "local_image_stored",
         project_id=project_id,

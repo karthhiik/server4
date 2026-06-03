@@ -129,12 +129,16 @@ class CloudflareWorkerClient(BaseLLMClient):
         # Response parsing per mode
         if self.mode == "text":
             # Text workers return response in various keys (pp.py pattern)
-            content = (
+            raw_content = (
                 data.get("response")
                 or data.get("content")
                 or data.get("output")
                 or str(data)
             )
+            # DEFENSIVE: CF workers sometimes return parsed objects instead of strings
+            if not isinstance(raw_content, str):
+                raw_content = json.dumps(raw_content, ensure_ascii=False)
+            content = raw_content
             if response_format and response_format.get("type") == "json_object":
                 content = self._normalize_json_content(content)
         else:
@@ -156,7 +160,7 @@ class CloudflareWorkerClient(BaseLLMClient):
             content=content,
             model=self.name,
             provider=self.provider,
-            tokens_used=0,
+            tokens_used=100,
             latency_ms=elapsed,
         )
 

@@ -1,0 +1,98 @@
+{
+  "ok": true,
+  "page_count": 13,
+  "all_nonblank": true,
+  "snapshots": [
+    {
+      "slide": 0,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_01.png",
+      "mean_luma": 150.51,
+      "variance": 513.28,
+      "nonblank": true
+    },
+    {
+      "slide": 1,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_02.png",
+      "mean_luma": 12.07,
+      "variance": 664.04,
+      "nonblank": true
+    },
+    {
+      "slide": 2,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_03.png",
+      "mean_luma": 12.89,
+      "variance": 859.66,
+      "nonblank": true
+    },
+    {
+      "slide": 3,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_04.png",
+      "mean_luma": 154.61,
+      "variance": 882.43,
+      "nonblank": true
+    },
+    {
+      "slide": 4,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_05.png",
+      "mean_luma": 152.8,
+      "variance": 737.91,
+      "nonblank": true
+    },
+    {
+      "slide": 5,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_06.png",
+      "mean_luma": 11.98,
+      "variance": 638.94,
+      "nonblank": true
+    },
+    {
+      "slide": 6,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_07.png",
+      "mean_luma": 12.64,
+      "variance": 802.76,
+      "nonblank": true
+    },
+    {
+      "slide": 7,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_08.png",
+      "mean_luma": 12.67,
+      "variance": 808.96,
+      "nonblank": true
+    },
+    {
+      "slide": 8,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_09.png",
+      "mean_luma": 15.08,
+      "variance": 833.94,
+      "nonblank": true
+    },
+    {
+      "slide": 9,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_10.png",
+      "mean_luma": 12.83,
+      "variance": 844.56,
+      "nonblank": true
+    },
+    {
+      "slide": 10,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_11.png",
+      "mean_luma": 12.97,
+      "variance": 876.89,
+      "nonblank": true
+    },
+    {
+      "slide": 11,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_12.png",
+      "mean_luma": 12.5,
+      "variance": 772.16,
+      "nonblank": true
+    },
+    {
+      "slide": 12,
+      "path": "qa_outputs\\zero_trust_live_standard_pass16\\standard_snapshots\\slide_13.png",
+      "mean_luma": 12.11,
+      "variance": 673.86,
+      "nonblank": true
+    }
+  ]
+}

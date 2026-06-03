@@ -1,0 +1,2827 @@
+{
+  "version": "1.0.0",
+  "categories": [
+    {
+      "id": "pitch",
+      "name": "Pitch Deck",
+      "description": "Investor-facing presentations"
+    },
+    {
+      "id": "sales",
+      "name": "Sales Deck",
+      "description": "Product sales and proposals"
+    },
+    {
+      "id": "keynote",
+      "name": "Keynote",
+      "description": "Conference talks and keynotes"
+    },
+    {
+      "id": "report",
+      "name": "Report",
+      "description": "Data reports and analytics"
+    },
+    {
+      "id": "product",
+      "name": "Product",
+      "description": "Product launches and showcases"
+    },
+    {
+      "id": "training",
+      "name": "Training",
+      "description": "Educational and training content"
+    },
+    {
+      "id": "company",
+      "name": "Company",
+      "description": "Company overviews and about us"
+    },
+    {
+      "id": "technical",
+      "name": "Technical",
+      "description": "Technical deep-dives and architecture"
+    },
+    {
+      "id": "executive",
+      "name": "Executive",
+      "description": "Executive briefings and summaries"
+    },
+    {
+      "id": "trust",
+      "name": "Trust & Compliance",
+      "description": "Security, compliance, and trust decks"
+    }
+  ],
+  "templates": [
+    {
+      "id": "yc_pitch",
+      "name": "YC Pitch Deck",
+      "category": "pitch",
+      "description": "Classic 10-slide Y Combinator pitch structure. Problem, solution, market, traction, team, ask.",
+      "slide_count_range": [
+        8,
+        12
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "title",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "problem",
+            "kit_component": "ProblemSolution",
+            "required": true
+          },
+          {
+            "id": "solution",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "market",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "traction",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "team",
+            "kit_component": "TeamMemberStrip",
+            "required": true
+          },
+          {
+            "id": "ask",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "startup",
+        "minimal",
+        "enterprise"
+      ],
+      "tags": [
+        "investor",
+        "startup",
+        "classic",
+        "founder"
+      ],
+      "placeholder_rules": {
+        "title": {
+          "headline": "company_name",
+          "subheadline": "tagline"
+        },
+        "problem": {
+          "bullets": "pain_points",
+          "stat_blocks": "problem_stats"
+        },
+        "solution": {
+          "bullets": "value_props",
+          "stat_blocks": "impact_metrics"
+        },
+        "market": {
+          "stat_blocks": "tam_sam_som"
+        },
+        "traction": {
+          "stat_blocks": "growth_metrics"
+        },
+        "team": {
+          "members": "team_members"
+        },
+        "ask": {
+          "headline": "funding_ask",
+          "subheadline": "use_of_funds"
+        }
+      },
+      "thumbnail_theme": "midnight_navy",
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/yc_pitch_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Acme Corp",
+              "subheadline": "Revolutionizing Payment Infrastructure",
+              "eyebrow": "Series A · $12M Raise",
+              "variant": "gradient"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "MetricsDashboard",
+            "data": {
+              "headline": "Traction & Growth",
+              "stats": [
+                {
+                  "value": "$4.2M",
+                  "label": "Annual Recurring Revenue",
+                  "trend": "+127%"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users",
+                  "trend": "+340%"
+                },
+                {
+                  "value": "96%",
+                  "label": "Retention Rate"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                },
+                {
+                  "label": "Q1'26",
+                  "value": 120
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "modern_pitch",
+      "name": "Modern Pitch",
+      "category": "pitch",
+      "description": "Contemporary pitch with bold visuals, gradient accents, and dynamic layout flow.",
+      "slide_count_range": [
+        10,
+        15
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "cover",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "story",
+            "kit_component": "SplitContent",
+            "required": true
+          },
+          {
+            "id": "value",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "social",
+            "kit_component": "SocialProof",
+            "required": false
+          },
+          {
+            "id": "team",
+            "kit_component": "TestimonialCard",
+            "required": false
+          },
+          {
+            "id": "ask",
+            "kit_component": "CoverSlide",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "modern",
+        "gradient",
+        "creative",
+        "dark_mode"
+      ],
+      "tags": [
+        "investor",
+        "modern",
+        "bold",
+        "gradient"
+      ],
+      "thumbnail_theme": "charcoal_coral",
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/modern_pitch_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "The Future of Work",
+              "subheadline": "AI-powered collaboration for modern teams",
+              "eyebrow": "Product Overview",
+              "variant": "gradient"
+            }
+          },
+          {
+            "type": "stats",
+            "kit_component": "StatHighlight",
+            "data": {
+              "value": "10M+",
+              "label": "Documents created by teams worldwide",
+              "percentage": 87,
+              "sub_stats": [
+                {
+                  "value": "4.9★",
+                  "label": "App Store"
+                },
+                {
+                  "value": "150+",
+                  "label": "Countries"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "enterprise_sales",
+      "name": "Enterprise Sales",
+      "category": "sales",
+      "description": "Trust-building sales deck with case studies, ROI metrics, and security assurances.",
+      "slide_count_range": [
+        12,
+        20
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "title",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "challenge",
+            "kit_component": "ProblemSolution",
+            "required": true
+          },
+          {
+            "id": "solution",
+            "kit_component": "SplitContent",
+            "required": true
+          },
+          {
+            "id": "features",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "roi",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "case_study",
+            "kit_component": "QuoteHighlight",
+            "required": false
+          },
+          {
+            "id": "security",
+            "kit_component": "ValuePropGrid",
+            "required": false
+          },
+          {
+            "id": "pricing",
+            "kit_component": "PricingTable",
+            "required": true
+          },
+          {
+            "id": "next_steps",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "enterprise",
+        "saas",
+        "minimal",
+        "fintech"
+      ],
+      "tags": [
+        "sales",
+        "b2b",
+        "enterprise",
+        "roi"
+      ],
+      "thumbnail_theme": "pearl_white",
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/enterprise_sales_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Enterprise Solutions",
+              "subheadline": "Trusted by 500+ Fortune companies worldwide",
+              "eyebrow": "Sales Proposal",
+              "variant": "solid"
+            }
+          },
+          {
+            "type": "comparison",
+            "kit_component": "ComparisonTable",
+            "data": {
+              "headline": "Why enterprises choose us",
+              "columns": [
+                {
+                  "name": "Competitor",
+                  "features": [
+                    {
+                      "label": "SOC2 Certified",
+                      "value": "✗"
+                    },
+                    {
+                      "label": "99.99% SLA",
+                      "value": "✗"
+                    },
+                    {
+                      "label": "On-Prem Deploy",
+                      "value": "✗"
+                    },
+                    {
+                      "label": "24/7 Support",
+                      "value": "✓"
+                    }
+                  ]
+                },
+                {
+                  "name": "Our Platform",
+                  "highlight": true,
+                  "features": [
+                    {
+                      "label": "SOC2 Certified",
+                      "value": "✓"
+                    },
+                    {
+                      "label": "99.99% SLA",
+                      "value": "✓"
+                    },
+                    {
+                      "label": "On-Prem Deploy",
+                      "value": "✓"
+                    },
+                    {
+                      "label": "24/7 Support",
+                      "value": "✓"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product_launch",
+      "name": "Product Launch",
+      "category": "product",
+      "description": "Dramatic product reveal with demo screenshots, feature highlights, and launch metrics.",
+      "slide_count_range": [
+        8,
+        14
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "cover",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "story",
+            "kit_component": "QuoteHighlight",
+            "required": true
+          },
+          {
+            "id": "demo",
+            "kit_component": "AppMockup",
+            "required": true
+          },
+          {
+            "id": "features",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "comparison",
+            "kit_component": "BeforeAfter",
+            "required": false
+          },
+          {
+            "id": "pricing",
+            "kit_component": "PricingTable",
+            "required": true
+          },
+          {
+            "id": "social",
+            "kit_component": "SocialProof",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "modern",
+        "gradient",
+        "startup",
+        "creative"
+      ],
+      "tags": [
+        "product",
+        "launch",
+        "demo",
+        "features"
+      ],
+      "thumbnail_theme": "cyber_purple",
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/product_launch_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Introducing Nova",
+              "subheadline": "The design tool that thinks with you",
+              "eyebrow": "Product Launch · 2026",
+              "variant": "gradient"
+            }
+          },
+          {
+            "type": "timeline",
+            "kit_component": "Timeline",
+            "data": {
+              "headline": "Launch Roadmap",
+              "nodes": [
+                {
+                  "label": "Beta",
+                  "detail": "Private access",
+                  "active": true
+                },
+                {
+                  "label": "Launch",
+                  "detail": "Public release",
+                  "active": true
+                },
+                {
+                  "label": "Scale",
+                  "detail": "Enterprise tier"
+                },
+                {
+                  "label": "Platform",
+                  "detail": "API & plugins"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "saas_onboarding",
+      "name": "SaaS Onboarding",
+      "category": "product",
+      "description": "User onboarding walkthrough with step-by-step process flow and feature introduction.",
+      "slide_count_range": [
+        6,
+        10
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "welcome",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "steps",
+            "kit_component": "ProcessFlow",
+            "required": true
+          },
+          {
+            "id": "features",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "setup",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "support",
+            "kit_component": "TestimonialCard",
+            "required": false
+          }
+        ]
+      },
+      "compatible_themes": [
+        "saas",
+        "minimal",
+        "modern",
+        "edtech"
+      ],
+      "tags": [
+        "saas",
+        "onboarding",
+        "tutorial",
+        "user-guide"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/saas_onboarding_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "SaaS Onboarding",
+              "subheadline": "User onboarding walkthrough with step-by-step process flow and feature introduction",
+              "variant": "gradient",
+              "eyebrow": "Product"
+            }
+          },
+          {
+            "type": "timeline",
+            "kit_component": "ProcessFlow",
+            "data": {
+              "headline": "Implementation Roadmap",
+              "nodes": [
+                {
+                  "label": "Setup",
+                  "detail": "Configure",
+                  "active": true
+                },
+                {
+                  "label": "Integrate",
+                  "detail": "Connect",
+                  "active": true
+                },
+                {
+                  "label": "Launch",
+                  "detail": "Go live"
+                },
+                {
+                  "label": "Scale",
+                  "detail": "Expand"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "keynote_cinematic",
+      "name": "Cinematic Keynote",
+      "category": "keynote",
+      "description": "Apple-style keynote with dramatic reveals, minimal text, and bold imagery.",
+      "slide_count_range": [
+        10,
+        18
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "open",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "chapter",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "reveal",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "detail",
+            "kit_component": "SplitContent",
+            "required": true
+          },
+          {
+            "id": "stats",
+            "kit_component": "MetricsDashboard",
+            "required": false
+          },
+          {
+            "id": "demo",
+            "kit_component": "AppMockup",
+            "required": false
+          },
+          {
+            "id": "close",
+            "kit_component": "CoverSlide",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "modern",
+        "minimal",
+        "dark_mode",
+        "gradient"
+      ],
+      "tags": [
+        "keynote",
+        "cinematic",
+        "apple-style",
+        "conference"
+      ],
+      "thumbnail_theme": "titanium_dark",
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/keynote_cinematic_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "One More Thing.",
+              "subheadline": "The most advanced platform we've ever built",
+              "variant": "gradient"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "MetricsDashboard",
+            "data": {
+              "headline": "Performance, Redefined",
+              "stats": [
+                {
+                  "value": "18T",
+                  "label": "Operations per second"
+                },
+                {
+                  "value": "22hrs",
+                  "label": "All-day battery life"
+                },
+                {
+                  "value": "120Hz",
+                  "label": "ProMotion display"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Gen 1",
+                  "value": 30
+                },
+                {
+                  "label": "Gen 2",
+                  "value": 55
+                },
+                {
+                  "label": "Gen 3",
+                  "value": 78
+                },
+                {
+                  "label": "This",
+                  "value": 120
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "data_report",
+      "name": "Data Report",
+      "category": "report",
+      "description": "Analytics-heavy deck with charts, tables, and data-driven narratives.",
+      "slide_count_range": [
+        12,
+        25
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "summary",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "kpis",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "trends",
+            "kit_component": "SplitContent",
+            "required": true
+          },
+          {
+            "id": "breakdown",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "segments",
+            "kit_component": "BentoGrid",
+            "required": false
+          },
+          {
+            "id": "recommendations",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "enterprise",
+        "minimal",
+        "saas",
+        "fintech"
+      ],
+      "tags": [
+        "data",
+        "analytics",
+        "report",
+        "metrics"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/data_report_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Data Report",
+              "subheadline": "Analytics-heavy deck with charts, tables, and data-driven narratives",
+              "variant": "gradient",
+              "eyebrow": "Report"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "MetricsDashboard",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "company_overview",
+      "name": "Company Overview",
+      "category": "company",
+      "description": "Comprehensive company introduction with mission, values, team, and milestones.",
+      "slide_count_range": [
+        10,
+        16
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "hero",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "mission",
+            "kit_component": "QuoteHighlight",
+            "required": true
+          },
+          {
+            "id": "values",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "team",
+            "kit_component": "TeamMemberStrip",
+            "required": true
+          },
+          {
+            "id": "milestones",
+            "kit_component": "Roadmap",
+            "required": true
+          },
+          {
+            "id": "clients",
+            "kit_component": "LogoMarquee",
+            "required": false
+          },
+          {
+            "id": "contact",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "enterprise",
+        "creative",
+        "minimal",
+        "healthcare"
+      ],
+      "tags": [
+        "company",
+        "about",
+        "corporate",
+        "brand"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/company_overview_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Company Overview",
+              "subheadline": "Comprehensive company introduction with mission, values, team, and milestones",
+              "variant": "gradient",
+              "eyebrow": "Company"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "QuoteHighlight",
+            "data": {
+              "quote": "This platform transformed how we operate. The results speak for themselves.",
+              "author": "Jane Smith",
+              "role": "CTO, Example Corp"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "training_workshop",
+      "name": "Training Workshop",
+      "category": "training",
+      "description": "Educational deck with learning objectives, process flows, and interactive elements.",
+      "slide_count_range": [
+        8,
+        20
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "intro",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "objectives",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "content",
+            "kit_component": "SplitContent",
+            "required": true
+          },
+          {
+            "id": "process",
+            "kit_component": "ProcessFlow",
+            "required": true
+          },
+          {
+            "id": "exercise",
+            "kit_component": "BentoGrid",
+            "required": false
+          },
+          {
+            "id": "summary",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "edtech",
+        "minimal",
+        "creative",
+        "healthcare"
+      ],
+      "tags": [
+        "training",
+        "education",
+        "workshop",
+        "learning"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/training_workshop_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Training Workshop",
+              "subheadline": "Educational deck with learning objectives, process flows, and interactive elements",
+              "variant": "gradient",
+              "eyebrow": "Training"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "ValuePropGrid",
+            "data": {
+              "headline": "Why Choose Us",
+              "items": [
+                {
+                  "title": "Fast",
+                  "description": "Deploy in minutes"
+                },
+                {
+                  "title": "Secure",
+                  "description": "Enterprise-grade security"
+                },
+                {
+                  "title": "Scalable",
+                  "description": "Grows with your team"
+                },
+                {
+                  "title": "Intuitive",
+                  "description": "Zero training required"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "security_whitepaper",
+      "name": "Security Whitepaper",
+      "category": "report",
+      "description": "Technical security documentation with architecture diagrams and compliance tables.",
+      "slide_count_range": [
+        15,
+        30
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "title",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "threats",
+            "kit_component": "ProblemSolution",
+            "required": true
+          },
+          {
+            "id": "architecture",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "compliance",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "benchmarks",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "roadmap",
+            "kit_component": "Roadmap",
+            "required": false
+          }
+        ]
+      },
+      "compatible_themes": [
+        "cybersecurity",
+        "enterprise",
+        "dark_mode",
+        "ai_tech"
+      ],
+      "tags": [
+        "security",
+        "technical",
+        "compliance",
+        "whitepaper"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/security_whitepaper_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Security Whitepaper",
+              "subheadline": "Technical security documentation with architecture diagrams and compliance tables",
+              "variant": "gradient",
+              "eyebrow": "Report"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "ProblemSolution",
+            "data": {
+              "headline": "The Challenge",
+              "problems": [
+                "Fragmented tools and workflows",
+                "Slow manual processes",
+                "Lack of real-time visibility"
+              ],
+              "solution": "A unified platform that automates, integrates, and delivers insights."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "healthcare_clinical",
+      "name": "Clinical Overview",
+      "category": "report",
+      "description": "Medical and clinical presentation with patient data, trial results, and protocol flows.",
+      "slide_count_range": [
+        10,
+        18
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "title",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "patient",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "protocol",
+            "kit_component": "ProcessFlow",
+            "required": true
+          },
+          {
+            "id": "results",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "team",
+            "kit_component": "TeamMemberStrip",
+            "required": true
+          },
+          {
+            "id": "next",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "healthcare",
+        "enterprise",
+        "minimal"
+      ],
+      "tags": [
+        "healthcare",
+        "clinical",
+        "medical",
+        "biotech"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/healthcare_clinical_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Clinical Overview",
+              "subheadline": "Medical and clinical presentation with patient data, trial results, and protocol flows",
+              "variant": "gradient",
+              "eyebrow": "Report"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "MetricsDashboard",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fintech_investor",
+      "name": "Fintech Investor",
+      "category": "pitch",
+      "description": "Financial services pitch with regulatory context, market data, and growth projections.",
+      "slide_count_range": [
+        12,
+        18
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "cover",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "market",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "problem",
+            "kit_component": "ProblemSolution",
+            "required": true
+          },
+          {
+            "id": "solution",
+            "kit_component": "SplitContent",
+            "required": true
+          },
+          {
+            "id": "traction",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "regulation",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "financials",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "team",
+            "kit_component": "TeamMemberStrip",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "fintech",
+        "enterprise",
+        "luxury",
+        "minimal"
+      ],
+      "tags": [
+        "fintech",
+        "finance",
+        "investor",
+        "regulatory"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/fintech_investor_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Fintech Investor",
+              "subheadline": "Financial services pitch with regulatory context, market data, and growth projections",
+              "variant": "gradient",
+              "eyebrow": "Pitch"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "MetricsDashboard",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ai_demo_day",
+      "name": "AI Demo Day",
+      "category": "product",
+      "description": "AI/ML product demo with model architecture, benchmark results, and live demo placeholders.",
+      "slide_count_range": [
+        8,
+        14
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "hook",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "model",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "benchmarks",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "demo",
+            "kit_component": "AppMockup",
+            "required": true
+          },
+          {
+            "id": "architecture",
+            "kit_component": "SplitContent",
+            "required": false
+          },
+          {
+            "id": "impact",
+            "kit_component": "SocialProof",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "ai_tech",
+        "modern",
+        "dark_mode",
+        "gradient"
+      ],
+      "tags": [
+        "ai",
+        "ml",
+        "demo",
+        "tech"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/ai_demo_day_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "AI Demo Day",
+              "subheadline": "AI/ML product demo with model architecture, benchmark results, and live demo placeholders",
+              "variant": "gradient",
+              "eyebrow": "Product"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "BentoGrid",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "board_meeting",
+      "name": "Board Meeting",
+      "category": "report",
+      "description": "Executive summary for board members with KPIs, strategic initiatives, and financial health.",
+      "slide_count_range": [
+        10,
+        16
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "executive",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "kpis",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "initiatives",
+            "kit_component": "Roadmap",
+            "required": true
+          },
+          {
+            "id": "financials",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "risks",
+            "kit_component": "ProblemSolution",
+            "required": false
+          },
+          {
+            "id": "next_quarter",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "enterprise",
+        "minimal",
+        "luxury",
+        "fintech"
+      ],
+      "tags": [
+        "board",
+        "executive",
+        "kpi",
+        "strategy"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/board_meeting_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Board Meeting",
+              "subheadline": "Executive summary for board members with KPIs, strategic initiatives, and financial health",
+              "variant": "gradient",
+              "eyebrow": "Report"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "MetricsDashboard",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "deep_tech_architecture",
+      "name": "Deep Tech Architecture",
+      "category": "technical",
+      "description": "Technical deep-dive with system architecture, performance metrics, and implementation details.",
+      "slide_count_range": [
+        12,
+        20
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "overview",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "architecture",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "performance",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "implementation",
+            "kit_component": "ProcessFlow",
+            "required": true
+          },
+          {
+            "id": "code",
+            "kit_component": "SplitContent",
+            "required": false
+          },
+          {
+            "id": "benchmarks",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "roadmap",
+            "kit_component": "Roadmap",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "ai_tech",
+        "dark_mode",
+        "cybersecurity",
+        "minimal"
+      ],
+      "tags": [
+        "technical",
+        "architecture",
+        "performance",
+        "engineering"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/deep_tech_architecture_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Deep Tech Architecture",
+              "subheadline": "Technical deep-dive with system architecture, performance metrics, and implementation details",
+              "variant": "gradient",
+              "eyebrow": "Technical"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "BentoGrid",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "vc_pitch_deck",
+      "name": "VC Pitch Deck",
+      "category": "pitch",
+      "description": "High-energy investor pitch with traction metrics, market size, and compelling ask.",
+      "slide_count_range": [
+        10,
+        14
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "cover",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "problem",
+            "kit_component": "ProblemSolution",
+            "required": true
+          },
+          {
+            "id": "solution",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "market",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "traction",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "business_model",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "competition",
+            "kit_component": "SplitContent",
+            "required": false
+          },
+          {
+            "id": "team",
+            "kit_component": "TeamMemberStrip",
+            "required": true
+          },
+          {
+            "id": "ask",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "startup",
+        "modern",
+        "gradient",
+        "ai_tech"
+      ],
+      "tags": [
+        "investor",
+        "vc",
+        "pitch",
+        "traction"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/vc_pitch_deck_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "VC Pitch Deck",
+              "subheadline": "High-energy investor pitch with traction metrics, market size, and compelling ask",
+              "variant": "gradient",
+              "eyebrow": "Pitch"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "ProblemSolution",
+            "data": {
+              "headline": "The Challenge",
+              "problems": [
+                "Fragmented tools and workflows",
+                "Slow manual processes",
+                "Lack of real-time visibility"
+              ],
+              "solution": "A unified platform that automates, integrates, and delivers insights."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "executive_briefing",
+      "name": "Executive Briefing",
+      "category": "executive",
+      "description": "Concise executive summary with key metrics, ROI analysis, and strategic recommendations.",
+      "slide_count_range": [
+        6,
+        10
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "summary",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "kpis",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "roi",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "recommendations",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "next_steps",
+            "kit_component": "ProcessFlow",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "enterprise",
+        "minimal",
+        "fintech",
+        "luxury"
+      ],
+      "tags": [
+        "executive",
+        "briefing",
+        "roi",
+        "strategy"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/executive_briefing_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Executive Briefing",
+              "subheadline": "Concise executive summary with key metrics, ROI analysis, and strategic recommendations",
+              "variant": "gradient",
+              "eyebrow": "Executive"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "MetricsDashboard",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "trust_compliance",
+      "name": "Trust & Compliance",
+      "category": "trust",
+      "description": "Security and compliance deck with certifications, audit results, and trust signals.",
+      "slide_count_range": [
+        10,
+        16
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "overview",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "certifications",
+            "kit_component": "LogoMarquee",
+            "required": true
+          },
+          {
+            "id": "security",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "compliance",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "audit",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "controls",
+            "kit_component": "ProcessFlow",
+            "required": true
+          },
+          {
+            "id": "contact",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "enterprise",
+        "cybersecurity",
+        "minimal",
+        "healthcare"
+      ],
+      "tags": [
+        "security",
+        "compliance",
+        "trust",
+        "audit"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/trust_compliance_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Trust & Compliance",
+              "subheadline": "Security and compliance deck with certifications, audit results, and trust signals",
+              "variant": "gradient",
+              "eyebrow": "Trust"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "LogoMarquee",
+            "data": {
+              "headline": "Trusted By",
+              "logos": [
+                "Acme",
+                "Globex",
+                "Initech",
+                "Massive",
+                "Umbrella"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cinematic_story",
+      "name": "Cinematic Story",
+      "category": "keynote",
+      "description": "Emotional, narrative-driven presentation with dramatic reveals and minimal text.",
+      "slide_count_range": [
+        8,
+        14
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "opening",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "chapter1",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "reveal1",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "chapter2",
+            "kit_component": "SplitContent",
+            "required": true
+          },
+          {
+            "id": "reveal2",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "closing",
+            "kit_component": "CoverSlide",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "modern",
+        "dark_mode",
+        "gradient",
+        "creative"
+      ],
+      "tags": [
+        "keynote",
+        "story",
+        "cinematic",
+        "emotional"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/cinematic_story_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Cinematic Story",
+              "subheadline": "Emotional, narrative-driven presentation with dramatic reveals and minimal text",
+              "variant": "gradient",
+              "eyebrow": "Keynote"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "BentoGrid",
+            "data": {
+              "headline": "Core Capabilities",
+              "items": [
+                {
+                  "title": "Integrate",
+                  "description": "Connect your stack"
+                },
+                {
+                  "title": "Automate",
+                  "description": "Streamline workflows"
+                },
+                {
+                  "title": "Analyze",
+                  "description": "Real-time insights"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "seed_round_pitch",
+      "name": "Seed Round Pitch",
+      "category": "pitch",
+      "description": "Early-stage pitch focused on vision, team, and initial traction for seed funding.",
+      "slide_count_range": [
+        8,
+        12
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "vision",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "problem",
+            "kit_component": "ProblemSolution",
+            "required": true
+          },
+          {
+            "id": "solution",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "market",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "team",
+            "kit_component": "TeamMemberStrip",
+            "required": true
+          },
+          {
+            "id": "traction",
+            "kit_component": "MetricsDashboard",
+            "required": false
+          },
+          {
+            "id": "ask",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "startup",
+        "modern",
+        "gradient",
+        "creative"
+      ],
+      "tags": [
+        "seed",
+        "early-stage",
+        "vision",
+        "team"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/seed_round_pitch_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Seed Round Pitch",
+              "subheadline": "Early-stage pitch focused on vision, team, and initial traction for seed funding",
+              "variant": "gradient",
+              "eyebrow": "Pitch"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "ProblemSolution",
+            "data": {
+              "headline": "The Challenge",
+              "problems": [
+                "Fragmented tools and workflows",
+                "Slow manual processes",
+                "Lack of real-time visibility"
+              ],
+              "solution": "A unified platform that automates, integrates, and delivers insights."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "series_a_pitch",
+      "name": "Series A Pitch",
+      "category": "pitch",
+      "description": "Growth-stage pitch with strong traction metrics, unit economics, and scale strategy.",
+      "slide_count_range": [
+        12,
+        16
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "cover",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "traction",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "unit_economics",
+            "kit_component": "DataTable",
+            "required": true
+          },
+          {
+            "id": "market",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "growth_strategy",
+            "kit_component": "Roadmap",
+            "required": true
+          },
+          {
+            "id": "team",
+            "kit_component": "TeamMemberStrip",
+            "required": true
+          },
+          {
+            "id": "ask",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "startup",
+        "enterprise",
+        "fintech",
+        "ai_tech"
+      ],
+      "tags": [
+        "series-a",
+        "growth",
+        "traction",
+        "unit-economics"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/series_a_pitch_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Series A Pitch",
+              "subheadline": "Growth-stage pitch with strong traction metrics, unit economics, and scale strategy",
+              "variant": "gradient",
+              "eyebrow": "Pitch"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "MetricsDashboard",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "partnership_proposal",
+      "name": "Partnership Proposal",
+      "category": "sales",
+      "description": "B2B partnership proposal with mutual benefits, integration plans, and success metrics.",
+      "slide_count_range": [
+        8,
+        12
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "opportunity",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "mutual_benefit",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "integration",
+            "kit_component": "ProcessFlow",
+            "required": true
+          },
+          {
+            "id": "case_studies",
+            "kit_component": "TestimonialCard",
+            "required": false
+          },
+          {
+            "id": "timeline",
+            "kit_component": "Roadmap",
+            "required": true
+          },
+          {
+            "id": "next_steps",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "enterprise",
+        "saas",
+        "minimal",
+        "modern"
+      ],
+      "tags": [
+        "partnership",
+        "b2b",
+        "integration",
+        "collaboration"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/partnership_proposal_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Partnership Proposal",
+              "subheadline": "B2B partnership proposal with mutual benefits, integration plans, and success metrics",
+              "variant": "gradient",
+              "eyebrow": "Sales"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "ValuePropGrid",
+            "data": {
+              "headline": "Why Choose Us",
+              "items": [
+                {
+                  "title": "Fast",
+                  "description": "Deploy in minutes"
+                },
+                {
+                  "title": "Secure",
+                  "description": "Enterprise-grade security"
+                },
+                {
+                  "title": "Scalable",
+                  "description": "Grows with your team"
+                },
+                {
+                  "title": "Intuitive",
+                  "description": "Zero training required"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "customer_success",
+      "name": "Customer Success Story",
+      "category": "sales",
+      "description": "Customer case study with problem-solution narrative, results, and testimonials.",
+      "slide_count_range": [
+        8,
+        12
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "customer",
+            "kit_component": "TitleHero",
+            "required": true
+          },
+          {
+            "id": "challenge",
+            "kit_component": "ProblemSolution",
+            "required": true
+          },
+          {
+            "id": "solution",
+            "kit_component": "SplitContent",
+            "required": true
+          },
+          {
+            "id": "implementation",
+            "kit_component": "ProcessFlow",
+            "required": true
+          },
+          {
+            "id": "results",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "testimonial",
+            "kit_component": "QuoteHighlight",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "enterprise",
+        "saas",
+        "minimal",
+        "healthcare"
+      ],
+      "tags": [
+        "case-study",
+        "customer",
+        "testimonial",
+        "success"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/customer_success_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Customer Success Story",
+              "subheadline": "Customer case study with problem-solution narrative, results, and testimonials",
+              "variant": "gradient",
+              "eyebrow": "Sales"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "ProblemSolution",
+            "data": {
+              "headline": "The Challenge",
+              "problems": [
+                "Fragmented tools and workflows",
+                "Slow manual processes",
+                "Lack of real-time visibility"
+              ],
+              "solution": "A unified platform that automates, integrates, and delivers insights."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "startup_story",
+      "name": "Startup Story",
+      "category": "company",
+      "description": "Narrative-driven founder journey with milestones, pivots, and vision.",
+      "slide_count_range": [
+        8,
+        14
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "origin",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "story",
+            "kit_component": "QuoteHighlight",
+            "required": true
+          },
+          {
+            "id": "pivot",
+            "kit_component": "SplitContent",
+            "required": false
+          },
+          {
+            "id": "growth",
+            "kit_component": "Roadmap",
+            "required": true
+          },
+          {
+            "id": "team",
+            "kit_component": "TestimonialCard",
+            "required": true
+          },
+          {
+            "id": "vision",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "startup",
+        "creative",
+        "warm_narrative",
+        "modern"
+      ],
+      "tags": [
+        "story",
+        "founder",
+        "journey",
+        "narrative"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/startup_story_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Startup Story",
+              "subheadline": "Narrative-driven founder journey with milestones, pivots, and vision",
+              "variant": "gradient",
+              "eyebrow": "Company"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "QuoteHighlight",
+            "data": {
+              "quote": "This platform transformed how we operate. The results speak for themselves.",
+              "author": "Jane Smith",
+              "role": "CTO, Example Corp"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "minimal_agency",
+      "name": "Agency Portfolio",
+      "category": "company",
+      "description": "Creative agency showcase with case studies, process, and team culture.",
+      "slide_count_range": [
+        10,
+        18
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "reel",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "work",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "process",
+            "kit_component": "ProcessFlow",
+            "required": true
+          },
+          {
+            "id": "clients",
+            "kit_component": "LogoMarquee",
+            "required": true
+          },
+          {
+            "id": "team",
+            "kit_component": "TeamMemberStrip",
+            "required": false
+          },
+          {
+            "id": "contact",
+            "kit_component": "TitleHero",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "creative",
+        "minimal",
+        "modern",
+        "gradient"
+      ],
+      "tags": [
+        "agency",
+        "portfolio",
+        "creative",
+        "showcase"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/minimal_agency_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Agency Portfolio",
+              "subheadline": "Creative agency showcase with case studies, process, and team culture",
+              "variant": "gradient",
+              "eyebrow": "Company"
+            }
+          },
+          {
+            "type": "metrics",
+            "kit_component": "BentoGrid",
+            "data": {
+              "headline": "Key Metrics",
+              "stats": [
+                {
+                  "value": "3.5x",
+                  "label": "ROI Improvement"
+                },
+                {
+                  "value": "94%",
+                  "label": "Customer Satisfaction"
+                },
+                {
+                  "value": "12K",
+                  "label": "Active Users"
+                }
+              ],
+              "bars": [
+                {
+                  "label": "Q1",
+                  "value": 35
+                },
+                {
+                  "label": "Q2",
+                  "value": 52
+                },
+                {
+                  "label": "Q3",
+                  "value": 78
+                },
+                {
+                  "label": "Q4",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "edtech_course",
+      "name": "Course Overview",
+      "category": "training",
+      "description": "Educational course outline with modules, learning outcomes, and instructor profiles.",
+      "slide_count_range": [
+        8,
+        14
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "course",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "outcomes",
+            "kit_component": "ValuePropGrid",
+            "required": true
+          },
+          {
+            "id": "modules",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "instructor",
+            "kit_component": "TestimonialCard",
+            "required": true
+          },
+          {
+            "id": "enrollment",
+            "kit_component": "PricingTable",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "edtech",
+        "minimal",
+        "creative",
+        "healthcare"
+      ],
+      "tags": [
+        "education",
+        "course",
+        "learning",
+        "modules"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/edtech_course_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Course Overview",
+              "subheadline": "Educational course outline with modules, learning outcomes, and instructor profiles",
+              "variant": "gradient",
+              "eyebrow": "Training"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "ValuePropGrid",
+            "data": {
+              "headline": "Why Choose Us",
+              "items": [
+                {
+                  "title": "Fast",
+                  "description": "Deploy in minutes"
+                },
+                {
+                  "title": "Secure",
+                  "description": "Enterprise-grade security"
+                },
+                {
+                  "title": "Scalable",
+                  "description": "Grows with your team"
+                },
+                {
+                  "title": "Intuitive",
+                  "description": "Zero training required"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "gamer_esports",
+      "name": "Esports Presentation",
+      "category": "product",
+      "description": "Gaming and esports deck with team rosters, tournament brackets, and highlight reels.",
+      "slide_count_range": [
+        8,
+        14
+      ],
+      "layout_structure": {
+        "zones": [
+          {
+            "id": "intro",
+            "kit_component": "CoverSlide",
+            "required": true
+          },
+          {
+            "id": "roster",
+            "kit_component": "TeamMemberStrip",
+            "required": true
+          },
+          {
+            "id": "stats",
+            "kit_component": "MetricsDashboard",
+            "required": true
+          },
+          {
+            "id": "highlights",
+            "kit_component": "BentoGrid",
+            "required": true
+          },
+          {
+            "id": "sponsors",
+            "kit_component": "LogoMarquee",
+            "required": true
+          }
+        ]
+      },
+      "compatible_themes": [
+        "gaming",
+        "dark_mode",
+        "gradient",
+        "modern"
+      ],
+      "tags": [
+        "gaming",
+        "esports",
+        "team",
+        "tournament"
+      ],
+      "preview_content": {
+        "background_image": "/api/v4/images/template-previews/gamer_esports_preview.jpg",
+        "slides": [
+          {
+            "type": "cover",
+            "kit_component": "TitleHero",
+            "data": {
+              "headline": "Esports Presentation",
+              "subheadline": "Gaming and esports deck with team rosters, tournament brackets, and highlight reels",
+              "variant": "gradient",
+              "eyebrow": "Product"
+            }
+          },
+          {
+            "type": "feature",
+            "kit_component": "TeamMemberStrip",
+            "data": {
+              "headline": "Meet the Team",
+              "members": [
+                {
+                  "name": "Alex Chen",
+                  "role": "CEO",
+                  "initials": "AC"
+                },
+                {
+                  "name": "Sarah Lee",
+                  "role": "CTO",
+                  "initials": "SL"
+                },
+                {
+                  "name": "Mike Ross",
+                  "role": "Design Lead",
+                  "initials": "MR"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

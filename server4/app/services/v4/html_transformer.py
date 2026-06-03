@@ -58,8 +58,10 @@ import json
 import math
 from typing import Any, Iterable, Mapping, Sequence
 
+from app.services.v4.motion_spec import build_seek_runtime_js
 
-_SCHEMA_VERSION = 1
+
+_SCHEMA_VERSION = 2
 """
 Bumped when the *shape* of the html_css_js artifact changes (e.g. new
 top-level keys). Independent from `fingerprint`, which is a content
@@ -569,12 +571,14 @@ def _render_comparison_block(
         feature = _esc(r.get("feature", ""))
         zebra_cls = " odd" if ri % 2 else ""
         parts.append(f'<div class="cmp-cell cmp-row{zebra_cls} cmp-feat">{feature}</div>')
-        values = r.get("values") or {}
-        if not isinstance(values, Mapping):
-            values = {}
-        for c in columns:
+        raw_values = r.get("values") or {}
+        values_by_name = raw_values if isinstance(raw_values, Mapping) else {}
+        values_list = raw_values if isinstance(raw_values, list) else []
+        for ci, c in enumerate(columns):
             highlight = bool(c.get("highlight"))
-            v = values.get(c.get("name"))
+            v = values_by_name.get(c.get("name")) if values_by_name else None
+            if v is None and ci < len(values_list):
+                v = values_list[ci]
             cls = (
                 "cmp-cell cmp-row" + zebra_cls
                 + (" highlight" if highlight else "")
@@ -851,6 +855,87 @@ def _render_quote_block(
 .qb-wrap[data-variant="accent"] .qb-role {
   color: color-mix(in oklch, var(--color-background) 75%, transparent);
 }
+"""
+    return body, extra_css, ""
+
+
+def _render_data_table(
+    props: Mapping[str, Any], ir: Mapping[str, Any]
+) -> tuple[str, str, str]:
+    headline = _esc(props.get("headline", ""))
+    subheadline = _esc(props.get("subheadline", ""))
+    headers = [str(h) for h in (props.get("headers") or []) if str(h).strip()]
+    raw_rows = props.get("rows") or []
+    rows: list[list[str]] = []
+    if isinstance(raw_rows, list):
+        for row in raw_rows:
+            if not isinstance(row, (list, tuple)):
+                continue
+            cells = [str(cell) for cell in row]
+            if any(cell.strip() for cell in cells):
+                rows.append(cells)
+
+    head_cls = _classes("dt-head", _ir_class_for_target(ir, "headline"))
+    table_cls = _classes("dt-table", _ir_class_for_target(ir, "table"))
+    parts: list[str] = ['<div class="dt-wrap">']
+    if headline or subheadline:
+        parts.append(f'<header class="{head_cls}">')
+        if headline:
+            parts.append(f'<h1>{headline}</h1>')
+        if subheadline:
+            parts.append(f'<p>{subheadline}</p>')
+        parts.append("</header>")
+    if headers and rows:
+        parts.append(f'<table class="{table_cls}"><thead><tr>')
+        for header in headers:
+            parts.append(f"<th>{_esc(header)}</th>")
+        parts.append("</tr></thead><tbody>")
+        for ri, row in enumerate(rows[:7]):
+            anim_cls = _ir_classes_for_target_group(ir, "rows", ri)
+            parts.append(f'<tr class="{_esc(anim_cls)}">')
+            for ci, _header in enumerate(headers):
+                cell = row[ci] if ci < len(row) else ""
+                parts.append(f"<td>{_esc(cell)}</td>")
+            parts.append("</tr>")
+        parts.append("</tbody></table>")
+    parts.append("</div>")
+    body = "".join(parts)
+
+    extra_css = """
+.dt-wrap {
+  display: grid; grid-template-rows: auto 1fr; gap: calc(var(--space-gap) * 1.3);
+  width: 100%; height: 100%;
+}
+.dt-head { max-width: 78ch; }
+.dt-head h1 {
+  margin: 0; font-family: var(--font-heading); font-size: var(--type-h1);
+  line-height: 1.08; color: var(--color-text-primary);
+}
+.dt-head p {
+  margin: calc(var(--space-gap) * .55) 0 0; font-size: var(--type-body);
+  color: var(--color-text-secondary); line-height: 1.4;
+}
+.dt-table {
+  width: 100%; border-collapse: collapse; align-self: stretch;
+  background: color-mix(in oklch, var(--color-surface) 82%, var(--color-primary) 6%);
+  border: 1px solid color-mix(in oklch, var(--color-border) 64%, transparent);
+}
+.dt-table th, .dt-table td {
+  padding: clamp(10px, 1.2vw, 18px); text-align: left; vertical-align: top;
+  border-bottom: 1px solid color-mix(in oklch, var(--color-border) 50%, transparent);
+}
+.dt-table th {
+  color: var(--color-primary); font-family: var(--font-heading);
+  font-size: var(--type-caption); letter-spacing: .08em; text-transform: uppercase;
+}
+.dt-table td {
+  color: var(--color-text-secondary); font-size: clamp(14px, 1.2vw, 20px);
+  line-height: 1.38;
+}
+.dt-table td:first-child {
+  color: var(--color-text-primary); font-weight: 700;
+}
+.dt-table tbody tr:last-child td { border-bottom: 0; }
 """
     return body, extra_css, ""
 
@@ -1390,6 +1475,11 @@ _KIT_RENDERERS = {
     "TimelineBlock":   _render_timeline_block,
     "ComparisonBlock": _render_comparison_block,
     "FeatureGrid":     _render_feature_grid,
+    "GlassCard":       _render_feature_grid,
+    "BentoGrid":       _render_feature_grid,
+    "ValuePropGrid":   _render_feature_grid,
+    "ProblemSolution": _render_feature_grid,
+    "DataTable":       _render_data_table,
     "TeamGrid":        _render_team_grid,
     "QuoteBlock":      _render_quote_block,
     "FullBleedImage":  _render_full_bleed_image,
@@ -1405,6 +1495,8 @@ def build_html_css_js(
     design_system: Mapping[str, Any] | None = None,
     slide_id: str | None = None,
     deck_title: str | None = None,
+    motion_spec: Mapping[str, Any] | None = None,
+    layer_metadata: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Build the `html_css_js` artifact.
@@ -1428,16 +1520,25 @@ def build_html_css_js(
         Used as the section's `id` attribute. Optional.
     deck_title : str | None
         Threaded into `head_meta.title` for standalone export.
+    motion_spec : Mapping[str, Any] | None
+        Product-level motion contract: intent preset, deterministic seek
+        protocol, poster frame, and QA snapshot plan.
+    layer_metadata : Mapping[str, Any] | None
+        Deterministic layer metadata derived from the engine artifact. Stored
+        on the artifact for screenshot/video/export tooling.
 
     Returns
     -------
     dict
-        `{html, css, js, head_meta, fingerprint, schema_version}`
+        `{html, css, js, head_meta, fingerprint, schema_version,
+        motion_spec, layer_metadata}`
     """
     kit_name = (kit or "").strip()
     renderer = _KIT_RENDERERS.get(kit_name)
     ir = animation_ir if isinstance(animation_ir, Mapping) else {}
     ds = design_system if isinstance(design_system, Mapping) else {}
+    motion = motion_spec if isinstance(motion_spec, Mapping) else {}
+    layers = layer_metadata if isinstance(layer_metadata, Mapping) else {}
 
     if renderer is None:
         # Honest empty render — never invent a different kit. The
@@ -1459,8 +1560,18 @@ def build_html_css_js(
 
     section_id_attr = _attr("id", slide_id)
     variant_attr = _attr("data-variant", variant)
+    poster = motion.get("poster_frame") if isinstance(motion.get("poster_frame"), Mapping) else {}
+    motion_attrs = "".join([
+        _attr("data-motion-protocol", motion.get("protocol")),
+        _attr("data-motion-preset", motion.get("preset")),
+        _attr("data-motion-style-preset", motion.get("style_preset")),
+        _attr("data-motion-duration-ms", motion.get("duration_ms")),
+        _attr("data-poster-frame-ms", poster.get("time_ms")),
+        _attr("data-layer-count", layers.get("layer_count")),
+        _attr("data-seek-protocol", motion.get("protocol")),
+    ])
     section_open = (
-        f'<section class="slide" data-kit="{_esc(kit_name)}"{variant_attr}{section_id_attr}>'
+        f'<section class="slide" data-kit="{_esc(kit_name)}"{variant_attr}{section_id_attr}{motion_attrs}>'
     )
     html = section_open + body_html + "</section>"
 
@@ -1471,9 +1582,11 @@ def build_html_css_js(
     css_parts = [ds_css, _BASE_CSS, kit_extra_css, ir_css]
     css = "\n".join(p.strip("\n") for p in css_parts if p)
 
-    # JS: only add the chart bootstrap stub if the kit is ChartBlock and
-    # we haven't already pre-rendered SVG (we always do, so JS is empty).
-    js = kit_extra_js or ""
+    # JS: add the deterministic seek bridge when a MotionSpec is present.
+    # Screenshot/PDF/video workers call window.__bariseSlide.seek(...) to
+    # sample a stable animation time instead of racing the browser paint loop.
+    motion_js = build_seek_runtime_js(motion, ir) if motion else ""
+    js = "\n".join(part for part in (motion_js, kit_extra_js or "") if part.strip())
 
     # Title falls back to the kit-rendered headline so PPTX export and
     # screenshot pipeline pick up something meaningful in the page title.
@@ -1495,6 +1608,16 @@ def build_html_css_js(
 
     fingerprint_input = (html + "\n" + css + "\n" + js).encode("utf-8")
     fingerprint = hashlib.sha1(fingerprint_input).hexdigest()[:12]
+    motion_payload = (
+        json.loads(json.dumps(motion, ensure_ascii=False))
+        if motion
+        else None
+    )
+    layer_payload = (
+        json.loads(json.dumps(layers, ensure_ascii=False))
+        if layers
+        else None
+    )
 
     return {
         "html": html,
@@ -1503,6 +1626,8 @@ def build_html_css_js(
         "head_meta": head_meta,
         "fingerprint": fingerprint,
         "schema_version": _SCHEMA_VERSION,
+        "motion_spec": motion_payload,
+        "layer_metadata": layer_payload,
     }
 
 

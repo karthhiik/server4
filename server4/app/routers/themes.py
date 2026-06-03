@@ -3,7 +3,7 @@
 from datetime import datetime
 
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.database import get_db
@@ -24,24 +24,35 @@ def _doc_to_response(doc: dict) -> ThemeResponse:
     )
 
 
+def _theme_v2_payload(t) -> dict:
+    """Serialize a v2 theme with the full frontend ThemeItem contract."""
+    return {
+        "id": t.id,
+        "name": t.name,
+        "categories": t.categories,
+        "primary": t.primary,
+        "accent": t.accent,
+        "background": t.background,
+        "heading_font": t.heading_font,
+        "body_font": t.body_font,
+        "density": t.density,
+        "motion_style": t.motion_style,
+        "layout_posture": t.layout_posture,
+        "description": t.description,
+        "tags": t.tags,
+        "is_dark": t.is_dark,
+    }
+
+
 @router.get("")
 async def list_themes(
+    limit: int = Query(default=200, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
     db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
 ) -> list[ThemeResponse]:
-    cursor = db.themes.find({}).sort("name", 1)
-    docs = await cursor.to_list(50)
+    cursor = db.themes.find({}).sort("name", 1).skip(offset)
+    docs = await cursor.to_list(limit)
     return [_doc_to_response(d) for d in docs]
-
-
-@router.get("/{theme_id}")
-async def get_theme(
-    theme_id: str,
-    db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
-) -> ThemeResponse:
-    doc = await db.themes.find_one({"_id": theme_id})
-    if not doc:
-        raise HTTPException(status_code=404, detail="Theme not found")
-    return _doc_to_response(doc)
 
 
 @router.post("/generate")
@@ -144,3 +155,210 @@ async def apply_theme_to_presentation(
         {"$set": {"theme_id": theme_id, "updated_at": datetime.utcnow()}},
     )
     return {"status": "theme_applied", "theme_id": theme_id}
+
+
+@router.get("/visual-directions")
+async def list_visual_directions() -> list[dict]:
+    """Return curated visual directions for the design picker.
+    Each direction is a fully-specified design system — one click
+    gives the user a complete, coherent visual identity.
+    Inspired by Open Design's deterministic direction approach."""
+    from app.services.v4.design_resolver import get_visual_directions_list
+    return get_visual_directions_list()
+
+
+@router.get("/v2/visual-directions")
+async def list_visual_directions_v2() -> list[dict]:
+    """Compatibility endpoint for the v2 frontend theme picker."""
+    return await list_visual_directions()
+
+
+@router.post("/visual-directions/{direction_id}/resolve")
+async def resolve_direction_tokens(direction_id: str) -> dict:
+    """Resolve a visual direction into complete design tokens.
+    Frontend uses this to preview what the direction will look like
+    before committing to it."""
+    from app.services.v4.design_resolver import resolve_from_direction, VISUAL_DIRECTIONS
+    if direction_id not in VISUAL_DIRECTIONS:
+        raise HTTPException(status_code=404, detail=f"Direction '{direction_id}' not found")
+    tokens = resolve_from_direction(direction_id)
+    return tokens.to_dict()
+
+
+@router.get("/{theme_id}")
+async def get_theme(
+    theme_id: str,
+    db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
+) -> ThemeResponse:
+    doc = await db.themes.find_one({"_id": theme_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Theme not found")
+    return _doc_to_response(doc)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# V2 THEME ENGINE ENDPOINTS (100+ themes)
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/v2/categories")
+async def list_theme_categories() -> list[dict]:
+    """Return all theme categories with metadata."""
+    from app.services.v4.theme_engine import ThemeEngine
+    engine = ThemeEngine()
+    return engine.get_categories()
+
+
+@router.get("/v2/themes")
+async def list_themes_v2(
+    category: str | None = None,
+    dark_only: bool = False,
+    light_only: bool = False,
+) -> list[dict]:
+    """Return all themes, optionally filtered by category or mode."""
+    from app.services.v4.theme_engine import ThemeEngine
+    engine = ThemeEngine()
+
+    if category:
+        themes = engine.get_by_category(category)
+    else:
+        themes = engine.get_all()
+
+    result = []
+    for t in themes:
+        if dark_only and not t.is_dark:
+            continue
+        if light_only and t.is_dark:
+            continue
+        result.append(_theme_v2_payload(t))
+    return result
+
+
+@router.get("/v2/themes/{theme_id}")
+async def get_theme_v2(theme_id: str) -> dict:
+    """Return a single theme by ID."""
+    from app.services.v4.theme_engine import ThemeEngine
+    engine = ThemeEngine()
+    t = engine.get(theme_id)
+    if not t:
+        raise HTTPException(status_code=404, detail=f"Theme '{theme_id}' not found")
+    return _theme_v2_payload(t)
+
+
+@router.get("/v2/search")
+async def search_themes_v2(q: str) -> list[dict]:
+    """Search themes by name, description, tag, or category."""
+    from app.services.v4.theme_engine import ThemeEngine
+    engine = ThemeEngine()
+    themes = engine.search(q)
+    return [_theme_v2_payload(t) for t in themes]
+
+
+@router.get("/v2/recommend")
+async def recommend_themes_v2(
+    purpose: str | None = None,
+    industry: str | None = None,
+) -> list[dict]:
+    """Recommend themes based on deck purpose and industry."""
+    from app.services.v4.theme_engine import ThemeEngine
+    engine = ThemeEngine()
+    themes = engine.recommend(purpose=purpose, industry=industry)
+    return [_theme_v2_payload(t) for t in themes]
+
+
+@router.post("/v2/{theme_id}/resolve")
+async def resolve_theme_tokens(theme_id: str) -> dict:
+    """Resolve a theme into complete design tokens for preview."""
+    from app.services.v4.theme_engine import ThemeEngine
+    engine = ThemeEngine()
+    tokens_dict = engine.resolve_theme(theme_id)
+    if not tokens_dict:
+        raise HTTPException(status_code=404, detail=f"Theme '{theme_id}' not found")
+    from app.services.v4.design_resolver import _resolve_from_theme_dict
+    tokens = _resolve_from_theme_dict(tokens_dict)
+    return tokens.to_dict()
+
+
+# ═══════════════════════════════════════════════════════════════════
+# TEMPLATE ENGINE ENDPOINTS
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/v2/templates/categories")
+async def list_template_categories() -> list[dict]:
+    """Return all template categories with metadata."""
+    from app.services.v4.template_engine import TemplateEngine
+    engine = TemplateEngine()
+    return engine.get_categories()
+
+
+@router.get("/v2/templates")
+async def list_templates_v2(
+    category: str | None = None,
+) -> list[dict]:
+    """Return all templates, optionally filtered by category."""
+    from app.services.v4.template_engine import TemplateEngine
+    engine = TemplateEngine()
+
+    if category:
+        templates = engine.get_by_category(category)
+    else:
+        templates = engine.get_all()
+
+    return [t.to_dict() for t in templates]
+
+
+@router.get("/v2/templates/search")
+async def search_templates_v2(q: str) -> list[dict]:
+    """Search templates by name, description, tag, or category."""
+    from app.services.v4.template_engine import TemplateEngine
+    engine = TemplateEngine()
+    templates = engine.search(q)
+    return [t.to_dict() for t in templates]
+
+
+@router.get("/v2/templates/recommend")
+async def recommend_templates_v2(
+    purpose: str | None = None,
+    industry: str | None = None,
+    slide_count: int | None = None,
+) -> list[dict]:
+    """Recommend templates based on purpose, industry, and slide count."""
+    from app.services.v4.template_engine import TemplateEngine
+    engine = TemplateEngine()
+    templates = engine.recommend(purpose=purpose, industry=industry, slide_count=slide_count)
+    return [t.to_dict() for t in templates]
+
+
+@router.get("/v2/templates/{template_id}")
+async def get_template_v2(template_id: str) -> dict:
+    """Return a single template by ID."""
+    from app.services.v4.template_engine import TemplateEngine
+    engine = TemplateEngine()
+    t = engine.get(template_id)
+    if not t:
+        raise HTTPException(status_code=404, detail=f"Template '{template_id}' not found")
+    return t.to_dict()
+
+
+@router.get("/v2/templates/{template_id}/validate")
+async def validate_template_slide_count(template_id: str, slide_count: int) -> dict:
+    """Validate that a slide count is compatible with a template."""
+    from app.services.v4.template_engine import TemplateEngine
+    engine = TemplateEngine()
+    valid, message = engine.validate_slide_count(template_id, slide_count)
+    return {"valid": valid, "message": message}
+
+
+@router.get("/v2/visual-systems")
+async def list_visual_systems() -> list[dict]:
+    """Return curated visual systems pairing templates with token sets.
+
+    A visual system is a deck personality the user can pick instead of a
+    single template — e.g. "YC Canon" pairs the YC application,
+    demo-day, partner-meeting, and classic templates with
+    minimal_dark + swiss_editorial directions for a coherent
+    typography + palette feel across the whole deck. Backed by
+    ``barise_templates_v29.json::_visual_systems``.
+    """
+    from app.services.v4.template_engine import TemplateEngine
+    engine = TemplateEngine()
+    return engine.get_visual_systems()

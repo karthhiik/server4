@@ -67,6 +67,8 @@ import structlog
 from app.config import LOCALHOST_CORS_ORIGINS, settings
 from app.services.v4.engine_transformer import build_engine
 from app.services.v4.html_transformer import build_html_css_js
+from app.services.v4.motion_spec import build_layer_metadata, build_motion_spec, build_render_qa_plan
+from app.services.v4.slide_intelligence import build_slide_intelligence_spec
 from app.services.v4.quality_scorer import score_slide
 from app.services.v4.reveal_legacy_transformer import build_reveal_legacy
 
@@ -111,7 +113,7 @@ _LIST_REQUIRED_KEYS: dict[str, set[str]] = {
 }
 
 _IMAGE_FIELD_NAMES = {"imageUrl", "logoUrl", "photoUrl", "image_url", "logo_url", "photo_url"}
-_APPROVED_IMAGE_PATH_PREFIXES = ("/api/v4/images/", "/uploads/team_photos/", "/uploads/slide_images/")
+_APPROVED_IMAGE_PATH_PREFIXES = ("/api/v4/images/", "/api/presentation/api/v4/images/", "/uploads/team_photos/", "/uploads/slide_images/")
 _OPTIONAL_CLEAR_LEAVES = {
     "subheadline", "eyebrow", "footer", "source", "caption", "role", "bio",
     "delta", "tagline", "description", "imageIntent", "image_intent",
@@ -162,6 +164,7 @@ def _parse_path(path: str) -> list[str | int]:
     list indexing works. Rejects empty segments."""
     if not isinstance(path, str) or not path.strip():
         raise SliceEditError("path is required", path=path or "", code="empty_path")
+    path = _normalize_props_path(path.strip())
     parts = path.split(".")
     out: list[str | int] = []
     for seg in parts:
@@ -174,6 +177,26 @@ def _parse_path(path: str) -> list[str | int]:
         else:
             out.append(seg)
     return out
+
+
+def _normalize_props_path(path: str) -> str:
+    """Accept public aliases while still editing inside props_json.
+
+    The documented editor API paths are relative to
+    `artifacts.kit_jsx.props_json` (for example, `headline`). Some older
+    clients and QA harnesses sent either `props_json.headline` or the full
+    compiled-artifact path. Treat those as aliases instead of forcing users
+    through a 422 for an otherwise safe local edit.
+    """
+    aliases = (
+        "artifacts.kit_jsx.props_json.",
+        "kit_jsx.props_json.",
+        "props_json.",
+    )
+    for prefix in aliases:
+        if path.startswith(prefix):
+            return path[len(prefix):]
+    return path
 
 
 def _resolve_existing(root: Any, path: Sequence[str | int]) -> Any:
@@ -628,7 +651,7 @@ def _apply_one_op(kit: str, root: dict[str, Any], raw_op: Mapping[str, Any]) -> 
             f"unsupported op {op_kind!r}",
             code="unsupported_op",
         )
-    path_str = str(raw_op.get("path") or "")
+    path_str = _normalize_props_path(str(raw_op.get("path") or "").strip())
     path = _parse_path(path_str)
     if op_kind == "replace":
         return _apply_replace(root, raw_op, path, path_str)
@@ -671,14 +694,6 @@ def _rebuild_artifacts(*, slide: dict, kit: str, props: dict) -> None:
     # Legacy mirror — current sandbox runtime path still reads this.
     slide["jsx_source"] = new_jsx
 
-    artifacts["html_css_js"] = build_html_css_js(
-        kit=kit,
-        props=props,
-        animation_ir=animation_ir,
-        design_system=None,
-        slide_id=slide_id,
-        deck_title=None,
-    )
     artifacts["engine"] = build_engine(
         kit=kit,
         props=props,
@@ -686,6 +701,57 @@ def _rebuild_artifacts(*, slide: dict, kit: str, props: dict) -> None:
         design_system=None,
         slide_id=slide_id,
     )
+    layer_metadata = build_layer_metadata(
+        slide_id=slide_id or "slide-000",
+        kit=kit,
+        engine_artifact=artifacts["engine"],
+        animation_ir=animation_ir,
+    )
+    motion_spec = slide.get("motion_spec")
+    if not isinstance(motion_spec, dict):
+        motion_spec = build_motion_spec(
+            intent=str(slide.get("intent") or props.get("intent") or ""),
+            layout=str(slide.get("layout") or ""),
+            kit=kit,
+            animation_plan=slide.get("animation_plan") or {},
+            animation_ir=animation_ir,
+            layer_metadata=layer_metadata,
+        )
+    slide["motion_spec"] = motion_spec
+    slide["html_layer_metadata"] = layer_metadata
+    slide["render_qa"] = build_render_qa_plan(
+        motion_spec=motion_spec,
+        layer_metadata=layer_metadata,
+    )
+    slide["poster_frame"] = motion_spec.get("poster_frame")
+    interaction_spec = build_slide_intelligence_spec(
+        slide_id=slide_id or "slide-000",
+        slide_index=int(slide.get("slide_index") or 0),
+        intent=str(slide.get("intent") or props.get("intent") or ""),
+        layout=str(slide.get("layout") or ""),
+        kit=kit,
+        props=props,
+        layer_metadata=layer_metadata,
+        motion_spec=motion_spec,
+        design_tokens=slide.get("design_tokens") if isinstance(slide.get("design_tokens"), Mapping) else None,
+        template_id=str(slide.get("template_id") or "") or None,
+    )
+    slide["interaction_spec"] = interaction_spec
+    artifacts["kit_jsx"]["motion_spec"] = motion_spec
+    artifacts["kit_jsx"]["layer_metadata"] = layer_metadata
+    artifacts["kit_jsx"]["interaction_spec"] = interaction_spec
+    artifacts["html_css_js"] = build_html_css_js(
+        kit=kit,
+        props=props,
+        animation_ir=animation_ir,
+        design_system=None,
+        slide_id=slide_id,
+        deck_title=None,
+        motion_spec=motion_spec,
+        layer_metadata=layer_metadata,
+    )
+    if isinstance(artifacts["html_css_js"], dict):
+        artifacts["html_css_js"]["interaction_spec"] = interaction_spec
     artifacts["reveal_legacy"] = build_reveal_legacy(
         kit=kit,
         props=props,

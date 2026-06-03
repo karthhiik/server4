@@ -32,6 +32,7 @@ import structlog
 from app.config import settings
 from app.services.image_pipeline.azure_flux_client import AzureFluxClient
 from app.services.image_pipeline.nvidia_sd3_client import NvidiaSD3Client
+from app.services.image_pipeline.huggingface_client import HuggingFaceClient
 from app.services.image_pipeline.prompt_builder import (
     AdvancedPromptBuilder,
     ImageIntent,
@@ -50,6 +51,7 @@ class ImageModelTier(str, Enum):
     CF_PHOENIX = "cf-phoenix"
     CF_LUCID = "cf-lucid"
     POLLINATIONS = "pollinations"
+    HUGGINGFACE = "huggingface"  # NEW: HuggingFace free tier fallback
     GRADIENT_SVG = "gradient-svg"
 
 
@@ -131,6 +133,7 @@ class ImagePipelineRouter:
         # Providers (lazy-initialized)
         self._azure_flux: Optional[AzureFluxClient] = None
         self._nvidia_sd3: Optional[NvidiaSD3Client] = None
+        self._huggingface: Optional[HuggingFaceClient] = None
 
         # Health tracking
         self._status: dict[ImageModelTier, ImageProviderStatus] = {
@@ -142,6 +145,7 @@ class ImagePipelineRouter:
         self._prompt_builder = AdvancedPromptBuilder()
 
         # Default tier ordering
+        # HuggingFace added as fallback for free tier (May 2026)
         # Pollinations removed from the production chain (Apr 2026)
         # because the free-tier endpoint stamps a visible watermark
         # on its outputs which then bleeds through into TitleHero /
@@ -152,6 +156,7 @@ class ImagePipelineRouter:
             ImageModelTier.NVIDIA_SD3,
             ImageModelTier.CF_PHOENIX,
             ImageModelTier.CF_LUCID,
+            ImageModelTier.HUGGINGFACE,  # NEW: Free tier fallback
             ImageModelTier.GRADIENT_SVG,
         ]
 
@@ -166,6 +171,11 @@ class ImagePipelineRouter:
         if self._nvidia_sd3 is None:
             self._nvidia_sd3 = NvidiaSD3Client()
         return self._nvidia_sd3
+
+    def _get_huggingface(self) -> HuggingFaceClient:
+        if self._huggingface is None:
+            self._huggingface = HuggingFaceClient()
+        return self._huggingface
 
     # ── Main generation method ───────────────────────────────────
 
@@ -290,6 +300,8 @@ class ImagePipelineRouter:
             return await self._gen_cf_lucid(ctx)
         elif tier == ImageModelTier.POLLINATIONS:
             return await self._gen_pollinations(ctx)
+        elif tier == ImageModelTier.HUGGINGFACE:
+            return await self._gen_huggingface(ctx)
         elif tier == ImageModelTier.GRADIENT_SVG:
             return await self._gen_gradient_svg(ctx)
 
@@ -379,6 +391,26 @@ class ImagePipelineRouter:
             content_type="image/jpeg",
             prompt_used=prompt,
             tier=ImageModelTier.CF_LUCID,
+        )
+
+    async def _gen_huggingface(self, ctx: PromptContext) -> ImageGenerationResult:
+        """Generate via HuggingFace Inference API (free tier fallback)."""
+        client = self._get_huggingface()
+        prompt = self._prompt_builder.build_prompt(ctx, provider="huggingface")
+
+        result = await client.generate_with_retry(prompt)
+
+        if not result:
+            raise ConnectionError("HuggingFace generation failed")
+
+        return ImageGenerationResult(
+            image_bytes=result.image_bytes,
+            provider="huggingface",
+            model=result.model,
+            latency_ms=result.latency_ms,
+            content_type=result.content_type,
+            prompt_used=prompt,
+            tier=ImageModelTier.HUGGINGFACE,
         )
 
     async def _gen_pollinations(self, ctx: PromptContext) -> ImageGenerationResult:
@@ -487,10 +519,26 @@ class ImagePipelineRouter:
         preferred: Optional[ImageModelTier],
         skip: set[ImageModelTier],
     ) -> list[ImageModelTier]:
-        """Build the provider chain, respecting preferences and skips."""
-        if not settings.ALLOW_POLLINATIONS_IMAGES:
-            skip = set(skip)
-            skip.add(ImageModelTier.POLLINATIONS)
+        """Build the provider chain, respecting preferences and skips.
+
+        Pollinations is always skipped at chain-build time regardless of
+        ``ALLOW_POLLINATIONS_IMAGES``. The free Pollinations endpoint stamps
+        a visible watermark that bleeds through TitleHero / FullBleedImage
+        scrims, so it must never reach a slide. The legacy env flag and
+        ``_gen_pollinations`` method are retained only for backward
+        compatibility with existing tests and explicit tier requests on the
+        legacy ``/api/images/generate`` endpoint, which already raises 400
+        when Pollinations is selected with the flag off.
+        """
+        skip = set(skip)
+        skip.add(ImageModelTier.POLLINATIONS)
+        if settings.ALLOW_POLLINATIONS_IMAGES:
+            # Operators occasionally re-enable the flag in dev configs; warn
+            # so the silent skip is observable in logs.
+            logger.warning(
+                "pollinations_flag_ignored_in_chain",
+                reason="watermarked_provider_banned_in_production",
+            )
         if preferred and preferred not in skip:
             # Put preferred first, then rest
             chain = [preferred]

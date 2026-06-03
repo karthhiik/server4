@@ -1,0 +1,994 @@
+{
+  "version": "2.0.0",
+  "categories": [
+    {"id": "pitch", "name": "Pitch Deck", "description": "Investor-facing presentations"},
+    {"id": "sales", "name": "Sales Deck", "description": "Product sales and proposals"},
+    {"id": "product", "name": "Product", "description": "Product launches and showcases"},
+    {"id": "keynote", "name": "Keynote", "description": "Conference talks and keynotes"},
+    {"id": "data", "name": "Data & Report", "description": "Analytics and data storytelling"},
+    {"id": "company", "name": "Company", "description": "Corporate overviews and culture"},
+    {"id": "creative", "name": "Creative", "description": "Portfolio and creative agency"},
+    {"id": "education", "name": "Education", "description": "Training and learning content"}
+  ],
+  "templates": [
+    {
+      "id": "yc_classic",
+      "name": "YC Classic",
+      "category": "pitch",
+      "description": "The iconic 10-slide Y Combinator structure. Problem, solution, market, traction, team, ask. Clean and proven.",
+      "slide_count_range": [8, 12],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "CoverSlide", "required": true},
+        {"id": "problem", "kit_component": "ProblemSolution", "required": true},
+        {"id": "solution", "kit_component": "ValuePropGrid", "required": true},
+        {"id": "market", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "traction", "kit_component": "StatHero", "required": true},
+        {"id": "team", "kit_component": "TeamGrid", "required": true},
+        {"id": "ask", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["minimal", "startup", "enterprise", "light_professional"],
+      "tags": ["investor", "startup", "classic", "yc", "founder"],
+      "min_slides": 8,
+      "max_slides": 12,
+      "thumbnail_theme": "light_professional",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CoverSlide", "data": {"eyebrow": "SEED ROUND", "headline": "PaySync", "subheadline": "Real-time payroll for remote teams"}},
+          {"type": "feature", "kit_component": "ProblemSolution", "data": {"headline": "The Problem", "items": [
+            {"title": "78%", "description": "of remote teams face payroll delays", "span": "1", "accent": true},
+            {"title": "3 Days", "description": "average delay in cross-border payments", "span": "1"},
+            {"title": "$2.1B", "description": "lost annually to FX fees", "span": "1"}
+          ]}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Traction", "stats": [
+            {"value": "$4.2M", "label": "ARR", "trend": "+340% YoY"},
+            {"value": "2,400", "label": "Teams", "trend": "+180%"},
+            {"value": "98.7%", "label": "Uptime", "trend": ""}
+          ], "bars": [
+            {"label": "Q1", "value": 12}, {"label": "Q2", "value": 28}, {"label": "Q3", "value": 45}, {"label": "Q4", "value": 78}
+          ]}},
+          {"type": "closing", "kit_component": "TitleHero", "data": {"eyebrow": "THE ASK", "headline": "$2M Seed", "subheadline": "To scale from 2,400 to 10,000 teams"}}
+        ]
+      }
+    },
+    {
+      "id": "modern_bold",
+      "name": "Modern Bold",
+      "category": "pitch",
+      "description": "Contemporary pitch with oversized typography, gradient accents, and asymmetric layout flow. Designed for confident founders.",
+      "slide_count_range": [10, 15],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "DuotoneHero", "required": true},
+        {"id": "story", "kit_component": "SplitOverlap", "required": true},
+        {"id": "value", "kit_component": "BentoGrid", "required": true},
+        {"id": "social", "kit_component": "SocialProof", "required": false},
+        {"id": "ask", "kit_component": "DuotoneHero", "required": true}
+      ]},
+      "compatible_themes": ["modern", "gradient", "creative", "bold_contrast"],
+      "tags": ["investor", "modern", "bold", "gradient", "confident"],
+      "min_slides": 10,
+      "max_slides": 15,
+      "thumbnail_theme": "bold_contrast",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "DuotoneHero", "data": {"eyebrow": "SERIES A", "headline": "Nova AI", "subheadline": "The operating system for creative teams"}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Why Nova", "items": [
+            {"title": "10x", "description": "faster creative workflows", "span": "2", "accent": true},
+            {"title": "AI-Powered", "description": "intelligent asset management", "span": "1"},
+            {"title": "Real-time", "description": "collaboration across time zones", "span": "1"}
+          ]}},
+          {"type": "stats", "kit_component": "StatHighlight", "data": {"value": "$12M", "label": "Annual savings for enterprise clients", "percentage": 87, "sub_stats": [
+            {"value": "3.2x", "label": "ROI"}, {"value": "94%", "label": "Adoption"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "cinematic_dark",
+      "name": "Cinematic Dark",
+      "category": "pitch",
+      "description": "Apple-style dramatic reveals with minimal text, bold imagery, and cinematic pacing. Dark mode by default.",
+      "slide_count_range": [10, 18],
+      "layout_structure": {"zones": [
+        {"id": "open", "kit_component": "CinematicHero", "required": true},
+        {"id": "chapter", "kit_component": "TitleHero", "required": true},
+        {"id": "reveal", "kit_component": "CinematicHero", "required": true},
+        {"id": "detail", "kit_component": "SplitContent", "required": true},
+        {"id": "close", "kit_component": "CinematicHero", "required": true}
+      ]},
+      "compatible_themes": ["minimal_dark", "modern", "dark_mode", "gradient"],
+      "tags": ["investor", "cinematic", "apple-style", "dramatic", "dark"],
+      "min_slides": 10,
+      "max_slides": 18,
+      "thumbnail_theme": "minimal_dark",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CinematicHero", "data": {"eyebrow": "VISION", "headline": "The Future of Work", "subheadline": "is spatial, intelligent, and human"}},
+          {"type": "feature", "kit_component": "SplitContent", "data": {"headline": "Immersive Collaboration", "subheadline": "Step inside your ideas", "body": "Spatial computing transforms how teams brainstorm, prototype, and present. No more flat screens."}},
+          {"type": "closing", "kit_component": "CinematicHero", "data": {"eyebrow": "INVEST", "headline": "$5M Series A", "subheadline": "Join the spatial revolution"}}
+        ]
+      }
+    },
+    {
+      "id": "editorial_split",
+      "name": "Editorial Split",
+      "category": "pitch",
+      "description": "Magazine-style editorial layouts with asymmetric splits, serif typography, and high-contrast imagery. Premium feel.",
+      "slide_count_range": [10, 14],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "EditorialImage", "required": true},
+        {"id": "narrative", "kit_component": "SplitOverlap", "required": true},
+        {"id": "value", "kit_component": "ValuePropGrid", "required": true},
+        {"id": "team", "kit_component": "TeamGrid", "required": true},
+        {"id": "ask", "kit_component": "EditorialImage", "required": true}
+      ]},
+      "compatible_themes": ["swiss_editorial", "creative", "minimal", "warm_narrative"],
+      "tags": ["investor", "editorial", "magazine", "premium", "serif"],
+      "min_slides": 10,
+      "max_slides": 14,
+      "thumbnail_theme": "swiss_editorial",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "EditorialImage", "data": {"eyebrow": "PRE-SEED", "headline": "Artisan Coffee", "subheadline": "Direct trade, roasted fresh, delivered to your door"}},
+          {"type": "feature", "kit_component": "SplitOverlap", "data": {"headline": "From Farm to Cup", "subheadline": "We partner directly with 40+ farms across Ethiopia, Colombia, and Vietnam.", "body": "Every bean is traceable. Every roast is small-batch. Every delivery is carbon-neutral."}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Growth", "stats": [
+            {"value": "18K", "label": "Subscribers", "trend": "+240%"},
+            {"value": "$2.1M", "label": "Revenue", "trend": "+380%"},
+            {"value": "4.9", "label": "Rating", "trend": ""}
+          ], "bars": [
+            {"label": "Jan", "value": 15}, {"label": "Feb", "value": 32}, {"label": "Mar", "value": 58}, {"label": "Apr", "value": 92}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "metrics_first",
+      "name": "Metrics First",
+      "category": "pitch",
+      "description": "Data-driven investor pitch where numbers tell the story. Hero metrics, animated charts, and bold stat cards.",
+      "slide_count_range": [8, 12],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "StatHero", "required": true},
+        {"id": "problem", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "market", "kit_component": "StatHighlight", "required": true},
+        {"id": "traction", "kit_component": "AnimatedChartBlock", "required": true},
+        {"id": "ask", "kit_component": "StatHero", "required": true}
+      ]},
+      "compatible_themes": ["enterprise", "fintech", "saas", "light_professional"],
+      "tags": ["investor", "data", "metrics", "analytics", "numbers"],
+      "min_slides": 8,
+      "max_slides": 12,
+      "thumbnail_theme": "light_professional",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "StatHero", "data": {"value": "$47B", "label": "The future of fintech infrastructure", "percentage": 73}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Market Opportunity", "stats": [
+            {"value": "$47B", "label": "TAM", "trend": ""},
+            {"value": "$8.2B", "label": "SAM", "trend": ""},
+            {"value": "$420M", "label": "SOM", "trend": ""}
+          ], "bars": [
+            {"label": "2022", "value": 12}, {"label": "2023", "value": 28}, {"label": "2024", "value": 58}, {"label": "2025", "value": 92}
+          ]}},
+          {"type": "stats", "kit_component": "StatHighlight", "data": {"value": "340%", "label": "YoY revenue growth", "percentage": 92, "sub_stats": [
+            {"value": "$8.4M", "label": "ARR"}, {"value": "150+", "label": "Enterprise clients"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "story_arc",
+      "name": "Story Arc",
+      "category": "pitch",
+      "description": "Narrative storytelling pitch that takes investors on a journey. Hero quotes, timeline reveals, and emotional hooks.",
+      "slide_count_range": [10, 16],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "QuoteHighlight", "required": true},
+        {"id": "origin", "kit_component": "TimelineBlock", "required": true},
+        {"id": "problem", "kit_component": "ProblemSolution", "required": true},
+        {"id": "solution", "kit_component": "SplitContent", "required": true},
+        {"id": "vision", "kit_component": "QuoteHighlight", "required": true}
+      ]},
+      "compatible_themes": ["warm_narrative", "creative", "minimal", "startup"],
+      "tags": ["investor", "storytelling", "narrative", "emotional", "journey"],
+      "min_slides": 10,
+      "max_slides": 16,
+      "thumbnail_theme": "warm_narrative",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "QuoteHighlight", "data": {"headline": "\"Healthcare should be a right, not a privilege.\"", "subheadline": "— Dr. Sarah Chen, Founder"}},
+          {"type": "timeline", "kit_component": "TimelineBlock", "data": {"headline": "Our Journey", "nodes": [
+            {"label": "2019", "detail": "Idea born in a clinic", "active": false},
+            {"label": "2021", "detail": "First 1,000 patients", "active": true},
+            {"label": "2023", "detail": "Series A closed", "active": true},
+            {"label": "2025", "detail": "1M patients served", "active": true}
+          ]}},
+          {"type": "feature", "kit_component": "SplitContent", "data": {"headline": "The Solution", "subheadline": "AI-powered diagnostics for underserved communities", "body": "Our platform connects remote clinics with world-class specialists through asynchronous AI screening."}}
+        ]
+      }
+    },
+    {
+      "id": "enterprise_trust",
+      "name": "Enterprise Trust",
+      "category": "sales",
+      "description": "Trust-building sales deck with case studies, ROI metrics, and security assurances.",
+      "slide_count_range": [12, 20],
+      "layout_structure": {"zones": [
+        {"id": "title", "kit_component": "TitleHero", "required": true},
+        {"id": "challenge", "kit_component": "ProblemSolution", "required": true},
+        {"id": "solution", "kit_component": "SplitContent", "required": true},
+        {"id": "features", "kit_component": "BentoGrid", "required": true},
+        {"id": "roi", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "pricing", "kit_component": "PricingTable", "required": true},
+        {"id": "next_steps", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["enterprise", "saas", "minimal", "fintech", "light_professional"],
+      "tags": ["sales", "b2b", "enterprise", "roi", "trust"],
+      "min_slides": 12,
+      "max_slides": 20,
+      "thumbnail_theme": "enterprise",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "TitleHero", "data": {"eyebrow": "PROPOSAL", "headline": "SecureCloud Enterprise", "subheadline": "Zero-trust security for the modern workforce"}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Platform Capabilities", "items": [
+            {"title": "Zero Trust", "description": "Never trust, always verify", "span": "1", "accent": true},
+            {"title": "SSO", "description": "Single sign-on everywhere", "span": "1"},
+            {"title": "Compliance", "description": "SOC2, GDPR, HIPAA ready", "span": "1"}
+          ]}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Customer ROI", "stats": [
+            {"value": "$2.4M", "label": "Saved annually", "trend": ""},
+            {"value": "99.99%", "label": "Uptime SLA", "trend": ""},
+            {"value": "-73%", "label": "Security incidents", "trend": ""}
+          ], "bars": [
+            {"label": "Before", "value": 100}, {"label": "After", "value": 27}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "saas_product",
+      "name": "SaaS Product",
+      "category": "sales",
+      "description": "Product-focused sales deck with screenshot mockups, feature grids, and interactive-feeling layouts.",
+      "slide_count_range": [10, 16],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "CoverSlide", "required": true},
+        {"id": "demo", "kit_component": "AppMockup", "required": true},
+        {"id": "features", "kit_component": "FeatureGrid", "required": true},
+        {"id": "social", "kit_component": "SocialProof", "required": true},
+        {"id": "pricing", "kit_component": "PricingTable", "required": true}
+      ]},
+      "compatible_themes": ["saas", "modern", "startup", "gradient", "creative"],
+      "tags": ["sales", "saas", "product", "demo", "features"],
+      "min_slides": 10,
+      "max_slides": 16,
+      "thumbnail_theme": "modern",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CoverSlide", "data": {"eyebrow": "PRODUCT OVERVIEW", "headline": "FlowCRM", "subheadline": "The CRM that sells itself"}},
+          {"type": "feature", "kit_component": "AppMockup", "data": {"headline": "Pipeline View", "subheadline": "Drag-and-drop deal management with AI predictions"}},
+          {"type": "feature", "kit_component": "FeatureGrid", "data": {"headline": "Key Features", "items": [
+            {"title": "AI Scoring", "description": "Predict which deals will close", "span": "1"},
+            {"title": "Automation", "description": "Workflows that run 24/7", "span": "1"},
+            {"title": "Analytics", "description": "Real-time revenue insights", "span": "1"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "roi_calculator",
+      "name": "ROI Calculator",
+      "category": "sales",
+      "description": "Metrics-heavy sales deck with before/after comparisons, savings calculators, and data visualization.",
+      "slide_count_range": [10, 18],
+      "layout_structure": {"zones": [
+        {"id": "title", "kit_component": "StatHero", "required": true},
+        {"id": "before", "kit_component": "BeforeAfter", "required": true},
+        {"id": "savings", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "comparison", "kit_component": "ComparisonBlock", "required": true},
+        {"id": "cta", "kit_component": "StatHero", "required": true}
+      ]},
+      "compatible_themes": ["enterprise", "fintech", "saas", "light_professional"],
+      "tags": ["sales", "roi", "calculator", "metrics", "b2b"],
+      "min_slides": 10,
+      "max_slides": 18,
+      "thumbnail_theme": "fintech",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "StatHero", "data": {"value": "$1.2M", "label": "Average annual savings", "percentage": 68}},
+          {"type": "feature", "kit_component": "BeforeAfter", "data": {"headline": "The Transformation", "before": "Manual invoicing: 40 hrs/week", "after": "Automated: 2 hrs/week", "stat": "95% time reduction"}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Cost Breakdown", "stats": [
+            {"value": "$480K", "label": "Labor savings", "trend": ""},
+            {"value": "$320K", "label": "Error reduction", "trend": ""},
+            {"value": "$400K", "label": "Efficiency gains", "trend": ""}
+          ], "bars": [
+            {"label": "Year 1", "value": 60}, {"label": "Year 2", "value": 85}, {"label": "Year 3", "value": 100}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "visual_demo",
+      "name": "Visual Demo",
+      "category": "sales",
+      "description": "Screenshot and mockup-heavy sales deck. Product screenshots, device frames, and visual storytelling dominate.",
+      "slide_count_range": [8, 14],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "FullBleedImage", "required": true},
+        {"id": "demo1", "kit_component": "AppMockup", "required": true},
+        {"id": "demo2", "kit_component": "BeforeAfter", "required": true},
+        {"id": "social", "kit_component": "SocialProof", "required": true},
+        {"id": "cta", "kit_component": "FullBleedImage", "required": true}
+      ]},
+      "compatible_themes": ["modern", "creative", "gradient", "startup"],
+      "tags": ["sales", "demo", "visual", "screenshots", "product"],
+      "min_slides": 8,
+      "max_slides": 14,
+      "thumbnail_theme": "gradient",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "FullBleedImage", "data": {"headline": "DesignPro", "subheadline": "See it to believe it"}},
+          {"type": "feature", "kit_component": "AppMockup", "data": {"headline": "Canvas Mode", "subheadline": "Infinite canvas with real-time collaboration"}},
+          {"type": "feature", "kit_component": "BeforeAfter", "data": {"headline": "Before & After", "before": "Static mockups", "after": "Living prototypes", "stat": "10x faster iteration"}}
+        ]
+      }
+    },
+    {
+      "id": "dramatic_reveal",
+      "name": "Dramatic Reveal",
+      "category": "product",
+      "description": "Cinematic product launch with countdown-style reveals, bold typography, and theatrical pacing.",
+      "slide_count_range": [8, 14],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "CinematicHero", "required": true},
+        {"id": "teaser", "kit_component": "TitleHero", "required": true},
+        {"id": "reveal", "kit_component": "CinematicHero", "required": true},
+        {"id": "features", "kit_component": "BentoGrid", "required": true},
+        {"id": "pricing", "kit_component": "PricingTable", "required": true},
+        {"id": "cta", "kit_component": "CinematicHero", "required": true}
+      ]},
+      "compatible_themes": ["modern", "gradient", "creative", "bold_contrast", "minimal_dark"],
+      "tags": ["product", "launch", "dramatic", "cinematic", "reveal"],
+      "min_slides": 8,
+      "max_slides": 14,
+      "thumbnail_theme": "minimal_dark",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CinematicHero", "data": {"eyebrow": "INTRODUCING", "headline": "Aether One", "subheadline": "The world's lightest AR headset"}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Specifications", "items": [
+            {"title": "48g", "description": "Featherlight design", "span": "1", "accent": true},
+            {"title": "8K", "description": "Per-eye resolution", "span": "1"},
+            {"title": "12hr", "description": "All-day battery", "span": "1"}
+          ]}},
+          {"type": "closing", "kit_component": "CinematicHero", "data": {"eyebrow": "AVAILABLE NOW", "headline": "$999", "subheadline": "Pre-order today, ships March 2026"}}
+        ]
+      }
+    },
+    {
+      "id": "feature_grid",
+      "name": "Feature Grid",
+      "category": "product",
+      "description": "Bento-style feature showcase with asymmetric card layouts, icons, and clean hierarchy. Inspired by Apple and Linear.",
+      "slide_count_range": [8, 14],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "CoverSlide", "required": true},
+        {"id": "hero", "kit_component": "BentoGrid", "required": true},
+        {"id": "detail1", "kit_component": "SplitContent", "required": true},
+        {"id": "detail2", "kit_component": "AppMockup", "required": true},
+        {"id": "pricing", "kit_component": "PricingTable", "required": true}
+      ]},
+      "compatible_themes": ["modern", "minimal", "startup", "saas", "light_professional"],
+      "tags": ["product", "features", "bento", "grid", "showcase"],
+      "min_slides": 8,
+      "max_slides": 14,
+      "thumbnail_theme": "minimal",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CoverSlide", "data": {"eyebrow": "PRODUCT UPDATE", "headline": "Notion AI 2.0", "subheadline": "Write faster. Think bigger."}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "What's New", "items": [
+            {"title": "Auto-Write", "description": "Drafts in your voice", "span": "2", "accent": true},
+            {"title": "Smart Search", "description": "Find anything instantly", "span": "1"},
+            {"title": "Insights", "description": "AI-powered analytics", "span": "1"}
+          ]}},
+          {"type": "feature", "kit_component": "SplitContent", "data": {"headline": "Auto-Write", "subheadline": "Your ideas, automatically structured", "body": "Select any text and Auto-Write expands it into a full document, email, or blog post."}}
+        ]
+      }
+    },
+    {
+      "id": "before_after",
+      "name": "Before & After",
+      "category": "product",
+      "description": "Transformation showcase comparing old vs new. Split layouts, contrast colors, and clear value demonstration.",
+      "slide_count_range": [8, 12],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "TitleHero", "required": true},
+        {"id": "pain", "kit_component": "ProblemSolution", "required": true},
+        {"id": "transform", "kit_component": "BeforeAfter", "required": true},
+        {"id": "results", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "cta", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["modern", "saas", "enterprise", "startup", "light_professional"],
+      "tags": ["product", "transformation", "before-after", "comparison", "value"],
+      "min_slides": 8,
+      "max_slides": 12,
+      "thumbnail_theme": "startup",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "TitleHero", "data": {"eyebrow": "PRODUCT LAUNCH", "headline": "CleanDesk", "subheadline": "From chaos to clarity in 30 seconds"}},
+          {"type": "feature", "kit_component": "BeforeAfter", "data": {"headline": "The Difference", "before": "200+ unread emails", "after": "Zero inbox, auto-sorted", "stat": "Save 2 hours daily"}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Results", "stats": [
+            {"value": "2.3hrs", "label": "Saved daily", "trend": ""},
+            {"value": "89%", "label": "Stress reduction", "trend": ""},
+            {"value": "4.8", "label": "App rating", "trend": ""}
+          ], "bars": [
+            {"label": "Week 1", "value": 20}, {"label": "Week 2", "value": 55}, {"label": "Week 3", "value": 82}, {"label": "Week 4", "value": 95}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "minimalist_stage",
+      "name": "Minimalist Stage",
+      "category": "keynote",
+      "description": "Apple-style minimal keynote. One idea per slide, massive typography, and intentional whitespace.",
+      "slide_count_range": [10, 20],
+      "layout_structure": {"zones": [
+        {"id": "open", "kit_component": "TitleHero", "required": true},
+        {"id": "chapter", "kit_component": "TitleHero", "required": true},
+        {"id": "reveal", "kit_component": "StatHero", "required": true},
+        {"id": "detail", "kit_component": "SplitContent", "required": true},
+        {"id": "close", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["minimal", "modern", "light_professional", "swiss_editorial"],
+      "tags": ["keynote", "minimal", "apple-style", "stage", "conference"],
+      "min_slides": 10,
+      "max_slides": 20,
+      "thumbnail_theme": "minimal",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "TitleHero", "data": {"eyebrow": "WWDC 2026", "headline": "Swift 6", "subheadline": "The next generation"}},
+          {"type": "stats", "kit_component": "StatHero", "data": {"value": "3x", "label": "Faster compile times", "percentage": 85}},
+          {"type": "feature", "kit_component": "SplitContent", "data": {"headline": "Concurrency Reimagined", "subheadline": "Actor isolation, sendable types, and data race safety by default.", "body": "Write concurrent code with confidence. The compiler guarantees safety."}}
+        ]
+      }
+    },
+    {
+      "id": "bold_statement",
+      "name": "Bold Statement",
+      "category": "keynote",
+      "description": "Large typography, bold colors, and provocative statements. Designed to make the audience sit up and listen.",
+      "slide_count_range": [8, 16],
+      "layout_structure": {"zones": [
+        {"id": "open", "kit_component": "DuotoneHero", "required": true},
+        {"id": "provoke", "kit_component": "QuoteHighlight", "required": true},
+        {"id": "evidence", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "vision", "kit_component": "DuotoneHero", "required": true}
+      ]},
+      "compatible_themes": ["bold_contrast", "modern", "gradient", "creative"],
+      "tags": ["keynote", "bold", "provocative", "typography", "stage"],
+      "min_slides": 8,
+      "max_slides": 16,
+      "thumbnail_theme": "bold_contrast",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "DuotoneHero", "data": {"eyebrow": "TEDx 2026", "headline": "AI Won't Replace You", "subheadline": "But someone using AI will"}},
+          {"type": "feature", "kit_component": "QuoteHighlight", "data": {"headline": "\"The future belongs to the curious.\"", "subheadline": "The tools change. The human drive to create doesn't."}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "The Numbers", "stats": [
+            {"value": "85%", "label": "Of tasks will be AI-assisted", "trend": ""},
+            {"value": "2.3x", "label": "Productivity lift", "trend": ""},
+            {"value": "$15T", "label": "Economic impact by 2030", "trend": ""}
+          ], "bars": [
+            {"label": "2024", "value": 15}, {"label": "2026", "value": 42}, {"label": "2028", "value": 78}, {"label": "2030", "value": 100}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "cinematic_journey",
+      "name": "Cinematic Journey",
+      "category": "keynote",
+      "description": "Full-bleed imagery, storytelling arcs, and emotional hooks. Like a movie trailer for your ideas.",
+      "slide_count_range": [10, 18],
+      "layout_structure": {"zones": [
+        {"id": "open", "kit_component": "CinematicHero", "required": true},
+        {"id": "scene1", "kit_component": "FullBleedImage", "required": true},
+        {"id": "scene2", "kit_component": "EditorialImage", "required": true},
+        {"id": "pivot", "kit_component": "QuoteHighlight", "required": true},
+        {"id": "close", "kit_component": "CinematicHero", "required": true}
+      ]},
+      "compatible_themes": ["modern", "gradient", "creative", "warm_narrative", "minimal_dark"],
+      "tags": ["keynote", "cinematic", "storytelling", "emotional", "journey"],
+      "min_slides": 10,
+      "max_slides": 18,
+      "thumbnail_theme": "warm_narrative",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CinematicHero", "data": {"eyebrow": "MAIN STAGE", "headline": "Beyond Boundaries", "subheadline": "Exploring the new frontiers of human potential"}},
+          {"type": "feature", "kit_component": "FullBleedImage", "data": {"headline": "The Challenge", "subheadline": "Climate, health, education — the stakes have never been higher"}},
+          {"type": "feature", "kit_component": "QuoteHighlight", "data": {"headline": "\"We are the first generation that can end poverty, and the last that can end climate change.\"", "subheadline": "— Ban Ki-moon"}}
+        ]
+      }
+    },
+    {
+      "id": "dashboard_report",
+      "name": "Dashboard Report",
+      "category": "data",
+      "description": "Analytics-heavy deck with charts, KPIs, and data-driven narratives. Every slide tells a data story.",
+      "slide_count_range": [12, 25],
+      "layout_structure": {"zones": [
+        {"id": "summary", "kit_component": "StatHero", "required": true},
+        {"id": "kpis", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "trends", "kit_component": "AnimatedChartBlock", "required": true},
+        {"id": "breakdown", "kit_component": "DataTable", "required": true},
+        {"id": "recommendations", "kit_component": "BentoGrid", "required": true}
+      ]},
+      "compatible_themes": ["enterprise", "minimal", "saas", "fintech", "light_professional"],
+      "tags": ["data", "analytics", "report", "dashboard", "kpis"],
+      "min_slides": 12,
+      "max_slides": 25,
+      "thumbnail_theme": "enterprise",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "StatHero", "data": {"value": "Q3 2026", "label": "Quarterly Business Review", "percentage": 72}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Key Performance Indicators", "stats": [
+            {"value": "$14.2M", "label": "Revenue", "trend": "+18% QoQ"},
+            {"value": "124%", "label": "Net Revenue Retention", "trend": "+4pp"},
+            {"value": "$2.1M", "label": "EBITDA", "trend": "+32%"}
+          ], "bars": [
+            {"label": "Q1", "value": 55}, {"label": "Q2", "value": 62}, {"label": "Q3", "value": 78}, {"label": "Q4", "value": 95}
+          ]}},
+          {"type": "feature", "kit_component": "DataTable", "data": {"headline": "Revenue by Segment", "columns": [
+            {"name": "Enterprise", "highlight": true, "features": [
+              {"label": "Revenue", "value": "$8.4M"}, {"label": "Growth", "value": "+24%"}, {"label": "Margin", "value": "78%"}
+            ]},
+            {"name": "Mid-Market", "highlight": false, "features": [
+              {"label": "Revenue", "value": "$4.1M"}, {"label": "Growth", "value": "+12%"}, {"label": "Margin", "value": "65%"}
+            ]},
+            {"name": "SMB", "highlight": false, "features": [
+              {"label": "Revenue", "value": "$1.7M"}, {"label": "Growth", "value": "+8%"}, {"label": "Margin", "value": "52%"}
+            ]}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "timeline_analysis",
+      "name": "Timeline Analysis",
+      "category": "data",
+      "description": "Time-based data storytelling with animated timelines, milestone reveals, and chronological narratives.",
+      "slide_count_range": [10, 20],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "TitleHero", "required": true},
+        {"id": "overview", "kit_component": "TimelineBlock", "required": true},
+        {"id": "deepdive", "kit_component": "ProcessFlow", "required": true},
+        {"id": "metrics", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "forecast", "kit_component": "Roadmap", "required": true}
+      ]},
+      "compatible_themes": ["enterprise", "minimal", "saas", "light_professional"],
+      "tags": ["data", "timeline", "chronological", "milestones", "forecast"],
+      "min_slides": 10,
+      "max_slides": 20,
+      "thumbnail_theme": "saas",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "TitleHero", "data": {"eyebrow": "ANALYSIS", "headline": "5-Year Growth Trajectory", "subheadline": "From startup to scale-up"}},
+          {"type": "timeline", "kit_component": "TimelineBlock", "data": {"headline": "Key Milestones", "nodes": [
+            {"label": "2021", "detail": "Founded, $500K pre-seed", "active": true},
+            {"label": "2022", "detail": "Product launch, 100 customers", "active": true},
+            {"label": "2023", "detail": "Series A, $5M", "active": true},
+            {"label": "2024", "detail": "Series B, $25M", "active": true},
+            {"label": "2025", "detail": "International expansion", "active": false}
+          ]}},
+          {"type": "feature", "kit_component": "Roadmap", "data": {"headline": "Future Roadmap", "nodes": [
+            {"label": "Q1 2026", "detail": "AI features beta", "active": true},
+            {"label": "Q2 2026", "detail": "Enterprise tier", "active": false},
+            {"label": "Q3 2026", "detail": "Mobile app", "active": false},
+            {"label": "Q4 2026", "detail": "IPO readiness", "active": false}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "comparison_matrix",
+      "name": "Comparison Matrix",
+      "category": "data",
+      "description": "Competitive analysis with side-by-side comparisons, feature matrices, and clear differentiation.",
+      "slide_count_range": [10, 16],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "TitleHero", "required": true},
+        {"id": "landscape", "kit_component": "BentoGrid", "required": true},
+        {"id": "compare", "kit_component": "ComparisonBlock", "required": true},
+        {"id": "advantage", "kit_component": "ValuePropGrid", "required": true},
+        {"id": "cta", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["enterprise", "saas", "minimal", "light_professional"],
+      "tags": ["data", "comparison", "competitive", "matrix", "analysis"],
+      "min_slides": 10,
+      "max_slides": 16,
+      "thumbnail_theme": "light_professional",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "TitleHero", "data": {"eyebrow": "COMPETITIVE ANALYSIS", "headline": "Why We're Different", "subheadline": "Feature-for-feature comparison"}},
+          {"type": "feature", "kit_component": "ComparisonBlock", "data": {"headline": "Feature Comparison", "columns": [
+            {"name": "Us", "highlight": true, "features": [
+              {"label": "Real-time sync", "value": true}, {"label": "AI assistant", "value": true}, {"label": "API access", "value": true}, {"label": "Price", "value": "$49/mo"}
+            ]},
+            {"name": "Competitor A", "highlight": false, "features": [
+              {"label": "Real-time sync", "value": true}, {"label": "AI assistant", "value": false}, {"label": "API access", "value": true}, {"label": "Price", "value": "$99/mo"}
+            ]},
+            {"name": "Competitor B", "highlight": false, "features": [
+              {"label": "Real-time sync", "value": false}, {"label": "AI assistant", "value": true}, {"label": "API access", "value": false}, {"label": "Price", "value": "$79/mo"}
+            ]}
+          ]}},
+          {"type": "feature", "kit_component": "ValuePropGrid", "data": {"headline": "Our Advantages", "items": [
+            {"title": "2x", "description": "Faster than competitors", "span": "1", "accent": true},
+            {"title": "50%", "description": "Lower total cost", "span": "1"},
+            {"title": "99.9%", "description": "Uptime guarantee", "span": "1"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "brand_story",
+      "name": "Brand Story",
+      "category": "company",
+      "description": "Comprehensive company introduction with mission, values, team, and milestones. Warm and human.",
+      "slide_count_range": [10, 16],
+      "layout_structure": {"zones": [
+        {"id": "hero", "kit_component": "CoverSlide", "required": true},
+        {"id": "mission", "kit_component": "QuoteHighlight", "required": true},
+        {"id": "values", "kit_component": "ValuePropGrid", "required": true},
+        {"id": "team", "kit_component": "TeamGrid", "required": true},
+        {"id": "milestones", "kit_component": "Roadmap", "required": true},
+        {"id": "contact", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["enterprise", "creative", "minimal", "warm_narrative"],
+      "tags": ["company", "about", "corporate", "brand", "story"],
+      "min_slides": 10,
+      "max_slides": 16,
+      "thumbnail_theme": "warm_narrative",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CoverSlide", "data": {"eyebrow": "ABOUT US", "headline": "GreenLeaf", "subheadline": "Sustainable solutions for a better tomorrow"}},
+          {"type": "feature", "kit_component": "QuoteHighlight", "data": {"headline": "\"We believe business can be a force for good.\"", "subheadline": "Our mission is to eliminate single-use plastics by 2030."}},
+          {"type": "feature", "kit_component": "TeamGrid", "data": {"headline": "Our Team", "members": [
+            {"name": "Sarah Chen", "role": "CEO", "bio": "Former VP at Unilever"},
+            {"name": "James Park", "role": "CTO", "bio": "PhD MIT, 12 patents"},
+            {"name": "Aisha Patel", "role": "Design Lead", "bio": "IDEO alumna"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "annual_report",
+      "name": "Annual Report",
+      "category": "company",
+      "description": "Financial and operational annual report with charts, financial tables, and strategic narratives.",
+      "slide_count_range": [15, 30],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "StatHero", "required": true},
+        {"id": "ceo", "kit_component": "QuoteHighlight", "required": true},
+        {"id": "financials", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "segments", "kit_component": "DataTable", "required": true},
+        {"id": "outlook", "kit_component": "Roadmap", "required": true}
+      ]},
+      "compatible_themes": ["enterprise", "fintech", "minimal", "light_professional"],
+      "tags": ["company", "annual", "report", "financial", "investor"],
+      "min_slides": 15,
+      "max_slides": 30,
+      "thumbnail_theme": "enterprise",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "StatHero", "data": {"value": "FY2026", "label": "Annual Report", "percentage": 91}},
+          {"type": "feature", "kit_component": "QuoteHighlight", "data": {"headline": "\"This was a transformative year.\"", "subheadline": "— CEO Letter to Shareholders"}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Financial Highlights", "stats": [
+            {"value": "$284M", "label": "Revenue", "trend": "+24%"},
+            {"value": "$42M", "label": "Net Income", "trend": "+38%"},
+            {"value": "$3.2B", "label": "Market Cap", "trend": "+15%"}
+          ], "bars": [
+            {"label": "Q1", "value": 55}, {"label": "Q2", "value": 62}, {"label": "Q3", "value": 82}, {"label": "Q4", "value": 100}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "culture_deck",
+      "name": "Culture Deck",
+      "category": "company",
+      "description": "Values, culture, and team showcase. Netflix-style culture deck with bold statements and team photos.",
+      "slide_count_range": [10, 18],
+      "layout_structure": {"zones": [
+        {"id": "hero", "kit_component": "TitleHero", "required": true},
+        {"id": "values", "kit_component": "BentoGrid", "required": true},
+        {"id": "principles", "kit_component": "QuoteHighlight", "required": true},
+        {"id": "team", "kit_component": "TeamGrid", "required": true},
+        {"id": "perks", "kit_component": "ValuePropGrid", "required": true}
+      ]},
+      "compatible_themes": ["creative", "modern", "startup", "warm_narrative"],
+      "tags": ["company", "culture", "values", "team", "hiring"],
+      "min_slides": 10,
+      "max_slides": 18,
+      "thumbnail_theme": "creative",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "TitleHero", "data": {"eyebrow": "CULTURE", "headline": "How We Work", "subheadline": "Our principles, values, and ways of working"}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Our Values", "items": [
+            {"title": "Impact", "description": "We measure success by customer outcomes", "span": "1", "accent": true},
+            {"title": "Growth", "description": "Every mistake is a lesson", "span": "1"},
+            {"title": "Trust", "description": "Radical candor, always", "span": "1"}
+          ]}},
+          {"type": "feature", "kit_component": "QuoteHighlight", "data": {"headline": "\"We hire adults and treat them as such.\"", "subheadline": "Freedom with responsibility"}}
+        ]
+      }
+    },
+    {
+      "id": "portfolio_showcase",
+      "name": "Portfolio Showcase",
+      "category": "creative",
+      "description": "Visual work showcase with full-bleed images, project grids, and case study layouts. For designers and agencies.",
+      "slide_count_range": [10, 20],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "FullBleedImage", "required": true},
+        {"id": "about", "kit_component": "SplitContent", "required": true},
+        {"id": "work1", "kit_component": "EditorialImage", "required": true},
+        {"id": "work2", "kit_component": "BentoGrid", "required": true},
+        {"id": "contact", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["creative", "modern", "gradient", "minimal_dark"],
+      "tags": ["creative", "portfolio", "agency", "design", "visual"],
+      "min_slides": 10,
+      "max_slides": 20,
+      "thumbnail_theme": "gradient",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "FullBleedImage", "data": {"headline": "Studio Mono", "subheadline": "Brand design for bold companies"}},
+          {"type": "feature", "kit_component": "SplitContent", "data": {"headline": "About Us", "subheadline": "A boutique design studio in Brooklyn", "body": "We craft identities, websites, and campaigns for brands that dare to be different."}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Selected Work", "items": [
+            {"title": "Fintech", "description": "Complete rebrand for NeoBank", "span": "2", "accent": true},
+            {"title": "Fashion", "description": "E-commerce for Luxe Co.", "span": "1"},
+            {"title": "Tech", "description": "Product design for CloudOS", "span": "1"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "creative_agency",
+      "name": "Creative Agency",
+      "category": "creative",
+      "description": "Bold, artistic agency deck with experimental layouts, duotone imagery, and avant-garde typography.",
+      "slide_count_range": [10, 18],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "DuotoneHero", "required": true},
+        {"id": "manifesto", "kit_component": "QuoteHighlight", "required": true},
+        {"id": "services", "kit_component": "BentoGrid", "required": true},
+        {"id": "work", "kit_component": "EditorialImage", "required": true},
+        {"id": "contact", "kit_component": "DuotoneHero", "required": true}
+      ]},
+      "compatible_themes": ["creative", "bold_contrast", "gradient", "modern"],
+      "tags": ["creative", "agency", "bold", "artistic", "experimental"],
+      "min_slides": 10,
+      "max_slides": 18,
+      "thumbnail_theme": "bold_contrast",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "DuotoneHero", "data": {"eyebrow": "CREATIVE AGENCY", "headline": "WildType", "subheadline": "We make brands unforgettable"}},
+          {"type": "feature", "kit_component": "QuoteHighlight", "data": {"headline": "\"Design is not just what it looks like. Design is how it works.\"", "subheadline": "— Steve Jobs"}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Services", "items": [
+            {"title": "Branding", "description": "Identity systems that scale", "span": "1", "accent": true},
+            {"title": "Digital", "description": "Websites and apps", "span": "1"},
+            {"title": "Campaign", "description": "Marketing that moves", "span": "1"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "design_system",
+      "name": "Design System",
+      "category": "creative",
+      "description": "Component showcase deck for design systems. Cards, buttons, typography scales, and color palettes.",
+      "slide_count_range": [8, 16],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "CoverSlide", "required": true},
+        {"id": "tokens", "kit_component": "BentoGrid", "required": true},
+        {"id": "components", "kit_component": "FeatureGrid", "required": true},
+        {"id": "usage", "kit_component": "SplitContent", "required": true},
+        {"id": "roadmap", "kit_component": "Roadmap", "required": true}
+      ]},
+      "compatible_themes": ["minimal", "modern", "saas", "light_professional"],
+      "tags": ["creative", "design-system", "components", "ui", "documentation"],
+      "min_slides": 8,
+      "max_slides": 16,
+      "thumbnail_theme": "minimal",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CoverSlide", "data": {"eyebrow": "DESIGN SYSTEM", "headline": "Prism UI", "subheadline": "A unified design language for our products"}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Design Tokens", "items": [
+            {"title": "Colors", "description": "8-color semantic palette", "span": "1", "accent": true},
+            {"title": "Type", "description": "12-scale type system", "span": "1"},
+            {"title": "Space", "description": "8pt grid spacing", "span": "1"}
+          ]}},
+          {"type": "feature", "kit_component": "FeatureGrid", "data": {"headline": "Components", "items": [
+            {"title": "Button", "description": "6 variants, 3 sizes", "span": "1"},
+            {"title": "Card", "description": "Flexible container system", "span": "1"},
+            {"title": "Input", "description": "Form controls with validation", "span": "1"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "course_module",
+      "name": "Course Module",
+      "category": "education",
+      "description": "Learning module with objectives, content blocks, interactive elements, and knowledge checks.",
+      "slide_count_range": [8, 20],
+      "layout_structure": {"zones": [
+        {"id": "intro", "kit_component": "TitleHero", "required": true},
+        {"id": "objectives", "kit_component": "ValuePropGrid", "required": true},
+        {"id": "content", "kit_component": "SplitContent", "required": true},
+        {"id": "process", "kit_component": "ProcessFlow", "required": true},
+        {"id": "summary", "kit_component": "BentoGrid", "required": true}
+      ]},
+      "compatible_themes": ["edtech", "minimal", "creative", "warm_narrative"],
+      "tags": ["education", "course", "learning", "training", "module"],
+      "min_slides": 8,
+      "max_slides": 20,
+      "thumbnail_theme": "edtech",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "TitleHero", "data": {"eyebrow": "MODULE 3", "headline": "React Advanced Patterns", "subheadline": "Hooks, Context, and Performance"}},
+          {"type": "feature", "kit_component": "ValuePropGrid", "data": {"headline": "Learning Objectives", "items": [
+            {"title": "Hooks", "description": "Master useEffect and custom hooks", "span": "1", "accent": true},
+            {"title": "Context", "description": "State without prop drilling", "span": "1"},
+            {"title": "Perf", "description": "Optimize render cycles", "span": "1"}
+          ]}},
+          {"type": "feature", "kit_component": "ProcessFlow", "data": {"headline": "Lesson Plan", "nodes": [
+            {"label": "Intro", "detail": "15 min", "active": true},
+            {"label": "Demo", "detail": "30 min", "active": true},
+            {"label": "Practice", "detail": "45 min", "active": false},
+            {"label": "Review", "detail": "10 min", "active": false}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "workshop_guide",
+      "name": "Workshop Guide",
+      "category": "education",
+      "description": "Interactive workshop with exercises, group activities, process flows, and collaborative frameworks.",
+      "slide_count_range": [10, 24],
+      "layout_structure": {"zones": [
+        {"id": "intro", "kit_component": "CoverSlide", "required": true},
+        {"id": "agenda", "kit_component": "TimelineBlock", "required": true},
+        {"id": "activity1", "kit_component": "BentoGrid", "required": true},
+        {"id": "framework", "kit_component": "DiagramBlock", "required": true},
+        {"id": "activity2", "kit_component": "ProcessFlow", "required": true},
+        {"id": "wrap", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["edtech", "creative", "modern", "warm_narrative"],
+      "tags": ["education", "workshop", "interactive", "facilitation", "group"],
+      "min_slides": 10,
+      "max_slides": 24,
+      "thumbnail_theme": "creative",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CoverSlide", "data": {"eyebrow": "DESIGN SPRINT", "headline": "Design Thinking Workshop", "subheadline": "Solve big problems in 5 days"}},
+          {"type": "timeline", "kit_component": "TimelineBlock", "data": {"headline": "5-Day Agenda", "nodes": [
+            {"label": "Mon", "detail": "Understand", "active": true},
+            {"label": "Tue", "detail": "Diverge", "active": true},
+            {"label": "Wed", "detail": "Decide", "active": true},
+            {"label": "Thu", "detail": "Prototype", "active": true},
+            {"label": "Fri", "detail": "Test", "active": true}
+          ]}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Day 1: Understand", "items": [
+            {"title": "Map", "description": "The problem space", "span": "1", "accent": true},
+            {"title": "Interview", "description": "5 target users", "span": "1"},
+            {"title": "Define", "description": "The challenge", "span": "1"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "premium_brand_investor",
+      "name": "Premium Brand Investor",
+      "category": "pitch",
+      "description": "Investor-grade premium pitch chassis with brand system, proof metrics, team credibility, market diligence, and a clear ask.",
+      "slide_count_range": [12, 18],
+      "layout_structure": {"zones": [
+        {"id": "cover", "kit_component": "CoverSlide", "required": true},
+        {"id": "problem", "kit_component": "ProblemSolution", "required": true},
+        {"id": "solution", "kit_component": "ValuePropGrid", "required": true},
+        {"id": "market", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "brand_system", "kit_component": "BentoGrid", "required": true},
+        {"id": "team", "kit_component": "TeamGrid", "required": true},
+        {"id": "competition", "kit_component": "ComparisonBlock", "required": true},
+        {"id": "ask", "kit_component": "TitleHero", "required": true}
+      ]},
+      "compatible_themes": ["midnight_gold", "ivory_gold", "royal_indigo", "ink_black", "midnight_navy"],
+      "tags": ["premium", "investor", "brand", "team", "fundraising", "diligence"],
+      "min_slides": 12,
+      "max_slides": 18,
+      "thumbnail_theme": "midnight_gold",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CoverSlide", "data": {"eyebrow": "SEED / SERIES A", "headline": "Brand-Led Investor Story", "subheadline": "Narrative, proof, team, and category design in one founder-grade deck"}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Proof Signals", "stats": [
+            {"value": "3", "label": "validated buyer segments", "trend": "clear ICP"},
+            {"value": "4", "label": "diligence evidence lanes", "trend": "mapped"},
+            {"value": "1", "label": "sharp capital ask", "trend": "board-ready"}
+          ], "bars": [
+            {"label": "Pain", "value": 72}, {"label": "Proof", "value": 88}, {"label": "Moat", "value": 81}, {"label": "Ask", "value": 94}
+          ]}},
+          {"type": "team", "kit_component": "TeamGrid", "data": {"headline": "Founder Credibility", "members": [
+            {"name": "Founder", "role": "Market insight"},
+            {"name": "CTO", "role": "Technical moat"},
+            {"name": "Advisor", "role": "Go-to-market"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "premium_diligence_data_room",
+      "name": "Premium Diligence Data Room",
+      "category": "data",
+      "description": "Evidence-first deck structure for technical investors, underwriters, and enterprise buyers that need charts, tables, risks, and traceable claims.",
+      "slide_count_range": [10, 16],
+      "layout_structure": {"zones": [
+        {"id": "summary", "kit_component": "StatHero", "required": true},
+        {"id": "benchmarks", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "trend", "kit_component": "AnimatedChartBlock", "required": true},
+        {"id": "claims", "kit_component": "DataTable", "required": true},
+        {"id": "risk", "kit_component": "ComparisonBlock", "required": true},
+        {"id": "roadmap", "kit_component": "Roadmap", "required": true}
+      ]},
+      "compatible_themes": ["steel_blue", "dark_sapphire", "graphite_slate", "pearl_white", "deep_ocean"],
+      "tags": ["premium", "diligence", "data", "charts", "tables", "technical", "risk"],
+      "min_slides": 10,
+      "max_slides": 16,
+      "thumbnail_theme": "steel_blue",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "StatHero", "data": {"value": "DILIGENCE", "label": "Evidence-first presentation system", "percentage": 86}},
+          {"type": "metrics", "kit_component": "MetricsDashboard", "data": {"headline": "Operating Signals", "stats": [
+            {"value": "p95", "label": "latency / reliability evidence", "trend": "benchmarked"},
+            {"value": "TAM", "label": "market claim mapping", "trend": "sourced"},
+            {"value": "Risk", "label": "mitigation register", "trend": "ranked"}
+          ], "bars": [
+            {"label": "Q1", "value": 18}, {"label": "Q2", "value": 36}, {"label": "Q3", "value": 61}, {"label": "Q4", "value": 84}
+          ]}},
+          {"type": "table", "kit_component": "DataTable", "data": {"headline": "Claim Traceability", "columns": [
+            {"label": "Claim"}, {"label": "Evidence"}, {"label": "Owner"}
+          ]}}
+        ]
+      }
+    },
+    {
+      "id": "premium_visual_brand_keynote",
+      "name": "Premium Visual Brand Keynote",
+      "category": "keynote",
+      "description": "High-emotion keynote flow with cinematic openings, image-led chapters, brand moments, and executive closing frames.",
+      "slide_count_range": [10, 18],
+      "layout_structure": {"zones": [
+        {"id": "open", "kit_component": "CinematicHero", "required": true},
+        {"id": "chapter", "kit_component": "FullBleedImage", "required": true},
+        {"id": "brand_moment", "kit_component": "BentoGrid", "required": true},
+        {"id": "proof", "kit_component": "MetricsDashboard", "required": true},
+        {"id": "belief", "kit_component": "QuoteHighlight", "required": true},
+        {"id": "close", "kit_component": "DuotoneHero", "required": true}
+      ]},
+      "compatible_themes": ["midnight_orchid", "charcoal_coral", "violet_glow", "copper_rust", "ivory_gold"],
+      "tags": ["premium", "brand", "keynote", "cinematic", "image-led", "executive"],
+      "min_slides": 10,
+      "max_slides": 18,
+      "thumbnail_theme": "midnight_orchid",
+      "preview_content": {
+        "slides": [
+          {"type": "cover", "kit_component": "CinematicHero", "data": {"eyebrow": "MAIN STAGE", "headline": "A Category Moment", "subheadline": "Brand, proof, and story built for a room that decides fast"}},
+          {"type": "feature", "kit_component": "BentoGrid", "data": {"headline": "Brand Signals", "items": [
+            {"title": "Narrative", "description": "A memorable thesis"},
+            {"title": "System", "description": "Reusable visual language"},
+            {"title": "Proof", "description": "Evidence that survives diligence"}
+          ]}},
+          {"type": "quote", "kit_component": "QuoteHighlight", "data": {"headline": "\"Make the hard thing obvious.\"", "subheadline": "Investor-ready keynote principle"}}
+        ]
+      }
+    }
+  ]
+}

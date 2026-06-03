@@ -1,11 +1,11 @@
 """Admin endpoints — provider health, generation stats."""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.database import get_db
-from app.dependencies import require_admin
-from app.services.observability import ObservabilityService
+from app.dependencies import require_admin, require_auth
+from app.services.observability import ObservabilityService, counter_snapshot
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
@@ -65,3 +65,15 @@ async def v4_gate_settings(
     """Runtime V4 gate and rollout settings."""
     svc = ObservabilityService(db)
     return svc.get_v4_gate_settings()
+
+
+@router.get("/metrics")
+async def v4_admin_metrics(
+    user: dict = Depends(require_auth),
+) -> dict:
+    """Redis-backed V4 operational counters. Admins only; 404 for others."""
+    role = user.get("role", "")
+    set_role = user.get("setuserrole", "")
+    if role != "admin" and set_role != "admin":
+        raise HTTPException(status_code=404, detail="Not Found")
+    return await counter_snapshot()

@@ -571,12 +571,17 @@ class RevealCompiler(BaseRenderer):
                 else:
                     initials = "".join(w[0].upper() for w in member.name.split()[:2])
                     img = f'<div class="team-avatar">{_esc(initials)}</div>'
+                bio_html = (
+                    f"<p class='team-bio'>{_esc(member.bio)}</p>"
+                    if member.bio
+                    else ""
+                )
                 parts.append(
                     f'    <div class="team-member" data-id="{_stable_id("member", i)}">\n'
                     f"      {img}\n"
                     f"      <h4>{_esc(member.name)}</h4>\n"
                     f'      <p class="team-role">{_esc(member.role)}</p>\n'
-                    f"      {f"<p class='team-bio'>{_esc(member.bio)}</p>" if member.bio else ''}\n"
+                    f"      {bio_html}\n"
                     f"    </div>"
                 )
             parts.append("  </div>")

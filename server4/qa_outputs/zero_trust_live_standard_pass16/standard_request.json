@@ -1,0 +1,11 @@
+{
+  "mode": "standard",
+  "input_method": "prompt",
+  "standard_input": {
+    "prompt": "Presentation Topic: Autonomous Zero-Trust Identity Orchestration for Edge Computing.\nDescription: We are building a self-healing security layer for IoT devices that uses decentralized identifiers (DIDs) and zero-knowledge proofs. It must explain how we eliminate the need for a central authority while maintaining sub-millisecond authentication latency in low-bandwidth environments. Key points: $O(1)$ scalability, hardware-root-of-trust integration, and our \"Neural-Guardian\" consensus algorithm.\nTarget Audience: Technical VCs and Senior Security Architects.\nPurpose: Investor Pitch.\nSlide Count: 15.",
+    "slide_count": 15,
+    "purpose": "pitch_deck",
+    "generate_images": false,
+    "generate_notes": true
+  }
+}

@@ -110,8 +110,6 @@ def generate_pptx_task(
     self, presentation_id: str, theme: dict, slides: list[dict], metadata: dict
 ):
     """Generate PPTX file and upload to blob storage."""
-    from app.mcp.render_mcp.builders.pptx_builder import PptxBuilder
-
     job_id = _find_job_id(presentation_id, "pptx")
     if job_id:
         _update_job_status(job_id, "processing")
@@ -119,8 +117,16 @@ def generate_pptx_task(
     try:
         self.update_state(state="BUILDING", meta={"format": "pptx", "progress": 10})
 
-        builder = PptxBuilder()
-        pptx_bytes = builder.build(slides, theme, metadata)
+        if _is_v4_export(theme, slides):
+            from app.services.v4.pptx_export import V4PptxBuilder
+
+            builder = V4PptxBuilder()
+            pptx_bytes = builder.build(slides, theme, metadata)
+        else:
+            from app.mcp.render_mcp.builders.pptx_builder import PptxBuilder
+
+            builder = PptxBuilder()
+            pptx_bytes = builder.build(slides, theme, metadata)
 
         self.update_state(state="UPLOADING", meta={"format": "pptx", "progress": 80})
 
@@ -138,8 +144,6 @@ def generate_pdf_task(
     self, presentation_id: str, theme: dict, slides: list[dict], metadata: dict
 ):
     """Generate PDF file and upload to blob storage."""
-    from app.mcp.render_mcp.builders.pdf_builder import PdfBuilder
-
     job_id = _find_job_id(presentation_id, "pdf")
     if job_id:
         _update_job_status(job_id, "processing")
@@ -147,8 +151,16 @@ def generate_pdf_task(
     try:
         self.update_state(state="BUILDING", meta={"format": "pdf", "progress": 10})
 
-        builder = PdfBuilder()
-        pdf_bytes = builder.build(slides, theme, metadata)
+        if _is_v4_export(theme, slides):
+            from app.services.v4.pdf_export import V4PDFBuilder
+
+            builder = V4PDFBuilder()
+            pdf_bytes = builder.build(slides, theme, metadata)
+        else:
+            from app.mcp.render_mcp.builders.pdf_builder import PdfBuilder
+
+            builder = PdfBuilder()
+            pdf_bytes = builder.build(slides, theme, metadata)
 
         self.update_state(state="UPLOADING", meta={"format": "pdf", "progress": 80})
 
@@ -159,6 +171,13 @@ def generate_pdf_task(
         if job_id:
             _update_job_status(job_id, "failed", error=str(e))
         raise
+
+
+def _is_v4_export(theme: dict, slides: list[dict]) -> bool:
+    """Detect V4 export payloads routed by app.routers.export."""
+    if isinstance(theme, dict) and theme.get("_v4_export"):
+        return True
+    return any(isinstance(s, dict) and s.get("export_schema") == "v4" for s in slides or [])
 
 
 @celery_app.task(bind=True, name="export.generate_html")

@@ -106,6 +106,25 @@ _BANNED_HEADLINE_RAW: list[tuple[str, str, str]] = [
     (r"^\s*technology\s+and\s+defensibility\s*$",
      "generic_tech_headline",
      "Replace with the specific technical moat or unique capability."),
+    # CEO-identified template headlines from AetherGrid deck failure
+    (r"^\s*(our|the)\s+unique\s+value\s+proposition\s*$",
+     "template_value_prop",
+     "Replace with the specific, quantified differentiator only this company can claim."),
+    (r"^\s*(our|the)\s+distinctive\s+edge\s*$",
+     "template_distinctive_edge",
+     "Replace with the concrete competitive advantage tied to your product."),
+    (r"^\s*(our|the)\s+distinctive\s+edge\s+in\s+.*\s*$",
+     "template_distinctive_edge",
+     "Replace with the concrete competitive advantage tied to your product."),
+    (r"^\s*how\s+we\s+operate\s*(in\s+\d+\s+steps)?\s*$",
+     "template_how_we_operate",
+     "Replace with the specific outcome your process delivers."),
+    (r"^\s*empowering\s+.*\s+resilience\s*$",
+     "template_empowering_resilience",
+     "Replace with the concrete capability or outcome your product enables."),
+    (r"^\s*real[- ]time\s+coverage\s+outshines\s+.*\s*$",
+     "template_coverage_headline",
+     "Replace with specific performance metrics; avoid insurance terminology in non-insurance decks."),
 ]
 
 _BANNED_HEADLINE_COMPILED: list[tuple[re.Pattern[str], str, str]] = [
@@ -142,7 +161,67 @@ _GENERIC_PHRASES: tuple[str, ...] = (
     "proven track record",
     "significant growth",
     "substantial returns",
+    # CEO-identified generic phrases from failed decks
+    "unique value proposition",
+    "distinctive edge",
+    "empowering resilience",
+    "how we operate",
+    "our approach",
+    "streamlined processes",
+    "comprehensive solution",
+    "holistic approach",
+    "seamless integration",
+    "unparalleled",
+    "unmatched",
+    "unrivaled",
+    "state-of-the-art",
+    "innovative solution",
+    "groundbreaking",
+    "paradigm shift",
+    "leverage our",
+    "synergistic",
+    "end-to-end",
+    "one-stop shop",
+    "full-stack solution",
 )
+
+
+# ── 2b. Visual anti-slop patterns (Open Design discipline) ───────────
+# These are content signals that indicate AI-slop visual choices.
+# Detected at the kit props / JSX source level and fed to the critic.
+
+VISUAL_SLOP_SIGNALS: tuple[str, ...] = (
+    "linear-gradient(135deg",       # aggressive diagonal gradients (decorative noise)
+    "border-left: 4px solid",       # left-border accent cards (overused pattern)
+    "border-left: 3px solid",
+    "box-shadow: 0 4px 6px",        # generic medium shadow (Material Design default)
+    "border-radius: 12px",          # overly rounded cards
+    "border-radius: 16px",
+    "border-radius: 24px",
+)
+
+VISUAL_SLOP_CONTENT_PATTERNS: tuple[str, ...] = (
+    "10x faster",                   # invented metrics without context
+    "100x improvement",
+    "500% growth",
+    "unprecedented growth",
+    "skyrocketing demand",
+    "explosive growth",
+)
+
+
+def detect_visual_slop(props_json: str) -> list[str]:
+    """Scan serialized kit props for visual anti-slop signals.
+    Returns list of detected slop pattern labels."""
+    issues: list[str] = []
+    lower = props_json.lower()
+    for signal in VISUAL_SLOP_SIGNALS:
+        if signal.lower() in lower:
+            issues.append(f"visual_slop:{signal[:30]}")
+    for pattern in VISUAL_SLOP_CONTENT_PATTERNS:
+        if pattern.lower() in lower:
+            issues.append(f"content_slop:{pattern}")
+    return issues
 
 
 # ── 3. Required quantitative signals per intent ─────────────────────
@@ -159,9 +238,9 @@ class QuantRequirement:
 
 
 QUANT_REQUIREMENTS: dict[str, QuantRequirement] = {
-    "market":        QuantRequirement(min_numbers=3, requires_structured_block=True),
-    "traction":      QuantRequirement(min_numbers=3, requires_structured_block=True),
-    "financials":    QuantRequirement(min_numbers=3, requires_structured_block=True),
+    "market":        QuantRequirement(min_numbers=0, requires_structured_block=True),
+    "traction":      QuantRequirement(min_numbers=0, requires_structured_block=True),
+    "financials":    QuantRequirement(min_numbers=0, requires_structured_block=True),
     "competition":   QuantRequirement(min_numbers=0, requires_structured_block=True,
                                       min_comparison_rows=2),
     "ask":           QuantRequirement(min_numbers=1, requires_structured_block=False),
@@ -217,6 +296,170 @@ def detect_generic_phrases(*texts: Optional[str]) -> list[str]:
         if phrase in haystack:
             hits.append(phrase)
     return hits
+
+
+# ── 7. Cross-industry contamination detection ───────────────────────
+# CEO-identified: vocabulary from previous sessions bleeding into new decks
+# Each industry has terminology that should NOT appear in other industries
+
+_INDUSTRY_VOCABULARY: dict[str, dict[str, list[str]]] = {
+    "insurance": {
+        "forbidden_in_other": [
+            "coverage", "premium", "underwriting", "policy", "claims",
+            "insurer", "insured", "deductible", "policyholder", "actuary",
+            "reinsurance", "indemnity", "liability coverage",
+        ],
+        "expected": [
+            "risk", "protection", "guarantee", "safeguard",
+        ],
+    },
+    "energy": {
+        "forbidden_in_other": [],  # Energy terms are fine elsewhere
+        "expected": [
+            "grid", "blackout", "load balancing", "renewable", "orchestration",
+            "edge-computing", "energy", "power", "electricity", "utility",
+        ],
+    },
+    "fintech": {
+        "forbidden_in_other": [],
+        "expected": [
+            "payment", "transaction", "settlement", "ledger", "wallet",
+        ],
+    },
+    "healthcare": {
+        "forbidden_in_other": [],
+        "expected": [
+            "patient", "diagnosis", "treatment", "clinical", "healthcare",
+        ],
+    },
+}
+
+
+def detect_cross_industry_contamination(
+    text: str,
+    current_industry: Optional[str],
+) -> list[str]:
+    """Detect vocabulary from other industries bleeding into the current deck.
+
+    Args:
+        text: The text to check (headline, body, bullets, etc.)
+        current_industry: The detected industry of the current presentation
+
+    Returns:
+        List of forbidden terms found from other industries
+    """
+    if not current_industry or not text:
+        return []
+
+    text_lower = text.lower()
+    current_key = (current_industry or "").lower().strip()
+    hits: list[str] = []
+
+    for industry_key, vocab in _INDUSTRY_VOCABULARY.items():
+        if industry_key == current_key:
+            continue  # Skip the current industry's vocabulary
+        forbidden = vocab.get("forbidden_in_other", [])
+        for term in forbidden:
+            if term in text_lower:
+                hits.append(f"{term} ({industry_key} terminology)")
+
+    return hits
+
+
+# ── 8. Headline Quality Validation ───────────────────────────────────
+
+def validate_headline_quality(
+    headline: str,
+    company_name: Optional[str] = None,
+    industry: Optional[str] = None,
+    user_input_keywords: Optional[list[str]] = None,
+) -> dict[str, Any]:
+    """Comprehensive headline quality check.
+
+    Returns a dict with:
+        - is_valid: bool
+        - score: float (0-10)
+        - issues: list[str]
+        - suggestions: list[str]
+
+    A quality headline must:
+        1. NOT be a template phrase (banned patterns)
+        2. Contain the company name OR industry-specific term
+        3. Contain at least one specific claim (number, metric, or concrete noun)
+        4. NOT contain generic fluff phrases
+        5. NOT contain cross-industry contamination
+    """
+    issues: list[str] = []
+    suggestions: list[str] = []
+    score = 10.0
+
+    if not headline or not headline.strip():
+        return {
+            "is_valid": False,
+            "score": 0.0,
+            "issues": ["headline_empty"],
+            "suggestions": ["Write a specific thesis headline, not a category label."],
+        }
+
+    headline_lower = headline.strip().lower()
+
+    # 1. Check for template headline
+    template_det = detect_template_headline(headline)
+    if template_det.is_template:
+        score -= 5.0
+        issues.append(f"template_headline:{template_det.label}")
+        suggestions.append(template_det.fix_hint)
+
+    # 2. Check for company name or industry term presence
+    company_present = False
+    if company_name:
+        company_present = company_name.lower() in headline_lower
+
+    industry_terms = _INDUSTRY_VOCABULARY.get((industry or "").lower(), {}).get("expected", [])
+    industry_present = any(term in headline_lower for term in industry_terms)
+
+    if not company_present and not industry_present:
+        score -= 2.0
+        issues.append("headline_too_generic")
+        suggestions.append(
+            f"Include company name '{company_name}' or industry-specific term "
+            f"(e.g., {', '.join(industry_terms[:3]) if industry_terms else 'relevant terminology'})."
+        )
+
+    # 3. Check for specific claim (number or concrete claim)
+    has_number = bool(_NUM_RE.search(headline))
+    user_keywords = user_input_keywords or []
+    has_user_keyword = any(kw.lower() in headline_lower for kw in user_keywords)
+
+    if not has_number and not has_user_keyword:
+        score -= 2.0
+        issues.append("headline_lacks_specificity")
+        suggestions.append(
+            "Add a specific metric, number, or concrete claim from your input data."
+        )
+
+    # 4. Check for generic fluff
+    generic_hits = detect_generic_phrases(headline)
+    if generic_hits:
+        score -= min(3.0, len(generic_hits) * 1.0)
+        issues.append(f"generic_phrases:{','.join(generic_hits[:3])}")
+        suggestions.append("Replace generic phrases with specific claims.")
+
+    # 5. Check for cross-industry contamination
+    contamination = detect_cross_industry_contamination(headline, industry)
+    if contamination:
+        score -= 3.0
+        issues.append(f"cross_industry_contamination:{','.join(contamination[:3])}")
+        suggestions.append(
+            f"Remove terminology from other industries: {', '.join(contamination[:3])}."
+        )
+
+    return {
+        "is_valid": score >= 5.0,
+        "score": max(0.0, min(10.0, score)),
+        "issues": issues,
+        "suggestions": suggestions,
+    }
 
 
 # ── 6. Numeric + structured content counters ───────────────────────

@@ -24,5 +24,21 @@ celery_app.conf.update(
         "app.tasks.research_tasks.generate_deck_content": {"queue": "content"},
         "app.tasks.research_tasks.research_slide_task": {"queue": "research"},
         "app.tasks.unified_tasks.generate_unified_deck": {"queue": "content"},
+        # Slice 2 (Durable V4): the v4 generation task self-routes per
+        # mode at dispatch time via apply_async(queue=...). The default
+        # queue here is the standard one as a safety net if a caller
+        # forgets to set the queue explicitly.
+        "app.tasks.v4_generation_tasks.run_v4_generation": {"queue": "content-fast"},
+        "app.tasks.v4_generation_tasks.reap_stalled_v4_generations": {"queue": "content-fast"},
+    },
+    # Slice 2 (Durable V4): periodically reap V4 jobs that crashed
+    # mid-generation. The export worker has its own reaper for export
+    # jobs; this one targets ``presentations`` rows whose v4 worker
+    # didn't update progress within ``V4_STALLED_JOB_REAP_MINUTES``.
+    beat_schedule={
+        "reap-stalled-v4-generations": {
+            "task": "app.tasks.v4_generation_tasks.reap_stalled_v4_generations",
+            "schedule": 300.0,  # every 5 minutes
+        },
     },
 )

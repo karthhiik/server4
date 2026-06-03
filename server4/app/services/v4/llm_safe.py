@@ -43,6 +43,62 @@ from app.services.v4.errors import WriterTimeoutError
 logger = structlog.get_logger(__name__)
 
 
+# ── Task-tier guard ────────────────────────────────────────────────
+# The senior-slide-engineer skill mandates: "No silent fallbacks to
+# classifier models for narrative/critic/grader/judge tasks."
+#
+# These two sets are the contract. ``_NARRATIVE_TIER_TASKS`` is the set
+# of tasks where weak-classifier models would silently degrade output
+# quality (telegraphic phrases, "Transforming industries" slop, lost
+# reasoning chains). ``_CLASSIFIER_TIER_TASKS`` is the set the guard
+# refuses to accept as a *fallback* for narrative tasks.
+#
+# The guard runs at call-site (caller wiring), not at chain-level —
+# every routing chain in ``model_router.py`` already ends with a strong
+# safety tail (OpenRouter free-tier qwen + GPT-4o-mini for planning),
+# which is the correct design. The guard prevents code from explicitly
+# wiring narrative→classifier as a fallback.
+_NARRATIVE_TIER_TASKS: frozenset[TaskType] = frozenset({
+    TaskType.NARRATIVE_STORYTELLING,
+    TaskType.PITCH_DEBATE,
+    TaskType.DUAL_MODE_REWRITE,
+    TaskType.STYLE_ADAPTATION,
+    TaskType.PREMIUM_THESIS_PLANNING,
+    TaskType.PREMIUM_TARGETED_REWRITE,
+    TaskType.REFINEMENT,           # critic / grader / judge
+    TaskType.CITATION_GUARD,
+    TaskType.EVIDENCE_EXTRACTION,
+    TaskType.CROSS_VALIDATION,
+    TaskType.SPEAKER_NOTES,
+    TaskType.OUTLINE_PLANNING,     # planner reasoning
+    TaskType.DEEP_RESEARCH_PLAN,
+})
+
+_CLASSIFIER_TIER_TASKS: frozenset[TaskType] = frozenset({
+    TaskType.INTENT_CLASSIFICATION,
+    TaskType.ENTITY_EXTRACTION,
+})
+
+
+def _validate_task_tier_pairing(
+    primary: TaskType, fallback: Optional[TaskType], phase: str,
+) -> None:
+    """Refuse narrative→classifier fallback wiring at call time.
+
+    Raises ``ValueError`` so the bug surfaces in development / tests
+    instead of silently producing low-quality content in production.
+    """
+    if fallback is None:
+        return
+    if primary in _NARRATIVE_TIER_TASKS and fallback in _CLASSIFIER_TIER_TASKS:
+        raise ValueError(
+            f"safe_complete: narrative-tier task {primary.name} cannot fall "
+            f"back to classifier-tier task {fallback.name} (phase={phase!r}). "
+            f"Use a refinement / template-fill / structured-json task as the "
+            f"fallback instead. See senior-slide-engineer skill."
+        )
+
+
 _RESUME_HINT_TMPL = (
     "\n\n[RESUME HINT] A previous model started this task and was interrupted. "
     "Below is what it produced before stopping. Continue from where it stopped "
@@ -108,6 +164,9 @@ async def safe_complete(
     slot_key = slot or phase or "default"
     use_resume = bool(resumable and presentation_id)
 
+    # Tier guard: refuse narrative→classifier fallback wiring (skill rule).
+    _validate_task_tier_pairing(primary_task, fallback_task, phase)
+
     # Phase A — primary
     try:
         resp = await asyncio.wait_for(
@@ -120,12 +179,24 @@ async def safe_complete(
             ),
             timeout=timeout_s,
         )
-        if use_resume:
-            try:
-                await partial_store.clear_partial(presentation_id, phase, slot_key)
-            except Exception:  # noqa: BLE001
-                pass
-        return resp
+        # CRITICAL FIX: Detect empty/0-token responses and treat as failure
+        # so the fallback chain can try the next model.
+        if resp and hasattr(resp, "content") and resp.content and resp.content.strip():
+            if use_resume:
+                try:
+                    await partial_store.clear_partial(presentation_id, phase, slot_key)
+                except Exception:  # noqa: BLE001
+                    pass
+            return resp
+        # Empty response — treat as failure to trigger fallback
+        logger.warning(
+            "v4_llm_primary_empty_response",
+            phase=phase,
+            task=primary_task.name,
+            model=getattr(resp, "model", "unknown"),
+            tokens=getattr(resp, "tokens_used", 0),
+        )
+        raise ValueError("Empty response from primary model")
     except (asyncio.TimeoutError, Exception) as primary_err:  # noqa: BLE001
         is_timeout = isinstance(primary_err, asyncio.TimeoutError)
         err_class = ErrorClass.TIMEOUT if is_timeout else classify_error(primary_err)
@@ -175,6 +246,15 @@ async def safe_complete(
                 ),
                 timeout=fallback_timeout_s,
             )
+            # CRITICAL FIX: Also detect empty responses in fallback path
+            if not (resp and hasattr(resp, "content") and resp.content and resp.content.strip()):
+                logger.warning(
+                    "v4_llm_fallback_empty_response",
+                    phase=phase,
+                    fallback_task=fallback_task.name,
+                    model=getattr(resp, "model", "unknown"),
+                )
+                raise ValueError("Empty response from fallback model")
             if use_resume:
                 try:
                     await partial_store.clear_partial(

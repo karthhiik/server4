@@ -1,11 +1,12 @@
 """Presentations CRUD — root collection operations."""
 
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Dict, Any
 
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
+from pydantic import BaseModel
 
 from app.database import get_db
 from app.dependencies import require_auth
@@ -17,8 +18,34 @@ from app.models.presentation import (
     PresentationResponse,
     PresentationUpdate,
 )
+from app.services.v4.pitch_coach import PitchCoach
 
 router = APIRouter(prefix="/api/presentations", tags=["Presentations"])
+
+
+# ── Pitch Coach Models ───────────────────────────────────────────────
+class PitchCoachRequest(BaseModel):
+    slides: List[Dict[str, Any]]
+
+
+class ChecklistResult(BaseModel):
+    item: str
+    present: bool
+    slide_indices: List[int] = []
+    score: float = 0.0
+    feedback: str = ""
+    suggestions: List[str] = []
+
+
+class PitchCoachResponse(BaseModel):
+    overall_score: float
+    checklist_results: List[ChecklistResult] = []
+    missing_items: List[str] = []
+    weak_areas: List[str] = []
+    strong_areas: List[str] = []
+    top_suggestions: List[str] = []
+    narrative_flow_score: float = 0.0
+    data_quality_score: float = 0.0
 
 
 def _doc_to_response(doc: dict) -> PresentationResponse:
@@ -184,3 +211,48 @@ async def duplicate_presentation(
         })
 
     return _doc_to_response(new_doc)
+
+
+# ── Pitch Coach Endpoint ───────────────────────────────────────────────
+@router.post("/{presentation_id}/pitch-coach/scan", response_model=PitchCoachResponse)
+async def pitch_coach_scan(
+    presentation_id: str,
+    request: PitchCoachRequest,
+    user: dict = Depends(require_auth),
+) -> PitchCoachResponse:
+    """
+    Analyze a pitch deck against Y Combinator's pitch deck checklist.
+    
+    Returns a comprehensive report with:
+    - Overall score (0.0 to 1.0)
+    - Checklist results for each YC required section
+    - Missing items
+    - Weak areas needing improvement
+    - Strong areas
+    - Top suggestions for improvement
+    - Narrative flow score
+    - Data quality score
+    """
+    coach = PitchCoach()
+    report = coach.scan_deck(request.slides)
+    
+    return PitchCoachResponse(
+        overall_score=report.overall_score,
+        checklist_results=[
+            ChecklistResult(
+                item=r.item.value,
+                present=r.present,
+                slide_indices=r.slide_indices,
+                score=r.score,
+                feedback=r.feedback,
+                suggestions=r.suggestions,
+            )
+            for r in report.checklist_results
+        ],
+        missing_items=[item.value for item in report.missing_items],
+        weak_areas=[item.value for item in report.weak_areas],
+        strong_areas=[item.value for item in report.strong_areas],
+        top_suggestions=report.top_suggestions,
+        narrative_flow_score=report.narrative_flow_score,
+        data_quality_score=report.data_quality_score,
+    )

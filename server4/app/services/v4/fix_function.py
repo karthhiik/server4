@@ -1,3 +1,0 @@
-    ) -> DeckSkeleton:
-        """Fallback skeleton."""
-        cap = (

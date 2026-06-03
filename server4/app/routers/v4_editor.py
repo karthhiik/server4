@@ -65,6 +65,7 @@ from fastapi import (
     Form,
     HTTPException,
     Query,
+    Request,
     Response,
     UploadFile,
 )
@@ -242,7 +243,9 @@ async def list_slides(
             "intent_summary": 1, "company_name": 1,
         },
     )
-    cursor = db.slides.find({"project_id": project_id}).sort("index", 1)
+    cursor = db.slides.find({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}]
+    }).sort("index", 1)
     docs = await cursor.to_list(length=200)
     return {
         "project": {
@@ -280,6 +283,7 @@ def _safe_filename_slug(value: str, fallback: str = "presentation") -> str:
 @router.get("/projects/{project_id}/export/pptx")
 async def export_project_pptx(
     project_id: str,
+    force: bool = False,
     user: dict | None = Depends(optional_auth),
     db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
 ) -> Response:
@@ -294,9 +298,26 @@ async def export_project_pptx(
         projection={
             "user_id": 1, "title": 1, "design_tokens": 1,
             "company_name": 1, "purpose": 1, "slide_count": 1,
+            "export_ready": 1, "quality_state": 1, "export_blockers": 1,
         },
     )
-    cursor = db.slides.find({"project_id": project_id}).sort("index", 1)
+    is_premium = _is_premium_user(user)
+    export_ready = proj.get("export_ready", True)
+    if not export_ready and not (force and is_premium):
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=409,
+            content={
+                "code": "export_blocked_quality_gate",
+                "message": "This deck has unresolved production-quality blockers and cannot be exported.",
+                "quality_state": proj.get("quality_state", "blocked"),
+                "export_blockers": proj.get("export_blockers", []),
+            },
+        )
+
+    cursor = db.slides.find({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}]
+    }).sort("index", 1)
     docs = await cursor.to_list(length=200)
     if not docs:
         raise HTTPException(
@@ -338,6 +359,229 @@ async def export_project_pptx(
         headers={
             "Content-Disposition": f'attachment; filename="{fname}"',
             "Content-Length": str(len(pptx_bytes)),
+        },
+    )
+
+
+@router.get("/projects/{project_id}/export/pdf")
+async def export_project_pdf(
+    project_id: str,
+    force: bool = False,
+    user: dict | None = Depends(optional_auth),
+    db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
+) -> Response:
+    """Stream a .pdf export of the v4 deck.
+
+    Uses V4PDFBuilder which renders compiled slides via Playwright for
+    pixel-perfect output. Falls back to a minimal valid PDF if Playwright
+    is unavailable in the container.
+    """
+    proj = await _load_owned_project(
+        db, project_id, user,
+        projection={
+            "user_id": 1, "title": 1, "design_tokens": 1,
+            "company_name": 1, "purpose": 1, "slide_count": 1,
+            "export_ready": 1, "quality_state": 1, "export_blockers": 1,
+        },
+    )
+    is_premium = _is_premium_user(user)
+    export_ready = proj.get("export_ready", True)
+    if not export_ready and not (force and is_premium):
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=409,
+            content={
+                "code": "export_blocked_quality_gate",
+                "message": "This deck has unresolved production-quality blockers and cannot be exported.",
+                "quality_state": proj.get("quality_state", "blocked"),
+                "export_blockers": proj.get("export_blockers", []),
+            },
+        )
+
+    cursor = db.slides.find({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}]
+    }).sort("index", 1)
+    docs = await cursor.to_list(length=200)
+    if not docs:
+        raise HTTPException(
+            status_code=409,
+            detail="No slides exist for this project yet — generate the deck first.",
+        )
+
+    slide_dtos = [_slide_doc_to_dto(d) for d in docs]
+    design_tokens = proj.get("design_tokens") or {}
+    metadata = {
+        "title": proj.get("title") or "",
+        "company": proj.get("company_name") or "",
+    }
+
+    from app.services.v4.pdf_export import V4PDFBuilder
+
+    try:
+        builder = V4PDFBuilder()
+        pdf_bytes = await builder.build_async(slide_dtos, design_tokens, metadata)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        logger.error(
+            "v4_pdf_export_failed",
+            project_id=project_id,
+            error=str(exc)[:200],
+        )
+        raise HTTPException(status_code=500, detail="PDF export failed") from exc
+
+    fname = _safe_filename_slug(proj.get("title") or "presentation") + ".pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{fname}"',
+            "Content-Length": str(len(pdf_bytes)),
+        },
+    )
+
+
+@router.get("/projects/{project_id}/export/docx")
+async def export_project_docx(
+    project_id: str,
+    request: Request,
+    force: bool = False,
+    user: dict | None = Depends(optional_auth),
+    db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
+) -> Response:
+    """Stream a .docx export of the v4 deck.
+
+    Renders screenshots of the compiled slides via Playwright and wraps them
+    into a Word document.
+    """
+    proj = await _load_owned_project(
+        db, project_id, user,
+        projection={
+            "user_id": 1, "title": 1, "design_tokens": 1,
+            "company_name": 1, "purpose": 1, "slide_count": 1,
+            "export_ready": 1, "quality_state": 1, "export_blockers": 1,
+        },
+    )
+    is_premium = _is_premium_user(user)
+    export_ready = proj.get("export_ready", True)
+    if not export_ready and not (force and is_premium):
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=409,
+            content={
+                "code": "export_blocked_quality_gate",
+                "message": "This deck has unresolved production-quality blockers and cannot be exported.",
+                "quality_state": proj.get("quality_state", "blocked"),
+                "export_blockers": proj.get("export_blockers", []),
+            },
+        )
+
+    cursor = db.slides.find({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}]
+    }).sort("index", 1)
+    docs = await cursor.to_list(length=200)
+    if not docs:
+        raise HTTPException(
+            status_code=409,
+            detail="No slides exist for this project yet — generate the deck first.",
+        )
+
+    # Extract auth token from request to pass to screenshot generator
+    auth_token = None
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        auth_token = auth_header.split(" ")[1]
+    else:
+        auth_token = request.cookies.get("barise_auth")
+
+    # Capture screenshots of all slides
+    from app.services.v4.slide_screenshot import capture_deck_screenshots
+    from app.services.v4.screenshot_exports import build_docx_from_screenshots
+
+    slide_count = len(docs)
+    frontend_origin = getattr(settings, "FRONTEND_ORIGIN", None) or "http://localhost:8080"
+
+    try:
+        pngs = await capture_deck_screenshots(
+            project_id=project_id,
+            slide_count=slide_count,
+            frontend_origin=frontend_origin,
+            auth_token=auth_token,
+        )
+        if not pngs:
+            raise ValueError("Failed to capture slide screenshots")
+        docx_bytes = build_docx_from_screenshots(pngs, proj.get("title") or "presentation")
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        logger.error(
+            "v4_docx_export_failed",
+            project_id=project_id,
+            error=str(exc)[:200],
+        )
+        raise HTTPException(status_code=500, detail="DOCX export failed") from exc
+
+    fname = _safe_filename_slug(proj.get("title") or "presentation") + ".docx"
+    return Response(
+        content=docx_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={
+            "Content-Disposition": f'attachment; filename="{fname}"',
+            "Content-Length": str(len(docx_bytes)),
+        },
+    )
+
+
+@router.get("/projects/{project_id}/export/json")
+async def export_project_json(
+    project_id: str,
+    user: dict | None = Depends(optional_auth),
+    db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
+) -> Response:
+    """Export the full v4 deck as lossless JSON.
+
+    Useful for backups, migration, and version control. Returns every
+    slide DTO plus project metadata as a single JSON document.
+    """
+    proj = await _load_owned_project(
+        db, project_id, user,
+        projection={
+            "user_id": 1, "title": 1, "design_tokens": 1,
+            "company_name": 1, "purpose": 1, "slide_count": 1,
+            "narrative_arc": 1, "industry": 1,
+        },
+    )
+    cursor = db.slides.find({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}]
+    }).sort("index", 1)
+    docs = await cursor.to_list(length=200)
+    if not docs:
+        raise HTTPException(
+            status_code=409,
+            detail="No slides exist for this project yet — generate the deck first.",
+        )
+
+    slide_dtos = [_slide_doc_to_dto(d) for d in docs]
+    export_payload = {
+        "project_id": project_id,
+        "title": proj.get("title") or "",
+        "company_name": proj.get("company_name") or "",
+        "purpose": proj.get("purpose") or "",
+        "narrative_arc": proj.get("narrative_arc") or "",
+        "industry": proj.get("industry") or "",
+        "design_tokens": proj.get("design_tokens") or {},
+        "slide_count": len(slide_dtos),
+        "slides": slide_dtos,
+    }
+
+    export_json = json.dumps(export_payload, default=str, ensure_ascii=False)
+    fname = _safe_filename_slug(proj.get("title") or "presentation") + ".barise.json"
+    return Response(
+        content=export_json.encode("utf-8"),
+        media_type="application/json",
+        headers={
+            "Content-Disposition": f'attachment; filename="{fname}"',
+            "Content-Length": str(len(export_json.encode("utf-8"))),
         },
     )
 
@@ -442,7 +686,9 @@ async def reorder_slides(
             "intent_summary": 1,
         },
     )
-    slide_docs = await db.slides.find({"project_id": project_id}).sort("index", 1).to_list(length=200)
+    slide_docs = await db.slides.find({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}]
+    }).sort("index", 1).to_list(length=200)
     if not slide_docs:
         raise HTTPException(status_code=409, detail="No slides exist for this project yet.")
 
@@ -657,7 +903,10 @@ async def patch_slide(
         },
     )
 
-    slide = await db.slides.find_one({"project_id": project_id, "index": slide_no})
+    slide = await db.slides.find_one({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}],
+        "index": slide_no,
+    })
     if not slide:
         raise HTTPException(status_code=404, detail=f"slide {slide_no} not found")
 
@@ -1443,7 +1692,10 @@ async def regenerate_slide_element(
     props = kit_jsx.get("props_json") if isinstance(kit_jsx, dict) else None
     if not isinstance(props, dict):
         raise HTTPException(status_code=409, detail="compiled slide is missing editable props")
-    slide_doc = await db.slides.find_one({"project_id": project_id, "index": slide_no})
+    slide_doc = await db.slides.find_one({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}],
+        "index": slide_no,
+    })
     if not slide_doc:
         raise HTTPException(status_code=404, detail=f"slide {slide_no} not found")
 
@@ -1935,7 +2187,10 @@ async def recompile_slide_display_artifact(
         raise HTTPException(status_code=404, detail=f"compiled slide {slide_no} not found")
 
     existing = compiled_slides[target_pos] if isinstance(compiled_slides[target_pos], dict) else {}
-    slide_doc = await db.slides.find_one({"project_id": project_id, "index": slide_no})
+    slide_doc = await db.slides.find_one({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}],
+        "index": slide_no,
+    })
     if not slide_doc:
         raise HTTPException(status_code=404, detail=f"slide {slide_no} not found")
 
@@ -2346,7 +2601,9 @@ async def regenerate_deck(
                 detail=f"deck regeneration cooldown — retry in {int(_DECK_REGEN_COOLDOWN_SECONDS - delta)}s",
             )
 
-    docs = await db.slides.find({"project_id": project_id}).sort("index", 1).to_list(length=200)
+    docs = await db.slides.find({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}]
+    }).sort("index", 1).to_list(length=200)
     if not docs:
         raise HTTPException(status_code=409, detail="project has no slides to regenerate")
     indices = [int(doc.get("index", i)) for i, doc in enumerate(docs)]
@@ -2541,7 +2798,10 @@ async def upsert_team_member(
         db, project_id, user,
         projection={"user_id": 1, "mode": 1, "company_name": 1},
     )
-    slide_doc = await db.slides.find_one({"project_id": project_id, "index": slide_no})
+    slide_doc = await db.slides.find_one({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}],
+        "index": slide_no,
+    })
     if not slide_doc:
         raise HTTPException(status_code=404, detail=f"slide {slide_no} not found")
 
@@ -2630,7 +2890,10 @@ async def delete_team_member(
     db: AsyncIOMotorDatabase = Depends(lambda: get_db()),
 ) -> dict[str, Any]:
     await _load_owned_project(db, project_id, user, projection={"user_id": 1, "mode": 1})
-    slide_doc = await db.slides.find_one({"project_id": project_id, "index": slide_no})
+    slide_doc = await db.slides.find_one({
+        "$or": [{"project_id": project_id}, {"presentation_id": project_id}],
+        "index": slide_no,
+    })
     if not slide_doc:
         raise HTTPException(status_code=404, detail=f"slide {slide_no} not found")
     members = list(slide_doc.get("team_members") or [])

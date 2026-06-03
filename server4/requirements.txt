@@ -27,6 +27,7 @@ celery[redis]>=5.3.0
 
 # PPTX / PDF / HTML Generation
 python-pptx>=0.6.23
+python-docx>=1.1.0
 weasyprint>=61.0
 Pillow>=10.2.0
 playwright>=1.41.0
@@ -51,3 +52,12 @@ structlog>=24.1.0
 aiofiles>=23.2.0
 tenacity>=8.2.0
 dirtyjson>=1.0.8
+
+# Profile Verification
+dnspython>=2.6.0
+rapidfuzz>=3.6.0
+
+# Document Parsing (Onboarding)
+unstructured[pdf,pptx]>=0.12.0
+python-magic>=0.4.27
+pytesseract>=0.3.10

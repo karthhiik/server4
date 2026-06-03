@@ -1,0 +1,848 @@
+{
+  "mode": "standard",
+  "project_id": "6a0d46d292868597239c25f4",
+  "duration_seconds": 125.25,
+  "generation_status": {
+    "project_id": "6a0d46d292868597239c25f4",
+    "status": "completed",
+    "progress": 100,
+    "message": "Complete",
+    "error": null,
+    "slide_count": 15,
+    "mode": "standard",
+    "title": "Autonomous Zero-Trust Identity Orchestration for Edge Computing",
+    "input_analysis": {
+      "detected_purpose": "pitch_deck",
+      "detected_audience": "Investors",
+      "audience_sophistication": "investor",
+      "detected_industry": "cybersecurity",
+      "detected_company_name": null,
+      "detected_stage": "seed",
+      "entities": [
+        {
+          "type": "technology",
+          "value": "decentralized identifiers (DIDs)",
+          "confidence": 0.9,
+          "source_span": null
+        },
+        {
+          "type": "technology",
+          "value": "zero-knowledge proofs",
+          "confidence": 0.9,
+          "source_span": null
+        },
+        {
+          "type": "technology",
+          "value": "hardware-root-of-trust",
+          "confidence": 0.8,
+          "source_span": null
+        },
+        {
+          "type": "technology",
+          "value": "Neural-Guardian consensus algorithm",
+          "confidence": 0.8,
+          "source_span": null
+        },
+        {
+          "type": "market",
+          "value": "IoT devices",
+          "confidence": 0.7,
+          "source_span": null
+        },
+        {
+          "type": "market",
+          "value": "Edge Computing",
+          "confidence": 0.7,
+          "source_span": null
+        }
+      ],
+      "suggested_narrative_arc": "problem_solution",
+      "suggested_slide_count": 15,
+      "suggested_slide_types": [
+        "title",
+        "problem",
+        "solution",
+        "technology",
+        "market",
+        "traction",
+        "team",
+        "ask"
+      ],
+      "missing_context": [
+        {
+          "field": "company name",
+          "importance": "critical",
+          "suggestion": "Please provide the name of your startup"
+        },
+        {
+          "field": "financial metrics",
+          "importance": "critical",
+          "suggestion": "Please provide information on your current funding, revenue, or growth rate"
+        },
+        {
+          "field": "competitors",
+          "importance": "recommended",
+          "suggestion": "Please provide an overview of the competitive landscape in the autonomous zero-trust identity orchestration market"
+        },
+        {
+          "field": "team",
+          "importance": "critical",
+          "suggestion": "Please provide information on your founding team, including their relevant experience and expertise"
+        },
+        {
+          "field": "traction",
+          "importance": "critical",
+          "suggestion": "Please provide information on any notable customers, partnerships, or pilot projects you have secured"
+        },
+        {
+          "field": "market data",
+          "importance": "recommended",
+          "suggestion": "Please provide an overview of the market size, growth rate, and potential for the autonomous zero-trust identity orchestration market"
+        }
+      ],
+      "input_richness_score": 0.5,
+      "confidence": 0.8
+    },
+    "overall_score": 8.607,
+    "generation_id": "03bae2b3-343",
+    "duration_ms": 45781,
+    "llm_trace_summary": [
+      {
+        "phase": "v4_writer_2",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1687,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1733
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_3",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1984,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1865
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_1",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2687,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1728
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_0",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2703,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1927
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_4",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1562,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1757
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_5",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1327,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1762
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_9",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1531,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1840
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_6",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2796,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1711
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_7",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2921,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 2177
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_12",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1531,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1775
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_10",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2671,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1742
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_11",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 4562,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1841
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_13",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 3468,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1745
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_8",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 8937,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 2164
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_14",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 5717,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1733
+          }
+        ]
+      }
+    ],
+    "llm_trace_count": 15,
+    "token_usage": {
+      "generation_id": "03bae2b3-343",
+      "project_id": "6a0d46d292868597239c25f4",
+      "mode": "standard",
+      "total_tokens": 27500,
+      "total_calls": 15,
+      "total_failed_calls": 0,
+      "total_latency_ms": 46084,
+      "by_model": [
+        {
+          "model": "groq",
+          "provider": "groq",
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 27500,
+          "call_count": 15,
+          "failed_calls": 0,
+          "total_latency_ms": 46084
+        }
+      ],
+      "by_phase": [
+        {
+          "phase": "v4_writer_2",
+          "task": "template_fill",
+          "total_tokens": 1733,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1687
+        },
+        {
+          "phase": "v4_writer_3",
+          "task": "template_fill",
+          "total_tokens": 1865,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1984
+        },
+        {
+          "phase": "v4_writer_1",
+          "task": "template_fill",
+          "total_tokens": 1728,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2687
+        },
+        {
+          "phase": "v4_writer_0",
+          "task": "template_fill",
+          "total_tokens": 1927,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2703
+        },
+        {
+          "phase": "v4_writer_4",
+          "task": "template_fill",
+          "total_tokens": 1757,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1562
+        },
+        {
+          "phase": "v4_writer_5",
+          "task": "template_fill",
+          "total_tokens": 1762,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1327
+        },
+        {
+          "phase": "v4_writer_9",
+          "task": "template_fill",
+          "total_tokens": 1840,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1531
+        },
+        {
+          "phase": "v4_writer_6",
+          "task": "template_fill",
+          "total_tokens": 1711,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2796
+        },
+        {
+          "phase": "v4_writer_7",
+          "task": "template_fill",
+          "total_tokens": 2177,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2921
+        },
+        {
+          "phase": "v4_writer_12",
+          "task": "template_fill",
+          "total_tokens": 1775,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1531
+        },
+        {
+          "phase": "v4_writer_10",
+          "task": "template_fill",
+          "total_tokens": 1742,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2671
+        },
+        {
+          "phase": "v4_writer_11",
+          "task": "template_fill",
+          "total_tokens": 1841,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 4562
+        },
+        {
+          "phase": "v4_writer_13",
+          "task": "template_fill",
+          "total_tokens": 1745,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 3468
+        },
+        {
+          "phase": "v4_writer_8",
+          "task": "template_fill",
+          "total_tokens": 2164,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 8937
+        },
+        {
+          "phase": "v4_writer_14",
+          "task": "template_fill",
+          "total_tokens": 1733,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 5717
+        }
+      ],
+      "estimated_cost_usd": 0.0
+    },
+    "progress_log": []
+  },
+  "content_score": {
+    "score": 90.9,
+    "slide_count": 15,
+    "concept_hits": {
+      "autonomous": true,
+      "zero_trust": true,
+      "identity_orchestration": true,
+      "edge_computing": true,
+      "iot_devices": true,
+      "self_healing": true,
+      "dids": true,
+      "zkp": true,
+      "no_central_authority": true,
+      "sub_millisecond_latency": false,
+      "low_bandwidth": true,
+      "o1_scalability": false,
+      "hardware_root_of_trust": true,
+      "neural_guardian": true,
+      "consensus_algorithm": true,
+      "technical_vcs": true,
+      "security_architects": true,
+      "investor_pitch": true
+    },
+    "missing_concepts": [
+      "sub_millisecond_latency",
+      "o1_scalability"
+    ],
+    "narrative_hits": {
+      "cover": true,
+      "problem": true,
+      "solution": true,
+      "architecture": true,
+      "performance": true,
+      "market": true,
+      "business": false,
+      "moat": true,
+      "roadmap": true,
+      "ask": true
+    },
+    "missing_narrative_beats": [
+      "business"
+    ],
+    "bad_copy_findings": [],
+    "specificity_hits": [
+      "DID",
+      "zero-knowledge",
+      "O(1)",
+      "hardware-root-of-trust",
+      "Neural-Guardian",
+      "low-bandwidth"
+    ]
+  },
+  "design_score": {
+    "score": 78.8,
+    "slide_count": 15,
+    "average_quality_score": 80.0,
+    "average_composition_score": 77.2,
+    "missing_props": [],
+    "l1_errors": [],
+    "pending_images": [],
+    "low_quality_slides": [
+      {
+        "slide": 0,
+        "quality_score": 85.0
+      },
+      {
+        "slide": 5,
+        "quality_score": 60.0
+      },
+      {
+        "slide": 8,
+        "quality_score": 60.0
+      },
+      {
+        "slide": 9,
+        "quality_score": 60.0
+      },
+      {
+        "slide": 10,
+        "quality_score": 30.0
+      },
+      {
+        "slide": 11,
+        "quality_score": 60.0
+      },
+      {
+        "slide": 12,
+        "quality_score": 45.0
+      }
+    ]
+  },
+  "edit_report": {
+    "ok": true,
+    "results": {
+      "patch_slide": {
+        "ok": true,
+        "slide": {
+          "id": "6a0d471392868597239c25f6",
+          "project_id": "6a0d46d292868597239c25f4",
+          "index": 0,
+          "intent": "title",
+          "layout": "title-only",
+          "headline": "Autonomous Zero-Trust Identity for Edge Fleets for cybersecurity",
+          "subheadline": "Investor pitch for technical VCs and senior security architects evaluating edge identity.",
+          "bullets": [],
+          "body": "",
+          "stat_blocks": [],
+          "quote": null,
+          "chart": null,
+          "table": null,
+          "timeline": null,
+          "comparison": null,
+          "diagram": null,
+          "image_prompt": "",
+          "image_url": null,
+          "image_source": null,
+          "image_position": null,
+          "image_intent": null,
+          "speaker_notes": "Introduce our company's focus on autonomous zero-trust edge security, emphasizing the importance of identity orchestration in this space.",
+          "citations": [],
+          "links": [],
+          "render_decision": {
+            "modality": "none",
+            "reason": "image generation disabled for this request",
+            "code_block": null,
+            "renderer": null
+          },
+          "team_members": [],
+          "requires_user_input": false,
+          "user_input_kind": null,
+          "user_input_reason": null,
+          "company_icon_url": null,
+          "company_icon_hidden": false,
+          "company_icon_position": null,
+          "company_icon_opacity": null,
+          "rationale": "Cover title for this pitch",
+          "purpose": "pitch_deck",
+          "source_model": null,
+          "score": null,
+          "version": 2,
+          "updated_at": "2026-05-20T05:31:21.025000",
+          "background_color": null,
+          "background_gradient": null,
+          "icons": []
+        }
+      },
+      "slice_patch": {
+        "ok": true,
+        "slide_id": "slide-000",
+        "slide_index": 0,
+        "fields_changed": [],
+        "artifact_version": 2,
+        "quality_score": 8.5,
+        "noop": true,
+        "operation_id": "qa-slice-6a0d46d292868597239c25f4"
+      },
+      "recompile": {
+        "ok": true,
+        "slide_id": "slide-000",
+        "slide_index": 0,
+        "artifact_version": 3
+      },
+      "company_icon_upload": {
+        "status_code": 403,
+        "ok": false,
+        "body": {
+          "detail": "company icon is a premium-only feature"
+        }
+      }
+    }
+  },
+  "exports": {
+    "slide_content_json": "qa_outputs\\zero_trust_live_standard_pass13\\standard_slide_content.json",
+    "compiled_slides_json": "qa_outputs\\zero_trust_live_standard_pass13\\standard_compiled_slides.json",
+    "pdf": "qa_outputs\\zero_trust_live_standard_pass13\\standard_deck.pdf",
+    "pptx": "qa_outputs\\zero_trust_live_standard_pass13\\standard_deck.pptx",
+    "snapshots_dir": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots"
+  },
+  "snapshot_report": {
+    "ok": true,
+    "page_count": 15,
+    "all_nonblank": true,
+    "snapshots": [
+      {
+        "slide": 0,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_01.png",
+        "mean_luma": 119.12,
+        "variance": 9893.27,
+        "nonblank": true
+      },
+      {
+        "slide": 1,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_02.png",
+        "mean_luma": 80.26,
+        "variance": 12308.71,
+        "nonblank": true
+      },
+      {
+        "slide": 2,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_03.png",
+        "mean_luma": 80.02,
+        "variance": 12282.23,
+        "nonblank": true
+      },
+      {
+        "slide": 3,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_04.png",
+        "mean_luma": 81.26,
+        "variance": 12367.81,
+        "nonblank": true
+      },
+      {
+        "slide": 4,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_05.png",
+        "mean_luma": 84.83,
+        "variance": 12143.03,
+        "nonblank": true
+      },
+      {
+        "slide": 5,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_06.png",
+        "mean_luma": 80.27,
+        "variance": 12321.31,
+        "nonblank": true
+      },
+      {
+        "slide": 6,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_07.png",
+        "mean_luma": 80.56,
+        "variance": 12339.21,
+        "nonblank": true
+      },
+      {
+        "slide": 7,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_08.png",
+        "mean_luma": 80.47,
+        "variance": 12326.45,
+        "nonblank": true
+      },
+      {
+        "slide": 8,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_09.png",
+        "mean_luma": 82.0,
+        "variance": 12145.11,
+        "nonblank": true
+      },
+      {
+        "slide": 9,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_10.png",
+        "mean_luma": 80.02,
+        "variance": 12313.87,
+        "nonblank": true
+      },
+      {
+        "slide": 10,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_11.png",
+        "mean_luma": 184.3,
+        "variance": 2661.77,
+        "nonblank": true
+      },
+      {
+        "slide": 11,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_12.png",
+        "mean_luma": 80.7,
+        "variance": 12352.13,
+        "nonblank": true
+      },
+      {
+        "slide": 12,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_13.png",
+        "mean_luma": 80.74,
+        "variance": 12352.07,
+        "nonblank": true
+      },
+      {
+        "slide": 13,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_14.png",
+        "mean_luma": 182.45,
+        "variance": 2657.77,
+        "nonblank": true
+      },
+      {
+        "slide": 14,
+        "path": "qa_outputs\\zero_trust_live_standard_pass13\\standard_snapshots\\slide_15.png",
+        "mean_luma": 84.96,
+        "variance": 12147.41,
+        "nonblank": true
+      }
+    ]
+  }
+}

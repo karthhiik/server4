@@ -1,0 +1,80 @@
+
+============================================================
+  Barise Presentation Service (Server4)
+  URL: http://0.0.0.0:8003
+  Docs: http://0.0.0.0:8003/docs
+  Health: http://0.0.0.0:8003/health
+  Mode: development
+============================================================
+
+{"port": 8003, "env": "development", "event": "server_starting", "level": "info", "timestamp": "2026-05-29T16:48:39.146600Z"}
+{"service": "presentation-service", "port": 8003, "event": "server_ready", "level": "info", "timestamp": "2026-05-29T16:48:39.147131Z"}
+INFO:     127.0.0.1:60660 - "GET /health HTTP/1.1" 200 OK
+{"v7": true, "phase4": true, "phase5": true, "phase6": true, "phase7": true, "event": "database_indexes_created", "level": "info", "timestamp": "2026-05-29T16:49:02.938400Z"}
+{"db": "barise_auth_db", "event": "mongodb_connected", "level": "info", "timestamp": "2026-05-29T16:49:02.940597Z"}
+{"db": "barise_auth_db", "event": "database_ready", "level": "info", "timestamp": "2026-05-29T16:49:03.580225Z"}
+INFO:     127.0.0.1:57304 - "GET /api/themes/visual-directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57305 - "GET /api/themes/v2/themes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57306 - "GET /api/themes/v2/templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57308 - "GET /api/themes/v2/visual-systems HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57760 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55774 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57075 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59072 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64203 - "GET /api/v4/modes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50913 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64204 - "GET /api/v4/projects?limit=60 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60706 - "GET /api/v4/modes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60078 - "GET /api/themes/v2/templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56431 - "GET /api/themes/v2/themes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56432 - "GET /api/themes/visual-directions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60707 - "GET /api/v4/projects?limit=60 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53932 - "GET /api/v4/images/template-previews/yc_pitch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54747 - "GET /api/v4/images/template-previews/modern_pitch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52892 - "GET /api/v4/images/template-previews/enterprise_sales_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49389 - "GET /api/v4/images/template-previews/saas_onboarding_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58845 - "GET /api/v4/images/template-previews/product_launch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49390 - "GET /api/v4/images/template-previews/keynote_cinematic_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57650 - "GET /api/v4/images/template-previews/data_report_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58052 - "GET /api/v4/images/template-previews/company_overview_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57633 - "GET /api/v4/images/template-previews/training_workshop_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64692 - "GET /api/v4/images/template-previews/security_whitepaper_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54465 - "GET /api/v4/images/template-previews/healthcare_clinical_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56188 - "GET /api/v4/images/template-previews/fintech_investor_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59235 - "GET /api/v4/images/template-previews/ai_demo_day_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59236 - "GET /api/v4/images/template-previews/board_meeting_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51318 - "GET /api/v4/images/template-previews/deep_tech_architecture_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51319 - "GET /api/v4/images/template-previews/vc_pitch_deck_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61345 - "GET /api/v4/images/template-previews/executive_briefing_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61346 - "GET /api/v4/images/template-previews/trust_compliance_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62751 - "GET /api/v4/images/template-previews/cinematic_story_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52495 - "GET /api/v4/images/template-previews/seed_round_pitch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60385 - "GET /api/v4/images/template-previews/series_a_pitch_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60386 - "GET /api/v4/images/template-previews/partnership_proposal_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52820 - "GET /api/v4/images/template-previews/customer_success_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52821 - "GET /api/v4/images/template-previews/startup_story_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53353 - "GET /api/v4/images/template-previews/minimal_agency_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53354 - "GET /api/v4/images/template-previews/edtech_course_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53355 - "GET /api/v4/images/template-previews/gamer_esports_preview.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57205 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62732 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54722 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58464 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides HTTP/1.1" 200 OK
+{"project_id": "6a1666acf3683c32fb3cb1b7", "slide_no": 0, "fields": ["headline", "subheadline", "bullets", "body", "speaker_notes", "layout", "image_prompt", "image_url", "image_position", "image_fit", "background_color", "background_gradient", "text_color", "accent_color", "font_heading", "font_body", "icons", "stat_blocks", "quote", "chart", "table", "timeline", "comparison", "diagram", "team_members", "company_icon_url", "company_icon_hidden", "company_icon_position", "company_icon_opacity", "links", "updated_at", "version"], "version": 3, "artifact_version": 4, "event": "v4_editor.patch_slide", "level": "info", "timestamp": "2026-05-29T17:34:11.469392Z"}
+{"error": "", "event": "redis_progress_emit_disabled", "level": "debug", "timestamp": "2026-05-29T17:34:11.886615Z"}
+INFO:     127.0.0.1:52738 - "PATCH /api/v4/projects/6a1666acf3683c32fb3cb1b7/slides/0 HTTP/1.1" 200 OK
+{"share_id": "ycrfSs5EDbL10Fx9", "project_id": "6a1666acf3683c32fb3cb1b7", "visibility": "public", "access": "view", "version_mode": "live_latest", "expires_at": "2026-06-12T17:34:19.576086+00:00", "has_password": false, "allowed_emails_count": 0, "event": "share_link_created", "level": "info", "timestamp": "2026-05-29T17:34:19.576086Z"}
+INFO:     127.0.0.1:52448 - "POST /api/v4/projects/6a1666acf3683c32fb3cb1b7/share HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62655 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49914 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55443 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58416 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61708 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51094 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59952 - "GET /api/v4/share/ycrfSs5EDbL10Fx9 HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:59953 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62753 - "GET /api/v4/share/ycrfSs5EDbL10Fx9 HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:62754 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57075 - "GET /api/v4/projects/6a1666acf3683c32fb3cb1b7/intel HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63004 - "GET /api/v4/share/ycrfSs5EDbL10Fx9 HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:63259 - "GET /api/v4/share/ycrfSs5EDbL10Fx9 HTTP/1.1" 500 Internal Server Error

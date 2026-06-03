@@ -117,7 +117,7 @@ export function BusinessModelSlide({ data, onUpdate }: BusinessModelSlideProps) 
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .slide-container {
           background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
           color: white;

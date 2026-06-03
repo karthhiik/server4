@@ -1,0 +1,882 @@
+{
+  "mode": "standard",
+  "project_id": "6a0d40f3181a925997597671",
+  "duration_seconds": 131.48,
+  "generation_status": {
+    "project_id": "6a0d40f3181a925997597671",
+    "status": "completed",
+    "progress": 100,
+    "message": "Complete",
+    "error": null,
+    "slide_count": 15,
+    "mode": "standard",
+    "title": "Autonomous Zero-Trust Identity Orchestration for Edge Computing",
+    "input_analysis": {
+      "detected_purpose": "pitch_deck",
+      "detected_audience": "Investors",
+      "audience_sophistication": "investor",
+      "detected_industry": "Cybersecurity",
+      "detected_company_name": null,
+      "detected_stage": null,
+      "entities": [
+        {
+          "type": "technology",
+          "value": "Decentralized Identifiers (DIDs)",
+          "confidence": 0.9,
+          "source_span": null
+        },
+        {
+          "type": "technology",
+          "value": "Zero-Knowledge Proofs",
+          "confidence": 0.9,
+          "source_span": null
+        },
+        {
+          "type": "product",
+          "value": "Neural-Guardian consensus algorithm",
+          "confidence": 0.8,
+          "source_span": null
+        },
+        {
+          "type": "market",
+          "value": "Edge Computing",
+          "confidence": 0.8,
+          "source_span": null
+        },
+        {
+          "type": "market",
+          "value": "IoT devices",
+          "confidence": 0.8,
+          "source_span": null
+        }
+      ],
+      "suggested_narrative_arc": "problem_solution",
+      "suggested_slide_count": 15,
+      "suggested_slide_types": [
+        "title",
+        "problem",
+        "solution",
+        "technology",
+        "market",
+        "traction",
+        "team",
+        "ask"
+      ],
+      "missing_context": [
+        {
+          "field": "Company Name",
+          "importance": "critical",
+          "suggestion": "Please provide the name of your startup"
+        },
+        {
+          "field": "Financial Metrics (e.g., funding, revenue)",
+          "importance": "critical",
+          "suggestion": "Include any relevant financial data to demonstrate traction and potential for growth"
+        },
+        {
+          "field": "Traction (e.g., customer acquisition, partnerships)",
+          "importance": "critical",
+          "suggestion": "Highlight any notable achievements or milestones that demonstrate the viability of your solution"
+        },
+        {
+          "field": "Competitors",
+          "importance": "recommended",
+          "suggestion": "Identify key competitors in the autonomous zero-trust identity orchestration space and explain how your solution differentiates"
+        },
+        {
+          "field": "Team Members",
+          "importance": "recommended",
+          "suggestion": "Introduce your founding team and highlight relevant expertise in cybersecurity, edge computing, and IoT devices"
+        }
+      ],
+      "input_richness_score": 0.6,
+      "confidence": 0.8
+    },
+    "overall_score": 8.429333333333334,
+    "generation_id": "6c0ca3f1-c38",
+    "duration_ms": 43843,
+    "llm_trace_summary": [
+      {
+        "phase": "v4_writer_0",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1578,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1545
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_1",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1813,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1630
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_2",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2108,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 2090
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_4",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1921,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1656
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_3",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 3750,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1758
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_6",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1969,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1714
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_5",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2531,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1612
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_7",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1235,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1584
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_8",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1406,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1704
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_9",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1483,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1619
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_10",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2062,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1548
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_12",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 2281,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1626
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_14",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 1375,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1570
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_11",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 3360,
+            "attempt_timeout_s": 15.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 1668
+          }
+        ]
+      },
+      {
+        "phase": "v4_writer_13",
+        "task": "template_fill",
+        "response_format_type": "json_object",
+        "attempts": [
+          {
+            "status": "failed",
+            "attempt": 1,
+            "model": "groq",
+            "provider": "groq",
+            "latency_ms": 6328,
+            "attempt_timeout_s": 15.0,
+            "retryable": false,
+            "error": "All 8 Groq keys exhausted: ['429 on key 20', '429 on key 22', '429 on key 23', '429 on key 24', '429 on key 25', '429 on key 26', '429 on key 27', '429 on key 28']",
+            "tokens": null
+          },
+          {
+            "status": "success",
+            "attempt": 1,
+            "model": "cf-qwen",
+            "provider": "cloudflare",
+            "latency_ms": 7217,
+            "attempt_timeout_s": 8.0,
+            "retryable": null,
+            "error": null,
+            "tokens": 0
+          }
+        ]
+      }
+    ],
+    "llm_trace_count": 17,
+    "token_usage": {
+      "generation_id": "6c0ca3f1-c38",
+      "project_id": "6a0d40f3181a925997597671",
+      "mode": "standard",
+      "total_tokens": 23324,
+      "total_calls": 15,
+      "total_failed_calls": 1,
+      "total_latency_ms": 36089,
+      "by_model": [
+        {
+          "model": "groq",
+          "provider": "groq",
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 23324,
+          "call_count": 14,
+          "failed_calls": 1,
+          "total_latency_ms": 28872
+        },
+        {
+          "model": "cf-qwen",
+          "provider": "cloudflare",
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "call_count": 1,
+          "failed_calls": 0,
+          "total_latency_ms": 7217
+        }
+      ],
+      "by_phase": [
+        {
+          "phase": "v4_writer_0",
+          "task": "template_fill",
+          "total_tokens": 1545,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1578
+        },
+        {
+          "phase": "v4_writer_1",
+          "task": "template_fill",
+          "total_tokens": 1630,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1813
+        },
+        {
+          "phase": "v4_writer_2",
+          "task": "template_fill",
+          "total_tokens": 2090,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2108
+        },
+        {
+          "phase": "v4_writer_4",
+          "task": "template_fill",
+          "total_tokens": 1656,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1921
+        },
+        {
+          "phase": "v4_writer_3",
+          "task": "template_fill",
+          "total_tokens": 1758,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 3750
+        },
+        {
+          "phase": "v4_writer_6",
+          "task": "template_fill",
+          "total_tokens": 1714,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1969
+        },
+        {
+          "phase": "v4_writer_5",
+          "task": "template_fill",
+          "total_tokens": 1612,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2531
+        },
+        {
+          "phase": "v4_writer_7",
+          "task": "template_fill",
+          "total_tokens": 1584,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1235
+        },
+        {
+          "phase": "v4_writer_8",
+          "task": "template_fill",
+          "total_tokens": 1704,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1406
+        },
+        {
+          "phase": "v4_writer_9",
+          "task": "template_fill",
+          "total_tokens": 1619,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1483
+        },
+        {
+          "phase": "v4_writer_10",
+          "task": "template_fill",
+          "total_tokens": 1548,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2062
+        },
+        {
+          "phase": "v4_writer_12",
+          "task": "template_fill",
+          "total_tokens": 1626,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 2281
+        },
+        {
+          "phase": "v4_writer_14",
+          "task": "template_fill",
+          "total_tokens": 1570,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 1375
+        },
+        {
+          "phase": "v4_writer_11",
+          "task": "template_fill",
+          "total_tokens": 1668,
+          "call_count": 1,
+          "models_used": [
+            "groq"
+          ],
+          "latency_ms": 3360
+        },
+        {
+          "phase": "v4_writer_13",
+          "task": "template_fill",
+          "total_tokens": 0,
+          "call_count": 1,
+          "models_used": [
+            "cf-qwen"
+          ],
+          "latency_ms": 7217
+        }
+      ],
+      "estimated_cost_usd": 0.0
+    },
+    "progress_log": []
+  },
+  "content_score": {
+    "score": 67.0,
+    "slide_count": 15,
+    "concept_hits": {
+      "autonomous": true,
+      "zero_trust": true,
+      "identity_orchestration": true,
+      "edge_computing": true,
+      "iot_devices": true,
+      "self_healing": false,
+      "dids": true,
+      "zkp": true,
+      "no_central_authority": true,
+      "sub_millisecond_latency": true,
+      "low_bandwidth": false,
+      "o1_scalability": false,
+      "hardware_root_of_trust": true,
+      "neural_guardian": false,
+      "consensus_algorithm": true,
+      "technical_vcs": false,
+      "security_architects": false,
+      "investor_pitch": false
+    },
+    "missing_concepts": [
+      "self_healing",
+      "low_bandwidth",
+      "o1_scalability",
+      "neural_guardian",
+      "technical_vcs",
+      "security_architects",
+      "investor_pitch"
+    ],
+    "narrative_hits": {
+      "cover": true,
+      "problem": true,
+      "solution": true,
+      "architecture": false,
+      "performance": true,
+      "market": true,
+      "business": false,
+      "moat": false,
+      "roadmap": false,
+      "ask": true
+    },
+    "missing_narrative_beats": [
+      "architecture",
+      "business",
+      "moat",
+      "roadmap"
+    ],
+    "bad_copy_findings": [],
+    "specificity_hits": [
+      "zero-knowledge",
+      "sub-millisecond",
+      "hardware-root-of-trust"
+    ]
+  },
+  "design_score": {
+    "score": 65.3,
+    "slide_count": 15,
+    "average_quality_score": 80.0,
+    "average_composition_score": 78.5,
+    "missing_props": [],
+    "l1_errors": [],
+    "pending_images": [
+      0,
+      1,
+      2,
+      7,
+      10,
+      13,
+      14
+    ],
+    "low_quality_slides": [
+      {
+        "slide": 0,
+        "quality_score": 85.0
+      },
+      {
+        "slide": 4,
+        "quality_score": 60.0
+      },
+      {
+        "slide": 6,
+        "quality_score": 85.0
+      },
+      {
+        "slide": 7,
+        "quality_score": 85.0
+      },
+      {
+        "slide": 8,
+        "quality_score": 60.0
+      },
+      {
+        "slide": 9,
+        "quality_score": 45.0
+      },
+      {
+        "slide": 10,
+        "quality_score": 60.0
+      },
+      {
+        "slide": 12,
+        "quality_score": 60.0
+      },
+      {
+        "slide": 14,
+        "quality_score": 60.0
+      }
+    ]
+  },
+  "edit_report": {
+    "ok": true,
+    "results": {
+      "patch_slide": {
+        "ok": true,
+        "slide": {
+          "id": "6a0d4133181a925997597672",
+          "project_id": "6a0d40f3181a925997597671",
+          "index": 0,
+          "intent": "problem_statement",
+          "layout": "title-only",
+          "headline": "Central Authority Fails IoT Trust for Cybersecurity",
+          "subheadline": "Vulnerable devices and increasing attack surfaces necessitate autonomous zero-trust identity orchestration for edge computing",
+          "bullets": [
+            "Billions of vulnerable devices",
+            "Increasing attack surface"
+          ],
+          "body": "Billions of vulnerable devices.",
+          "stat_blocks": [],
+          "quote": null,
+          "chart": null,
+          "table": null,
+          "timeline": null,
+          "comparison": null,
+          "diagram": null,
+          "image_prompt": "",
+          "image_url": null,
+          "image_source": null,
+          "image_position": null,
+          "image_intent": null,
+          "speaker_notes": "The current IoT security landscape is plagued by vulnerabilities and inefficiencies, with billions of devices at risk. Our company is addressing this issue with autonomous zero-trust identity orchestration for edge computing, providing a secure solution for the increasing attack surface.",
+          "citations": [],
+          "links": [],
+          "render_decision": {
+            "modality": "image",
+            "reason": "body slide — atmospheric background image",
+            "code_block": null,
+            "renderer": "phoenix"
+          },
+          "team_members": [],
+          "requires_user_input": false,
+          "user_input_kind": null,
+          "user_input_reason": null,
+          "company_icon_url": null,
+          "company_icon_hidden": false,
+          "company_icon_position": null,
+          "company_icon_opacity": null,
+          "rationale": "Cover problem statement for this pitch",
+          "purpose": "pitch_deck",
+          "source_model": null,
+          "score": null,
+          "version": 2,
+          "updated_at": "2026-05-20T05:06:10.963000",
+          "background_color": null,
+          "background_gradient": null,
+          "icons": []
+        }
+      },
+      "slice_patch": {
+        "ok": true,
+        "slide_id": "slide-000",
+        "slide_index": 0,
+        "fields_changed": [],
+        "artifact_version": 2,
+        "quality_score": 8.5,
+        "noop": true,
+        "operation_id": "qa-slice-6a0d40f3181a925997597671"
+      },
+      "recompile": {
+        "ok": true,
+        "slide_id": "slide-000",
+        "slide_index": 0,
+        "artifact_version": 3
+      },
+      "company_icon_upload": {
+        "status_code": 403,
+        "ok": false,
+        "body": {
+          "detail": "company icon is a premium-only feature"
+        }
+      }
+    }
+  },
+  "exports": {
+    "slide_content_json": "qa_outputs\\zero_trust_live_standard_pass11\\standard_slide_content.json",
+    "compiled_slides_json": "qa_outputs\\zero_trust_live_standard_pass11\\standard_compiled_slides.json",
+    "pdf": "qa_outputs\\zero_trust_live_standard_pass11\\standard_deck.pdf",
+    "pptx": "qa_outputs\\zero_trust_live_standard_pass11\\standard_deck.pptx",
+    "snapshots_dir": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots"
+  },
+  "snapshot_report": {
+    "ok": true,
+    "page_count": 15,
+    "all_nonblank": true,
+    "snapshots": [
+      {
+        "slide": 0,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_01.png",
+        "mean_luma": 250.89,
+        "variance": 894.7,
+        "nonblank": true
+      },
+      {
+        "slide": 1,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_02.png",
+        "mean_luma": 80.07,
+        "variance": 12298.78,
+        "nonblank": true
+      },
+      {
+        "slide": 2,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_03.png",
+        "mean_luma": 86.17,
+        "variance": 12262.39,
+        "nonblank": true
+      },
+      {
+        "slide": 3,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_04.png",
+        "mean_luma": 81.41,
+        "variance": 12362.85,
+        "nonblank": true
+      },
+      {
+        "slide": 4,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_05.png",
+        "mean_luma": 82.4,
+        "variance": 11923.7,
+        "nonblank": true
+      },
+      {
+        "slide": 5,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_06.png",
+        "mean_luma": 85.31,
+        "variance": 12182.52,
+        "nonblank": true
+      },
+      {
+        "slide": 6,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_07.png",
+        "mean_luma": 81.0,
+        "variance": 12344.48,
+        "nonblank": true
+      },
+      {
+        "slide": 7,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_08.png",
+        "mean_luma": 79.63,
+        "variance": 12258.21,
+        "nonblank": true
+      },
+      {
+        "slide": 8,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_09.png",
+        "mean_luma": 80.84,
+        "variance": 12173.1,
+        "nonblank": true
+      },
+      {
+        "slide": 9,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_10.png",
+        "mean_luma": 83.33,
+        "variance": 12022.84,
+        "nonblank": true
+      },
+      {
+        "slide": 10,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_11.png",
+        "mean_luma": 182.63,
+        "variance": 2645.86,
+        "nonblank": true
+      },
+      {
+        "slide": 11,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_12.png",
+        "mean_luma": 83.05,
+        "variance": 11976.48,
+        "nonblank": true
+      },
+      {
+        "slide": 12,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_13.png",
+        "mean_luma": 84.06,
+        "variance": 12083.12,
+        "nonblank": true
+      },
+      {
+        "slide": 13,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_14.png",
+        "mean_luma": 184.32,
+        "variance": 2686.85,
+        "nonblank": true
+      },
+      {
+        "slide": 14,
+        "path": "qa_outputs\\zero_trust_live_standard_pass11\\standard_snapshots\\slide_15.png",
+        "mean_luma": 181.55,
+        "variance": 2607.34,
+        "nonblank": true
+      }
+    ]
+  }
+}

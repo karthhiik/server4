@@ -32,6 +32,8 @@ from bson import ObjectId
 
 import structlog
 
+import httpx
+
 from app.services.image_pipeline.pipeline_router import (
     ImageGenerationResult,
     ImageModelTier,
@@ -41,6 +43,7 @@ from app.services.image_pipeline.prompt_builder import ImageIntent, PromptContex
 from app.services.v4.design_resolver import ResolvedDesignTokens
 from app.services.v4.image_prompt_library import build_image_prompt
 from app.services.v4.parallel_writer import GeneratedSlide
+from app.services.v4.visual_rhythm import catalog_anti_pattern_prompt_suffix
 from app.config import settings
 
 logger = structlog.get_logger(__name__)
@@ -150,10 +153,11 @@ def _brand_style_suffix(tokens: ResolvedDesignTokens) -> str:
         "spacious":    "minimalist, airy, confident",
     }[tokens.density]
     dominant = f"dominant palette {p.primary} and {p.accent} on {p.background}"
+    avoid = catalog_anti_pattern_prompt_suffix(tokens.to_dict())
     return (
         f"{density_mood}, {dominant}, 16:9 wide composition, "
         "subtle depth, high production value, no text overlay, "
-        "leaves breathing room for overlaid headlines"
+        f"leaves breathing room for overlaid headlines, {avoid}"
     )
 
 
@@ -177,7 +181,7 @@ def _enhance_prompt(
     if not settings.ENABLE_IMAGE_PROMPT_ENRICHMENT:
         prompt = raw_prompt or slide_headline or slide_intent or "presentation visual"
         return prompt[:1200], "disabled"
-    return build_image_prompt(
+    prompt, archetype = build_image_prompt(
         intent=slide_intent,
         layout=slide_layout,
         image_prompt=raw_prompt,
@@ -186,6 +190,10 @@ def _enhance_prompt(
         industry=industry,
         deck_purpose=deck_purpose,
     )
+    avoid = catalog_anti_pattern_prompt_suffix(tokens.to_dict())
+    if avoid and "ai-purple" not in prompt.lower():
+        prompt = f"{prompt} Avoid: {avoid}."
+    return prompt[:1200], archetype
 
 
 def _pick_image_intent(slide_intent: str) -> ImageIntent:
@@ -305,6 +313,7 @@ async def _run_one(
     router: ImagePipelineRouter,
     tokens: ResolvedDesignTokens,
     project_id: str,
+    mode: str,
     emit: Optional[ProgressEmit],
 ) -> tuple[int, Optional[str], Optional[str]]:
     """Run a single image generation. Returns (slide_index, url_or_none,
@@ -326,8 +335,9 @@ async def _run_one(
         variant="dark" if tokens.palette.background.lower() in {"#0b0d12", "#000", "#000000"} else "light",
     )
     try:
+        skip_tiers = [ImageModelTier.AZURE_FLUX] if mode != "premium" else None
         result: Optional[ImageGenerationResult] = await router.generate(
-            ctx, preferred_tier=job.preferred_tier
+            ctx, preferred_tier=job.preferred_tier, skip_tiers=skip_tiers
         )
     except Exception as e:
         logger.warning("image_gen_unexpected_error",
@@ -335,6 +345,38 @@ async def _run_one(
         result = None
 
     if not result:
+        # ── Free stock photo fallback ──────────────────────────────
+        # When AI generation fails (rate limits, timeouts, all tiers
+        # exhausted), try Unsplash/Pexels/Pixabay for real photography.
+        # This is free, fast (<2s), and produces better results than
+        # gradient placeholders for hero/background images.
+        try:
+            from app.services.v4.free_photo_search import get_best_free_photo
+            stock = await get_best_free_photo(job.prompt[:200])
+            if stock and stock.url:
+                # Upload the stock photo to our blob storage for stability
+                async with httpx.AsyncClient(timeout=15.0) as client:
+                    img_resp = await client.get(stock.url)
+                    if img_resp.status_code == 200:
+                        url = await _upload_to_blob(img_resp.content, job.slide_id, project_id)
+                        if url:
+                            logger.info("free_stock_photo_used",
+                                       index=job.slide_index, source=stock.source)
+                            if emit:
+                                await emit("slide_image_ready", {
+                                    "index": job.slide_index,
+                                    "url": url,
+                                    "tier": "free_stock",
+                                    "provider": stock.source,
+                                    "latency_ms": int((time.perf_counter() - t0) * 1000),
+                                    "fallback_count": 0,
+                                    "position": job.position,
+                                    "image_intent": job.intent.value,
+                                })
+                            return job.slide_index, url, "free_stock"
+        except Exception as stock_err:
+            logger.debug("free_stock_fallback_failed", error=str(stock_err)[:100])
+
         if emit:
             await emit("slide_image_failed", {
                 "index": job.slide_index,
@@ -360,20 +402,29 @@ async def _run_one(
     try:
         from app.database import get_db  # local import to avoid cycles
         db = get_db()
+        # Match on either schema key — V4 inserts both, but if the image
+        # stage races ahead of the router's slide upsert (rare, but the
+        # `$setOnInsert` block here is intended to handle exactly that),
+        # we want to be certain we don't accidentally orphan a doc.
         await db.slides.update_one(
-            {"presentation_id": project_id, "index": job.slide_index},
+            {
+                "$or": [
+                    {"presentation_id": project_id, "index": job.slide_index},
+                    {"project_id": project_id, "index": job.slide_index},
+                ],
+            },
             {
                 "$set": {
                     "image_url": url,
                     "image_source": result.tier.value,
                     "image_position": job.position,
                     "image_intent": job.intent.value,
-                },
-                "$setOnInsert": {
-                    "_id": str(ObjectId()),
                     "presentation_id": project_id,
                     "project_id": project_id,
                     "index": job.slide_index,
+                },
+                "$setOnInsert": {
+                    "_id": str(ObjectId()),
                 },
             },
             upsert=True,
@@ -433,7 +484,7 @@ async def generate_images(
         async with sem:
             return await _run_one(
                 job=job, router=router, tokens=tokens,
-                project_id=project_id, emit=emit,
+                project_id=project_id, mode=mode, emit=emit,
             )
 
     t0 = time.perf_counter()

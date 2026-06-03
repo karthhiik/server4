@@ -67,6 +67,8 @@ import structlog
 
 from app.services.v4.engine_transformer import build_engine
 from app.services.v4.html_transformer import build_html_css_js
+from app.services.v4.motion_spec import build_layer_metadata, build_motion_spec, build_render_qa_plan
+from app.services.v4.slide_intelligence import build_slide_intelligence_spec
 from app.services.v4.quality_scorer import (
     _DENSITY_TARGETS,
     _collect_visible_text,
@@ -602,14 +604,6 @@ def _commit_remediated_props(
     # path until the frontend Phase 7 hook ships.
     slide["jsx_source"] = new_jsx
 
-    artifacts["html_css_js"] = build_html_css_js(
-        kit=kit,
-        props=props,
-        animation_ir=animation_ir,
-        design_system=None,
-        slide_id=slide_id,
-        deck_title=None,
-    )
     artifacts["engine"] = build_engine(
         kit=kit,
         props=props,
@@ -617,6 +611,57 @@ def _commit_remediated_props(
         design_system=None,
         slide_id=slide_id,
     )
+    layer_metadata = build_layer_metadata(
+        slide_id=slide_id or "slide-000",
+        kit=kit,
+        engine_artifact=artifacts["engine"],
+        animation_ir=animation_ir,
+    )
+    motion_spec = slide.get("motion_spec")
+    if not isinstance(motion_spec, dict):
+        motion_spec = build_motion_spec(
+            intent=str(slide.get("intent") or props.get("intent") or ""),
+            layout=str(slide.get("layout") or ""),
+            kit=kit,
+            animation_plan=slide.get("animation_plan") or {},
+            animation_ir=animation_ir,
+            layer_metadata=layer_metadata,
+        )
+    slide["motion_spec"] = motion_spec
+    slide["html_layer_metadata"] = layer_metadata
+    slide["render_qa"] = build_render_qa_plan(
+        motion_spec=motion_spec,
+        layer_metadata=layer_metadata,
+    )
+    slide["poster_frame"] = motion_spec.get("poster_frame")
+    interaction_spec = build_slide_intelligence_spec(
+        slide_id=slide_id or "slide-000",
+        slide_index=int(slide.get("slide_index") or 0),
+        intent=str(slide.get("intent") or props.get("intent") or ""),
+        layout=str(slide.get("layout") or ""),
+        kit=kit,
+        props=props,
+        layer_metadata=layer_metadata,
+        motion_spec=motion_spec,
+        design_tokens=slide.get("design_tokens") if isinstance(slide.get("design_tokens"), Mapping) else None,
+        template_id=str(slide.get("template_id") or "") or None,
+    )
+    slide["interaction_spec"] = interaction_spec
+    artifacts["kit_jsx"]["motion_spec"] = motion_spec
+    artifacts["kit_jsx"]["layer_metadata"] = layer_metadata
+    artifacts["kit_jsx"]["interaction_spec"] = interaction_spec
+    artifacts["html_css_js"] = build_html_css_js(
+        kit=kit,
+        props=props,
+        animation_ir=animation_ir,
+        design_system=None,
+        slide_id=slide_id,
+        deck_title=None,
+        motion_spec=motion_spec,
+        layer_metadata=layer_metadata,
+    )
+    if isinstance(artifacts["html_css_js"], dict):
+        artifacts["html_css_js"]["interaction_spec"] = interaction_spec
     artifacts["reveal_legacy"] = build_reveal_legacy(
         kit=kit,
         props=props,

@@ -300,6 +300,301 @@ _CUSTOM: list[NarrativeSlot] = [
 ]
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# STANDARD MODE PITCH DECK PURPOSES (15+ new purposes for Standard Mode)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+_DEEP_TECH: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Technology + company name",              "must",      "technical, precise"),
+    NarrativeSlot("architecture",      "diagram",     "System architecture overview",           "must",      "structural, detailed"),
+    NarrativeSlot("technical_problem", "two-column", "Technical challenge being solved",       "must",      "problem-focused"),
+    NarrativeSlot("solution",          "image-full",  "Technical solution implementation",      "must",      "concrete, demonstrable"),
+    NarrativeSlot("performance",      "chart-focus", "Benchmarks + performance metrics",      "must",      "data-driven, quantitative"),
+    NarrativeSlot("scalability",      "process",     "How system scales",                      "important", "architectural"),
+    NarrativeSlot("security",         "bullet-points","Security measures + compliance",        "important", "security-focused"),
+    NarrativeSlot("integration",      "diagram",     "API + integration patterns",             "optional",  "technical"),
+    NarrativeSlot("deployment",       "process",     "Deployment + infrastructure",            "optional",  "operational"),
+    NarrativeSlot("team",             "grid-3",      "Technical team expertise",                "important", "credibility-focused"),
+    NarrativeSlot("roadmap",          "timeline",    "Technical roadmap",                       "important", "forward-looking"),
+    NarrativeSlot("contact",         "title-only",  "Technical contact + docs",                "must",      "accessible"),
+]
+
+_VC_PITCH: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Company + one-liner",                    "must",      "punchy, visionary"),
+    NarrativeSlot("problem",         "two-column",  "Market pain + opportunity",               "must",      "urgent, compelling"),
+    NarrativeSlot("solution",         "image-full",  "Product + how it solves",                 "must",      "clear, transformative"),
+    NarrativeSlot("market",           "stat-hero",   "TAM / SAM / SOM with sources",             "must",      "ambitious, data-backed"),
+    NarrativeSlot("traction",         "chart-focus", "Growth metrics + momentum",               "must",      "proof-backed, exciting"),
+    NarrativeSlot("business_model",  "grid-3",      "Revenue model + unit economics",          "must",      "logical, sustainable"),
+    NarrativeSlot("competition",     "comparison",  "Competitive positioning",                 "important", "differentiated"),
+    NarrativeSlot("team",            "grid-3",      "Founders + key hires",                    "must",      "credibility, mission-aligned"),
+    NarrativeSlot("financials",      "table",       "Projections + key assumptions",            "important", "realistic"),
+    NarrativeSlot("ask",             "stat-hero",   "Raise amount + use of funds",             "must",      "clear, actionable"),
+    NarrativeSlot("timeline",        "timeline",    "Milestones + use of proceeds",             "important", "strategic"),
+    NarrativeSlot("contact",         "title-only",  "Thank-you + contact",                     "must",      "grateful, open"),
+]
+
+_EXECUTIVE_BRIEF: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Topic + executive summary",              "must",      "concise, executive"),
+    NarrativeSlot("executive_summary","stat-hero", "Bottom-line recommendation",              "must",      "decisive, direct"),
+    NarrativeSlot("context",          "two-column",  "Background + why this matters",           "important", "efficient"),
+    NarrativeSlot("analysis",         "table",       "Data + key findings",                     "must",      "objective, data-driven"),
+    NarrativeSlot("options",          "comparison",  "Strategic options evaluated",              "important", "balanced"),
+    NarrativeSlot("recommendation",   "stat-hero",   "Recommended path forward",                "must",      "decisive"),
+    NarrativeSlot("risks",            "bullet-points","Key risks + mitigations",                "important", "candid, proactive"),
+    NarrativeSlot("financial_impact", "chart-focus", "ROI / cost-benefit analysis",             "must",      "quantitative"),
+    NarrativeSlot("next_steps",      "title-only",  "Actions + owners + timeline",             "must",      "accountable"),
+]
+
+_TRUST_COMPLIANCE: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Trust + compliance overview",             "must",      "authoritative, reassuring"),
+    NarrativeSlot("compliance_landscape","two-column","Regulatory environment",                "must",      "informative"),
+    NarrativeSlot("security_framework","diagram",    "Security architecture",                   "must",      "technical, detailed"),
+    NarrativeSlot("certifications",   "grid-3",      "Compliance certifications + audits",      "must",      "credibility-focused"),
+    NarrativeSlot("data_protection",  "process",     "Data protection measures",                "must",      "privacy-focused"),
+    NarrativeSlot("incident_response","bullet-points","Incident response procedures",             "important", "prepared"),
+    NarrativeSlot("third_party",      "comparison",  "Third-party validations",                  "important", "independent"),
+    NarrativeSlot("risk_mitigation",  "table",       "Risk assessment + mitigation",            "must",      "comprehensive"),
+    NarrativeSlot("contact",         "title-only",  "Compliance contact + resources",          "must",      "accessible"),
+]
+
+_CINEMATIC_KEYNOTE: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Single powerful phrase",                   "must",      "poetic, minimalist"),
+    NarrativeSlot("hook",             "quote",       "Opening emotional hook",                  "must",      "captivating"),
+    NarrativeSlot("vision",           "image-full",  "Future vision visualization",              "must",      "inspiring"),
+    NarrativeSlot("story",            "two-column",  "Narrative arc + human impact",             "must",      "emotional"),
+    NarrativeSlot("moment",           "stat-hero",   "Defining moment + impact",                 "must",      "high-impact"),
+    NarrativeSlot("insight",          "diagram",     "Key insight revealed",                     "important", "revealing"),
+    NarrativeSlot("journey",          "timeline",    "The journey so far",                       "important", "narrative"),
+    NarrativeSlot("possibility",     "image-full",  "What becomes possible",                   "must",      "aspirational"),
+    NarrativeSlot("call_to_action",  "title-only",  "Single powerful call to action",           "must",      "inspiring"),
+]
+
+_SEED_ROUND: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Company + vision statement",               "must",      "visionary, founder-led"),
+    NarrativeSlot("founder_story",    "two-column",  "Why we started + personal journey",        "must",      "authentic, narrative"),
+    NarrativeSlot("problem",          "two-column",  "Problem we're solving",                    "must",      "relatable, urgent"),
+    NarrativeSlot("solution",         "image-full",  "Our solution + early traction",            "must",      "clear, exciting"),
+    NarrativeSlot("market",           "stat-hero",   "Market opportunity",                       "must",      "ambitious, validated"),
+    NarrativeSlot("traction",         "chart-focus", "Early metrics + validation",               "must",      "proof-backed"),
+    NarrativeSlot("team",            "grid-3",      "Founders + why this team",                 "must",      "credibility-focused"),
+    NarrativeSlot("ask",             "stat-hero",   "Seed round ask + use of funds",            "must",      "clear, specific"),
+    NarrativeSlot("roadmap",         "timeline",    "18-month roadmap",                         "important", "realistic"),
+    NarrativeSlot("contact",         "title-only",  "Thank-you + contact",                     "must",      "grateful"),
+]
+
+_SERIES_A: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Company + growth headline",                "must",      "data-driven, confident"),
+    NarrativeSlot("traction",         "chart-focus", "Growth metrics + momentum",               "must",      "proof-backed, impressive"),
+    NarrativeSlot("problem",          "two-column",  "Market pain + opportunity",               "must",      "urgent, validated"),
+    NarrativeSlot("solution",         "image-full",  "Product + differentiation",                "must",      "clear, compelling"),
+    NarrativeSlot("market",           "stat-hero",   "TAM / SAM / SOM + growth",                 "must",      "ambitious, data-backed"),
+    NarrativeSlot("unit_economics",  "grid-3",      "CAC / LTV / payback period",               "must",      "financial, rigorous"),
+    NarrativeSlot("business_model",   "process",     "Revenue model + monetization",             "must",      "logical"),
+    NarrativeSlot("competition",     "comparison",  "Competitive positioning",                 "important", "differentiated"),
+    NarrativeSlot("team",            "grid-3",      "Team + key hires",                        "must",      "credibility-focused"),
+    NarrativeSlot("financials",      "table",       "Projections + assumptions",                "must",      "realistic, detailed"),
+    NarrativeSlot("ask",             "stat-hero",   "Series A ask + use of funds",              "must",      "clear, actionable"),
+    NarrativeSlot("contact",         "title-only",  "Thank-you + contact",                     "must",      "professional"),
+]
+
+_PARTNERSHIP: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Partnership opportunity",                  "must",      "collaborative, professional"),
+    NarrativeSlot("about_us",         "two-column",  "Who we are + what we do",                 "must",      "clear, credible"),
+    NarrativeSlot("about_you",        "two-column",  "Understanding your business",             "must",      "partner-focused"),
+    NarrativeSlot("synergy",          "diagram",     "How we fit together",                     "must",      "mutual benefit"),
+    NarrativeSlot("value_proposition","grid-3",     "Value for both parties",                   "must",      "win-win"),
+    NarrativeSlot("integration",      "process",     "Technical integration path",               "important", "concrete"),
+    NarrativeSlot("business_model",   "comparison",  "Revenue sharing model",                    "must",      "transparent"),
+    NarrativeSlot("success_metrics",  "chart-focus", "Shared success metrics",                   "important", "aligned"),
+    NarrativeSlot("next_steps",       "title-only",  "Path to partnership",                     "must",      "actionable"),
+]
+
+_CUSTOMER_CASE: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Customer + success headline",              "must",      "success-focused"),
+    NarrativeSlot("customer_profile", "two-column",  "Who the customer is",                      "must",      "credible"),
+    NarrativeSlot("challenge",        "bullet-points","Pain points + stakes",                     "must",      "vivid, empathetic"),
+    NarrativeSlot("solution",         "image-full",  "What we implemented",                      "must",      "concrete"),
+    NarrativeSlot("implementation",  "process",     "How we worked together",                   "important", "collaborative"),
+    NarrativeSlot("results",          "stat-hero",   "Quantified outcomes + timeline",            "must",      "data-driven"),
+    NarrativeSlot("testimonial",      "quote",       "Customer quote",                           "important", "authentic"),
+    NarrativeSlot("lessons",          "bullet-points","Key learnings",                            "optional",  "reflective"),
+    NarrativeSlot("next_steps",       "title-only",  "Future collaboration",                     "must",      "forward-looking"),
+]
+
+_FUNDRAISING_ROADSHOW: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Company + fundraising round",               "must",      "confident, prepared"),
+    NarrativeSlot("executive_summary","stat-hero", "Investment thesis in one slide",            "must",      "compelling"),
+    NarrativeSlot("market",           "stat-hero",   "TAM / SAM / SOM + growth rate",             "must",      "ambitious, data-backed"),
+    NarrativeSlot("traction",         "chart-focus", "Growth metrics + momentum",                 "must",      "impressive"),
+    NarrativeSlot("product",          "image-full",  "Product + differentiation",                 "must",      "clear, compelling"),
+    NarrativeSlot("unit_economics",  "grid-3",      "CAC / LTV / payback",                       "must",      "financial, rigorous"),
+    NarrativeSlot("business_model",   "process",     "Revenue model + monetization",              "must",      "logical"),
+    NarrativeSlot("competition",     "comparison",  "Competitive landscape",                    "important", "positioned"),
+    NarrativeSlot("team",            "grid-3",      "Team + advisors",                          "must",      "credibility-focused"),
+    NarrativeSlot("financials",      "table",       "Projections + assumptions",                "must",      "realistic"),
+    NarrativeSlot("ask",             "stat-hero",   "Round size + use of funds",                 "must",      "clear"),
+    NarrativeSlot("contact",         "title-only",  "Thank-you + next steps",                    "must",      "professional"),
+]
+
+_GROWTH_DECK: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Growth strategy + company",                "must",      "metrics-driven, ambitious"),
+    NarrativeSlot("current_state",    "stat-hero",   "Where we are today",                       "must",      "factual"),
+    NarrativeSlot("growth_metrics",   "chart-focus", "Key growth KPIs",                          "must",      "data-heavy"),
+    NarrativeSlot("growth_drivers",  "grid-3",      "What drives growth",                       "must",      "strategic"),
+    NarrativeSlot("strategy",        "process",     "Growth strategy",                          "must",      "structured"),
+    NarrativeSlot("experiments",     "two-column",  "Growth experiments + learnings",            "important", "data-driven"),
+    NarrativeSlot("market_expansion", "comparison",  "Expansion opportunities",                   "important", "ambitious"),
+    NarrativeSlot("team",            "grid-3",      "Growth team structure",                    "important", "operational"),
+    NarrativeSlot("resource_needs",  "table",       "Resources to execute",                      "must",      "realistic"),
+    NarrativeSlot("timeline",        "timeline",    "Growth timeline",                          "must",      "structured"),
+    NarrativeSlot("next_steps",      "title-only",  "Immediate actions",                        "must",      "actionable"),
+]
+
+_MARKET_ANALYSIS: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Market analysis + focus",                   "must",      "research-driven, analytical"),
+    NarrativeSlot("executive_summary","stat-hero", "Key market insights",                       "must",      "decisive"),
+    NarrativeSlot("market_size",      "chart-focus", "TAM / SAM / SOM + CAGR",                    "must",      "data-driven"),
+    NarrativeSlot("market_trends",    "grid-3",      "Key market trends",                        "must",      "insightful"),
+    NarrativeSlot("customer_segments","comparison",  "Target customer segments",                 "must",      "segmented"),
+    NarrativeSlot("competitive_landscape","diagram", "Competitive landscape",                     "must",      "comprehensive"),
+    NarrativeSlot("market_dynamics",  "two-column",  "Market forces + dynamics",                 "important", "analytical"),
+    NarrativeSlot("opportunities",    "bullet-points","Market opportunities",                    "must",      "strategic"),
+    NarrativeSlot("threats",         "bullet-points","Market threats + risks",                   "important", "candid"),
+    NarrativeSlot("recommendations", "title-only",  "Strategic recommendations",                 "must",      "actionable"),
+]
+
+_COMPETITIVE_ANALYSIS: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Competitive analysis + company",            "must",      "positioning-focused"),
+    NarrativeSlot("market_overview",  "stat-hero",   "Market position summary",                   "must",      "strategic"),
+    NarrativeSlot("competitors",      "grid-3",      "Key competitors overview",                 "must",      "comprehensive"),
+    NarrativeSlot("feature_matrix",   "comparison",  "Feature comparison matrix",                 "must",      "detailed"),
+    NarrativeSlot("positioning",      "diagram",     "Competitive positioning",                   "must",      "strategic"),
+    NarrativeSlot("differentiators",  "two-column",  "Our unique differentiators",                "must",      "clear, compelling"),
+    NarrativeSlot("moat",            "process",     "Competitive moat",                         "must",      "strategic"),
+    NarrativeSlot("threats",          "bullet-points","Competitive threats",                      "important", "candid"),
+    NarrativeSlot("opportunities",    "bullet-points","Competitive opportunities",                "must",      "strategic"),
+    NarrativeSlot("next_steps",      "title-only",  "Strategic next steps",                      "must",      "actionable"),
+]
+
+_TEAM_DECK: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Team + company",                           "must",      "credibility-focused"),
+    NarrativeSlot("mission",         "stat-hero",   "Company mission + vision",                 "must",      "inspiring"),
+    NarrativeSlot("founders",        "grid-3",      "Founders + backgrounds",                    "must",      "credibility-focused"),
+    NarrativeSlot("leadership",      "grid-3",      "Leadership team",                          "must",      "credibility-focused"),
+    NarrativeSlot("org_structure",   "diagram",     "Organizational structure",                  "important", "clear"),
+    NarrativeSlot("culture",         "two-column",  "Company culture + values",                  "important", "authentic"),
+    NarrativeSlot("advisors",        "grid-3",      "Advisory board",                           "optional",  "credibility"),
+    NarrativeSlot("hiring_plan",     "timeline",    "Hiring roadmap",                            "important", "forward-looking"),
+    NarrativeSlot("contact",         "title-only",  "Team contact + opportunities",             "must",      "open"),
+]
+
+_FINANCIAL_PROJECTION: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Financial projections + company",            "must",      "financial, professional"),
+    NarrativeSlot("executive_summary","stat-hero", "Financial summary",                         "must",      "decisive"),
+    NarrativeSlot("assumptions",      "bullet-points","Key assumptions",                         "must",      "transparent"),
+    NarrativeSlot("revenue",          "chart-focus", "Revenue projections",                      "must",      "data-driven"),
+    NarrativeSlot("expenses",        "table",       "Expense breakdown",                        "must",      "detailed"),
+    NarrativeSlot("unit_economics",  "grid-3",      "Unit economics analysis",                   "must",      "rigorous"),
+    NarrativeSlot("cash_flow",       "chart-focus", "Cash flow projections",                     "must",      "critical"),
+    NarrativeSlot("sensitivity",     "comparison",  "Sensitivity analysis",                      "important", "comprehensive"),
+    NarrativeSlot("scenarios",       "table",       "Best / base / worst case",                   "important", "realistic"),
+    NarrativeSlot("funding_needs",   "stat-hero",   "Funding requirements",                      "must",      "clear"),
+    NarrativeSlot("contact",         "title-only",  "Financial contact",                         "must",      "accessible"),
+]
+
+_PRODUCT_ROADMAP: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Product roadmap + company",                 "must",      "visionary, strategic"),
+    NarrativeSlot("vision",          "stat-hero",   "Product vision + strategy",                 "must",      "inspiring"),
+    NarrativeSlot("current_state",    "two-column",  "Current product state",                    "must",      "factual"),
+    NarrativeSlot("near_term",       "timeline",    "3-month roadmap",                          "must",      "concrete"),
+    NarrativeSlot("mid_term",        "timeline",    "6-12 month roadmap",                        "must",      "strategic"),
+    NarrativeSlot("long_term",       "timeline",    "12-24 month roadmap",                       "important", "visionary"),
+    NarrativeSlot("prioritization",  "process",     "Prioritization framework",                   "important", "strategic"),
+    NarrativeSlot("resource_needs",  "grid-3",      "Resources to execute",                      "must",      "realistic"),
+    NarrativeSlot("risks",           "bullet-points","Risks + mitigations",                       "important", "candid"),
+    NarrativeSlot("contact",         "title-only",  "Product contact",                          "must",      "accessible"),
+]
+
+_MILESTONE_DECK: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Milestones + company",                      "must",      "achievement-focused"),
+    NarrativeSlot("executive_summary","stat-hero", "Key achievements summary",                   "must",      "celebratory"),
+    NarrativeSlot("year_overview",    "chart-focus", "Year at a glance metrics",                   "must",      "data-driven"),
+    NarrativeSlot("product_milestones","timeline",  "Product milestones",                        "must",      "chronological"),
+    NarrativeSlot("business_milestones","timeline", "Business milestones",                       "must",      "chronological"),
+    NarrativeSlot("team_milestones",  "grid-3",      "Team achievements",                         "important", "human-focused"),
+    NarrativeSlot("customer_wins",    "grid-3",      "Customer milestones",                       "must",      "credibility"),
+    NarrativeSlot("awards",          "bullet-points","Awards + recognition",                      "optional",  "credibility"),
+    NarrativeSlot("lessons",          "two-column",  "Key learnings",                             "important", "reflective"),
+    NarrativeSlot("next_steps",      "title-only",  "Next milestones",                           "must",      "forward-looking"),
+]
+
+_CRISIS_MANAGEMENT: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Crisis response + company",                 "must",      "transparent, accountable"),
+    NarrativeSlot("situation",        "stat-hero",   "Current situation",                        "must",      "factual, direct"),
+    NarrativeSlot("timeline",        "timeline",    "What happened when",                       "must",      "chronological"),
+    NarrativeSlot("impact",           "two-column",  "Impact assessment",                        "must",      "comprehensive"),
+    NarrativeSlot("root_cause",       "bullet-points","Root cause analysis",                     "must",      "analytical"),
+    NarrativeSlot("response",         "process",     "Immediate response actions",                "must",      "actionable"),
+    NarrativeSlot("remediation",     "grid-3",      "Remediation steps",                        "must",      "structured"),
+    NarrativeSlot("prevention",      "bullet-points","Prevention measures",                      "must",      "proactive"),
+    NarrativeSlot("communication",   "two-column",  "Communication plan",                       "must",      "transparent"),
+    NarrativeSlot("commitment",      "title-only",  "Commitment to resolution",                  "must",      "accountable"),
+]
+
+_EXPANSION_PLAN: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Expansion plan + company",                  "must",      "ambitious, strategic"),
+    NarrativeSlot("executive_summary","stat-hero", "Expansion opportunity summary",              "must",      "compelling"),
+    NarrativeSlot("current_footprint","chart-focus", "Current market footprint",                  "must",      "data-driven"),
+    NarrativeSlot("expansion_markets","grid-3",     "Target expansion markets",                  "must",      "strategic"),
+    NarrativeSlot("market_entry",     "process",     "Market entry strategy",                     "must",      "structured"),
+    NarrativeSlot("resource_needs",  "table",       "Resources for expansion",                   "must",      "realistic"),
+    NarrativeSlot("timeline",        "timeline",    "Expansion timeline",                       "must",      "structured"),
+    NarrativeSlot("risks",           "bullet-points","Expansion risks + mitigations",             "important", "candid"),
+    NarrativeSlot("success_metrics",  "chart-focus", "Success metrics",                          "must",      "measurable"),
+    NarrativeSlot("next_steps",      "title-only",  "Immediate actions",                        "must",      "actionable"),
+]
+
+_ADVISORY_BOARD: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Advisory board + company",                  "must",      "credibility-focused"),
+    NarrativeSlot("company_overview", "two-column",  "Company + mission",                         "must",      "clear"),
+    NarrativeSlot("advisory_mission","stat-hero",   "Advisory board mission",                     "must",      "strategic"),
+    NarrativeSlot("advisors",         "grid-3",      "Advisors + backgrounds",                    "must",      "credibility-focused"),
+    NarrativeSlot("value_add",       "two-column",  "Value advisors bring",                      "must",      "clear"),
+    NarrativeSlot("engagement",      "process",     "Advisor engagement model",                  "important", "structured"),
+    NarrativeSlot("structure",        "diagram",     "Advisory board structure",                  "important", "clear"),
+    NarrativeSlot("compensation",    "table",       "Advisor compensation",                      "optional",  "transparent"),
+    NarrativeSlot("contact",         "title-only",  "Advisory contact",                          "must",      "accessible"),
+]
+
+_STRATEGIC_PARTNERSHIP: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Strategic partnership + companies",         "must",      "enterprise, professional"),
+    NarrativeSlot("about_us",         "two-column",  "Who we are + capabilities",                "must",      "credibility-focused"),
+    NarrativeSlot("about_you",        "two-column",  "Partner company overview",                  "must",      "partner-focused"),
+    NarrativeSlot("strategic_fit",   "diagram",     "Strategic alignment",                       "must",      "mutual benefit"),
+    NarrativeSlot("partnership_model","process",     "Partnership structure",                     "must",      "clear"),
+    NarrativeSlot("value_proposition","grid-3",     "Value for both parties",                    "must",      "win-win"),
+    NarrativeSlot("integration",      "diagram",     "Technical + business integration",          "important", "concrete"),
+    NarrativeSlot("governance",      "bullet-points","Governance structure",                     "important", "structured"),
+    NarrativeSlot("financials",      "table",       "Financial terms",                          "important", "transparent"),
+    NarrativeSlot("next_steps",      "title-only",  "Path to partnership",                      "must",      "actionable"),
+]
+
+_PRE_SEED_PITCH: list[NarrativeSlot] = [
+    NarrativeSlot("title",            "title-only",  "Company + founding vision",                 "must",      "visionary, founder-led"),
+    NarrativeSlot("founder_story",   "two-column",  "Why we started + personal journey",         "must",      "authentic, narrative"),
+    NarrativeSlot("problem",          "two-column",  "Problem we're solving",                    "must",      "relatable, urgent"),
+    NarrativeSlot("insight",          "stat-hero",   "Unique insight + opportunity",              "must",      "compelling"),
+    NarrativeSlot("solution",         "image-full",  "Our solution concept",                      "must",      "clear, exciting"),
+    NarrativeSlot("market",          "stat-hero",   "Market opportunity",                       "must",      "ambitious"),
+    NarrativeSlot("traction",         "chart-focus", "Early validation + proof points",            "must",      "proof-backed"),
+    NarrativeSlot("team",            "grid-3",      "Founders + why this team",                 "must",      "credibility-focused"),
+    NarrativeSlot("ask",             "stat-hero",   "Pre-seed ask + use of funds",               "must",      "clear, specific"),
+    NarrativeSlot("roadmap",         "timeline",    "12-month roadmap",                          "important", "realistic"),
+    NarrativeSlot("contact",         "title-only",  "Thank-you + contact",                      "must",      "grateful"),
+]
+
+
 NARRATIVE_ARCS: dict[str, list[NarrativeSlot]] = {
     "pitch_deck":       _PITCH_DECK,
     "investor_update":  _INVESTOR_UPDATE,
@@ -316,6 +611,29 @@ NARRATIVE_ARCS: dict[str, list[NarrativeSlot]] = {
     "educational":      _EDUCATIONAL,
     "internal_memo":    _INTERNAL_MEMO,
     "custom":           _CUSTOM,
+    # Standard Mode Pitch Deck Purposes
+    "deep_tech":        _DEEP_TECH,
+    "vc_pitch":         _VC_PITCH,
+    "executive_brief":  _EXECUTIVE_BRIEF,
+    "trust_compliance": _TRUST_COMPLIANCE,
+    "cinematic_keynote": _CINEMATIC_KEYNOTE,
+    "seed_round":       _SEED_ROUND,
+    "series_a":         _SERIES_A,
+    "partnership":      _PARTNERSHIP,
+    "customer_case":    _CUSTOMER_CASE,
+    "fundraising_roadshow": _FUNDRAISING_ROADSHOW,
+    "growth_deck":      _GROWTH_DECK,
+    "market_analysis":  _MARKET_ANALYSIS,
+    "competitive_analysis": _COMPETITIVE_ANALYSIS,
+    "team_deck":        _TEAM_DECK,
+    "financial_projection": _FINANCIAL_PROJECTION,
+    "product_roadmap":  _PRODUCT_ROADMAP,
+    "milestone_deck":   _MILESTONE_DECK,
+    "crisis_management": _CRISIS_MANAGEMENT,
+    "expansion_plan":   _EXPANSION_PLAN,
+    "advisory_board":   _ADVISORY_BOARD,
+    "strategic_partnership": _STRATEGIC_PARTNERSHIP,
+    "pre_seed_pitch":   _PRE_SEED_PITCH,
 }
 
 
@@ -337,6 +655,29 @@ VOICE_PROFILES: dict[str, VoiceProfile] = {
     "educational":      VoiceProfile(0.55, 0.55, 0.15, 0.20, 0.50),
     "internal_memo":    VoiceProfile(0.85, 0.65, 0.25, 0.85, 0.10),
     "custom":           VoiceProfile(0.65, 0.55, 0.45, 0.45, 0.40),
+    # Standard Mode Pitch Deck Purposes
+    "deep_tech":        VoiceProfile(0.60, 0.95, 0.30, 0.40, 0.20),
+    "vc_pitch":         VoiceProfile(0.60, 0.50, 0.95, 0.85, 0.40),
+    "executive_brief":  VoiceProfile(0.95, 0.60, 0.40, 0.70, 0.15),
+    "trust_compliance": VoiceProfile(0.95, 0.70, 0.25, 0.50, 0.10),
+    "cinematic_keynote": VoiceProfile(0.30, 0.40, 0.80, 0.60, 0.90),
+    "seed_round":       VoiceProfile(0.55, 0.45, 0.90, 0.70, 0.60),
+    "series_a":         VoiceProfile(0.70, 0.55, 0.85, 0.65, 0.30),
+    "partnership":      VoiceProfile(0.75, 0.55, 0.60, 0.50, 0.40),
+    "customer_case":    VoiceProfile(0.70, 0.40, 0.55, 0.30, 0.50),
+    "fundraising_roadshow": VoiceProfile(0.80, 0.55, 0.90, 0.75, 0.25),
+    "growth_deck":      VoiceProfile(0.60, 0.50, 0.70, 0.80, 0.20),
+    "market_analysis":  VoiceProfile(0.85, 0.70, 0.30, 0.50, 0.15),
+    "competitive_analysis": VoiceProfile(0.75, 0.60, 0.40, 0.50, 0.20),
+    "team_deck":        VoiceProfile(0.65, 0.40, 0.50, 0.40, 0.50),
+    "financial_projection": VoiceProfile(0.90, 0.70, 0.30, 0.60, 0.10),
+    "product_roadmap":  VoiceProfile(0.60, 0.55, 0.50, 0.65, 0.30),
+    "milestone_deck":   VoiceProfile(0.70, 0.45, 0.55, 0.50, 0.60),
+    "crisis_management": VoiceProfile(0.85, 0.60, 0.20, 0.95, 0.30),
+    "expansion_plan":   VoiceProfile(0.75, 0.60, 0.70, 0.70, 0.25),
+    "advisory_board":   VoiceProfile(0.80, 0.50, 0.40, 0.50, 0.20),
+    "strategic_partnership": VoiceProfile(0.85, 0.60, 0.50, 0.60, 0.25),
+    "pre_seed_pitch":   VoiceProfile(0.50, 0.40, 0.95, 0.80, 0.70),
 }
 
 
@@ -364,7 +705,7 @@ FORBIDDEN_INTENTS_BY_PURPOSE: dict[str, frozenset[str]] = {
     "case_study":       frozenset({"ask", "fundraising"}),
     "company_overview": frozenset({"ask", "fundraising"}),
     "conference_talk":  frozenset({"ask", "fundraising", "competition"}),
-    # Pitch-shaped purposes have no forbidden set \u2014 they may legitimately
+    # Pitch-shaped purposes have no forbidden set — they may legitimately
     # use any of the canonical pitch intents.
     "pitch_deck":       frozenset(),
     "investor_update":  frozenset(),
@@ -375,10 +716,33 @@ FORBIDDEN_INTENTS_BY_PURPOSE: dict[str, frozenset[str]] = {
     "demo_day":         frozenset(),
     "project_proposal": frozenset({"fundraising"}),
     "custom":           frozenset(),
+    # Standard Mode Pitch Deck Purposes
+    "deep_tech":        frozenset(),
+    "vc_pitch":         frozenset(),
+    "executive_brief":  frozenset({"fundraising"}),
+    "trust_compliance": frozenset({"fundraising", "ask"}),
+    "cinematic_keynote": frozenset(),
+    "seed_round":       frozenset(),
+    "series_a":         frozenset(),
+    "partnership":      frozenset({"fundraising"}),
+    "customer_case":    frozenset({"fundraising"}),
+    "fundraising_roadshow": frozenset(),
+    "growth_deck":      frozenset(),
+    "market_analysis":  frozenset(),
+    "competitive_analysis": frozenset(),
+    "team_deck":        frozenset(),
+    "financial_projection": frozenset(),
+    "product_roadmap":  frozenset(),
+    "milestone_deck":   frozenset(),
+    "crisis_management": frozenset(),
+    "expansion_plan":   frozenset(),
+    "advisory_board":   frozenset(),
+    "strategic_partnership": frozenset(),
+    "pre_seed_pitch":   frozenset(),
 }
 
 
-# \u2550\u2550 PUBLIC API \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+# \u2550\u2550 PUBLIC API \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
 _PRIORITY_RANK: dict[SlotPriority, int] = {"must": 0, "important": 1, "optional": 2}
 
